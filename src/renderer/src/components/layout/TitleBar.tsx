@@ -1,46 +1,63 @@
+import { Settings, Minus, Square, X } from 'lucide-react'
 import { useSettingsStore } from '@/stores/settings-store'
+
+function TitleButton({
+  children,
+  onClick,
+  title,
+  hoverClass = 'hover:bg-white/[0.06] hover:text-[#c0caf5]'
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  title?: string
+  hoverClass?: string
+}): JSX.Element {
+  return (
+    <button
+      className={`flex h-full w-11 items-center justify-center text-[#565f89] transition-all duration-150 ${hoverClass}`}
+      onClick={onClick}
+      title={title}
+    >
+      {children}
+    </button>
+  )
+}
 
 export function TitleBar(): JSX.Element {
   const toggleSettings = useSettingsStore((s) => s.toggleSettings)
+
   return (
-    <div className="flex h-10 items-center justify-between bg-[#16161e] select-none"
+    <div
+      className="flex h-10 items-center justify-between border-b border-white/[0.04] bg-[#0f0f17] select-none"
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
-      <div className="flex items-center gap-2 pl-4">
-        <span className="text-sm font-semibold text-[#c0caf5]">Terma</span>
+      <div className="flex items-center gap-2.5 pl-4">
+        <div className="flex h-5 w-5 items-center justify-center rounded-md bg-gradient-to-br from-[#7aa2f7] to-[#bb9af7]">
+          <span className="text-[10px] font-bold text-white">T</span>
+        </div>
+        <span className="text-[13px] font-semibold tracking-tight text-[#c0caf5]/90">Terma</span>
       </div>
       <div
-        className="flex h-full"
+        className="flex h-full items-center"
         style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
       >
-        <button
-          className="flex h-full w-12 items-center justify-center text-[#565f89] hover:bg-[#1a1b26] hover:text-[#c0caf5]"
-          onClick={toggleSettings}
-          title="Settings (Ctrl+Shift+,)"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg>
-        </button>
-        <button
-          className="flex h-full w-12 items-center justify-center text-[#565f89] hover:bg-[#1a1b26] hover:text-[#c0caf5]"
-          onClick={() => window.api.window.minimize()}
-        >
-          <svg width="12" height="12" viewBox="0 0 12 12"><rect y="5" width="12" height="2" fill="currentColor" /></svg>
-        </button>
-        <button
-          className="flex h-full w-12 items-center justify-center text-[#565f89] hover:bg-[#1a1b26] hover:text-[#c0caf5]"
-          onClick={() => window.api.window.maximize()}
-        >
-          <svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" stroke="currentColor" strokeWidth="1.5" fill="none" /></svg>
-        </button>
-        <button
-          className="flex h-full w-12 items-center justify-center text-[#565f89] hover:bg-[#f7768e] hover:text-white"
+        <TitleButton onClick={toggleSettings} title="Settings (Ctrl+Shift+,)">
+          <Settings size={14} strokeWidth={1.8} />
+        </TitleButton>
+        <div className="mx-1 h-4 w-px bg-white/[0.06]" />
+        <TitleButton onClick={() => window.api.window.minimize()} title="Minimize">
+          <Minus size={14} strokeWidth={1.8} />
+        </TitleButton>
+        <TitleButton onClick={() => window.api.window.maximize()} title="Maximize">
+          <Square size={11} strokeWidth={1.8} />
+        </TitleButton>
+        <TitleButton
           onClick={() => window.api.window.close()}
+          title="Close"
+          hoverClass="hover:bg-[#f7768e] hover:text-white"
         >
-          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" /></svg>
-        </button>
+          <X size={14} strokeWidth={1.8} />
+        </TitleButton>
       </div>
     </div>
   )
