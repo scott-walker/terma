@@ -15,12 +15,9 @@ export function PaneWrapper({ node, tabId, isActive }: PaneWrapperProps): JSX.El
 
   return (
     <div
-      className="flex h-full w-full flex-col overflow-hidden bg-base"
-      style={{
-        borderRadius: 8,
-        border: `1.5px solid ${isActive ? config.color + '88' : 'var(--color-border)'}`,
-        transition: 'border-color 0.2s'
-      }}
+      className={`flex h-full w-full flex-col overflow-hidden rounded-lg border-[1.5px] bg-base transition-[border-color] duration-200 ${
+        isActive ? config.paneBorderClass : 'border-border'
+      }`}
     >
       <PaneHeader tabId={tabId} paneId={node.id} paneType={paneType} />
       <div className="relative flex-1">

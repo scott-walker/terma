@@ -7,7 +7,7 @@ export function WorkspaceBar(): JSX.Element {
   if (workspaceOrder.length <= 1) return <></>
 
   return (
-    <div className="flex h-8 items-center gap-1 border-b border-[#1a1b26] bg-[#16161e] px-2">
+    <div className="flex h-8 items-center gap-1 border-b border-border bg-base px-2">
       {workspaceOrder.map((id) => {
         const ws = workspaces[id]
         if (!ws) return null
@@ -16,8 +16,8 @@ export function WorkspaceBar(): JSX.Element {
             key={id}
             className={`rounded px-3 py-0.5 text-xs transition-colors ${
               id === activeWorkspaceId
-                ? 'bg-[#1a1b26] text-[#c0caf5]'
-                : 'text-[#565f89] hover:text-[#a9b1d6]'
+                ? 'bg-surface text-fg'
+                : 'text-fg-muted hover:text-fg-secondary'
             }`}
             onClick={() => setActiveWorkspace(id)}
           >
@@ -26,7 +26,7 @@ export function WorkspaceBar(): JSX.Element {
         )
       })}
       <button
-        className="ml-1 flex h-5 w-5 items-center justify-center rounded text-[#565f89] hover:bg-[#1a1b26] hover:text-[#c0caf5]"
+        className="ml-1 flex h-5 w-5 items-center justify-center rounded text-fg-muted hover:bg-surface hover:text-fg"
         onClick={() => createWorkspace(`Workspace ${workspaceOrder.length + 1}`)}
         title="New workspace"
       >

@@ -16,7 +16,10 @@
   --palette-green-500: #00d25b;
   --palette-red-500: #fc424a;
   --palette-cyan-500: #57caeb;
+  --palette-blue-400: #60a5fa;
   --palette-amber-500: #ffab00;
+  --shadow-accent-glow: 0 0 20px color-mix(in oklch, var(--color-accent) 8%, transparent);
+  --gradient-logo: linear-gradient(135deg, var(--palette-green-500), var(--palette-cyan-500));
 }
 
 /* ─── Semantic tokens → Tailwind utilities ─── */
@@ -37,6 +40,7 @@
   --color-danger: var(--palette-red-500);
   --color-info: var(--palette-cyan-500);
   --color-warning: var(--palette-amber-500);
+  --color-directory: var(--palette-blue-400);
   --shadow-panel: -8px 0 40px oklch(0% 0 0 / 0.6);
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -97,4 +101,34 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* ─── Utility classes ─── */
+.drag-region { -webkit-app-region: drag; }
+.no-drag-region { -webkit-app-region: no-drag; }
+
+.text-gradient-logo {
+  background: var(--gradient-logo);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.window-control {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.window-control:hover { opacity: 1; }
+
+.pane-type-pill {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  background: transparent;
 }

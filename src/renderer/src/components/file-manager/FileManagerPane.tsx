@@ -23,16 +23,7 @@ export function FileManagerPane({ paneId }: FileManagerPaneProps): JSX.Element {
   return (
     <div className="flex h-full w-full flex-col">
       {/* Path header */}
-      <div
-        className="shrink-0 text-fg-muted"
-        style={{
-          padding: '8px 16px 10px',
-          fontSize: 12,
-          borderBottom: '1px solid var(--color-border)',
-          display: 'flex',
-          justifyContent: 'space-between'
-        }}
-      >
+      <div className="flex shrink-0 justify-between border-b border-border px-4 pb-2.5 pt-2 text-xs text-fg-muted">
         <span>{pane.rootPath}</span>
         <span>{entryCount} items</span>
       </div>

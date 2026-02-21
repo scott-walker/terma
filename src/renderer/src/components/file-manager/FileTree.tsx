@@ -84,9 +84,10 @@ export function FileTree({
   })
 
   return (
-    <div ref={parentRef} className="h-full overflow-auto" style={{ padding: '6px 0' }}>
+    <div ref={parentRef} className="h-full overflow-auto py-1.5">
       <div
-        style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}
+        style={{ height: `${virtualizer.getTotalSize()}px` }}
+        className="relative w-full"
       >
         {virtualizer.getVirtualItems().map((virtualItem) => {
           const entry = entries[virtualItem.index]
@@ -98,27 +99,17 @@ export function FileTree({
                 setSelected(virtualItem.index)
                 if (entry.isDirectory) onToggleDir(entry.path)
               }}
+              className={`absolute left-0 top-0 flex w-full cursor-pointer items-center justify-between px-4 py-1.5 text-[13px] transition-[background] duration-100 ${
+                entry.isDirectory ? 'text-directory' : 'text-fg'
+              } ${isSelected ? 'bg-elevated' : 'bg-transparent'}`}
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
                 height: `${virtualItem.size}px`,
                 transform: `translateY(${virtualItem.start}px)`,
-                padding: '6px 16px',
-                paddingLeft: `${entry.depth * 18 + 16}px`,
-                fontSize: 13,
-                color: entry.isDirectory ? '#60a5fa' : 'var(--color-fg)',
-                background: isSelected ? 'var(--color-elevated)' : 'transparent',
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                transition: 'background 0.1s'
+                paddingLeft: `${entry.depth * 18 + 16}px`
               }}
             >
               <span>
-                <span style={{ opacity: 0.5, marginRight: 10 }}>
+                <span className="mr-2.5 opacity-50">
                   {entry.isDirectory
                     ? expandedDirs.has(entry.path)
                       ? '▾'

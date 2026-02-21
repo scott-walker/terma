@@ -28,35 +28,15 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback
       return (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            width: '100%',
-            color: '#555a70',
-            fontSize: 12,
-            padding: 16
-          }}
-        >
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ marginBottom: 8, color: '#ef4444' }}>Component error</div>
-            <div style={{ fontSize: 11, opacity: 0.7 }}>
+        <div className="flex h-full w-full items-center justify-center p-4 text-xs text-fg-muted">
+          <div className="text-center">
+            <div className="mb-2 text-danger">Component error</div>
+            <div className="text-[11px] opacity-70">
               {this.state.error?.message || 'Unknown error'}
             </div>
             <button
               onClick={() => this.setState({ hasError: false, error: null })}
-              style={{
-                marginTop: 12,
-                padding: '4px 12px',
-                background: 'transparent',
-                border: '1px solid #1e2130',
-                color: '#555a70',
-                borderRadius: 4,
-                cursor: 'pointer',
-                fontSize: 11
-              }}
+              className="mt-3 cursor-pointer rounded-sm border border-border bg-transparent px-3 py-1 text-[11px] text-fg-muted"
             >
               Retry
             </button>

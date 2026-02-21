@@ -133,7 +133,7 @@ export default function App(): JSX.Element {
       <TitleBar />
       <TabBar />
       {/* Content area with padding like nexterm (padding: 6) */}
-      <div className="flex-1 overflow-hidden" style={{ padding: 8 }}>
+      <div className="flex-1 overflow-hidden p-2">
         {tabOrder.map((tabId) => {
           const tab = tabs[tabId]
           if (!tab) return null
@@ -141,8 +141,7 @@ export default function App(): JSX.Element {
           return (
             <div
               key={tabId}
-              className="h-full w-full"
-              style={{ display: isActive ? 'block' : 'none' }}
+              className={`h-full w-full ${isActive ? 'block' : 'hidden'}`}
             >
               <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
             </div>

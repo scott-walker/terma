@@ -2,6 +2,7 @@ import { Columns2, Rows2, X } from 'lucide-react'
 import type { PaneType } from '@/lib/layout-tree'
 import { PANE_TYPE_CONFIGS } from '@/lib/pane-types'
 import { useTabStore } from '@/stores/tab-store'
+import { IconButton } from '@/components/ui/IconButton'
 
 interface PaneHeaderProps {
   tabId: string
@@ -16,16 +17,13 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
   const Icon = config.icon
 
   return (
-    <div
-      className="flex shrink-0 items-center justify-between border-b border-border bg-elevated"
-      style={{ padding: '8px 14px', gap: 10 }}
-    >
+    <div className="flex shrink-0 items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2">
       {/* Left: icon + type tabs */}
-      <div className="flex items-center" style={{ gap: 10 }}>
-        <Icon size={16} style={{ color: config.color, opacity: 0.9 }} />
+      <div className="flex items-center gap-2.5">
+        <Icon size={16} className={`${config.colorClass} opacity-90`} />
 
         {/* Type switcher — colored tabs */}
-        <div className="flex" style={{ gap: 3 }}>
+        <div className="flex gap-0.5">
           {paneTypes.map((pt) => {
             const ptConfig = PANE_TYPE_CONFIGS[pt]
             const isActive = pt === paneType
@@ -36,19 +34,11 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
                   e.stopPropagation()
                   if (!isActive) useTabStore.getState().setPaneType(tabId, paneId, pt)
                 }}
-                style={{
-                  background: isActive ? ptConfig.color + '22' : 'transparent',
-                  border: isActive
-                    ? `1px solid ${ptConfig.color}44`
-                    : '1px solid transparent',
-                  color: isActive ? ptConfig.color : undefined,
-                  fontSize: 12,
-                  padding: '3px 10px',
-                  borderRadius: 4,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s'
-                }}
-                className={!isActive ? 'text-fg-muted' : ''}
+                className={`pane-type-pill ${
+                  isActive
+                    ? `${ptConfig.bgActiveClass} ${ptConfig.borderActiveClass} ${ptConfig.colorClass}`
+                    : 'text-fg-muted'
+                }`}
               >
                 {ptConfig.label}
               </button>
@@ -58,61 +48,32 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
       </div>
 
       {/* Right: split + close */}
-      <div className="flex" style={{ gap: 6 }}>
-        <button
+      <div className="flex gap-1.5">
+        <IconButton
+          icon={Columns2}
           onClick={(e) => {
             e.stopPropagation()
             useTabStore.getState().splitPane(tabId, paneId, 'horizontal')
           }}
           title="Split horizontal"
-          className="text-fg-muted"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            padding: '4px 6px',
-            borderRadius: 4,
-            cursor: 'pointer',
-            lineHeight: 1
-          }}
-        >
-          <Columns2 size={16} />
-        </button>
-        <button
+        />
+        <IconButton
+          icon={Rows2}
           onClick={(e) => {
             e.stopPropagation()
             useTabStore.getState().splitPane(tabId, paneId, 'vertical')
           }}
           title="Split vertical"
-          className="text-fg-muted"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            padding: '4px 6px',
-            borderRadius: 4,
-            cursor: 'pointer',
-            lineHeight: 1
-          }}
-        >
-          <Rows2 size={16} />
-        </button>
-        <button
+        />
+        <IconButton
+          icon={X}
           onClick={(e) => {
             e.stopPropagation()
             useTabStore.getState().closePane(tabId, paneId)
           }}
           title="Close pane"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#ef4444',
-            padding: '4px 6px',
-            borderRadius: 4,
-            cursor: 'pointer',
-            lineHeight: 1
-          }}
-        >
-          <X size={16} />
-        </button>
+          variant="danger"
+        />
       </div>
     </div>
   )

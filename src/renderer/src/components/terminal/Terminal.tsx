@@ -40,8 +40,7 @@ export function TerminalPane({ tabId, paneId, active }: TerminalPaneProps): JSX.
   return (
     <div
       ref={containerRef}
-      className="h-full w-full"
-      style={{ padding: '4px 8px' }}
+      className="h-full w-full px-2 py-1"
     />
   )
 }

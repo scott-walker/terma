@@ -20,7 +20,7 @@ function createWindow(): BrowserWindow {
     minHeight: 300,
     frame: false,
     titleBarStyle: 'hidden',
-    backgroundColor: '#1a1b26',
+    backgroundColor: '#191c24',
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
