@@ -32,6 +32,24 @@ interface FsApi {
   onFsEvent(cb: (event: FsEvent) => void): () => void
 }
 
+interface TerminalSettings {
+  activeThemeId: string
+  fontFamily: string
+  fontSize: number
+  lineHeight: number
+  cursorBlink: boolean
+  cursorStyle: 'bar' | 'block' | 'underline'
+  scrollback: number
+  zoomLevel: number
+}
+
+interface SettingsApi {
+  get(): Promise<TerminalSettings>
+  update(partial: Partial<TerminalSettings>): Promise<TerminalSettings>
+  reset(): Promise<TerminalSettings>
+  onChanged(cb: (settings: TerminalSettings) => void): () => void
+}
+
 interface WindowApi {
   minimize(): void
   maximize(): void
@@ -43,6 +61,7 @@ declare global {
     api: {
       pty: PtyApi
       fs: FsApi
+      settings: SettingsApi
       window: WindowApi
     }
   }

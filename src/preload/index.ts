@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { PTY_CHANNELS, FS_CHANNELS } from '../shared/channels'
+import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS } from '../shared/channels'
+import type { TerminalSettings } from '../shared/settings'
 
 const ptyApi = {
   create: (opts?: { cols?: number; rows?: number; cwd?: string }): Promise<string> =>
@@ -63,6 +64,20 @@ const fsApi = {
   }
 }
 
+const settingsApi = {
+  get: (): Promise<TerminalSettings> => ipcRenderer.invoke(SETTINGS_CHANNELS.GET),
+  update: (partial: Partial<TerminalSettings>): Promise<TerminalSettings> =>
+    ipcRenderer.invoke(SETTINGS_CHANNELS.UPDATE, partial),
+  reset: (): Promise<TerminalSettings> => ipcRenderer.invoke(SETTINGS_CHANNELS.RESET),
+  onChanged: (cb: (settings: TerminalSettings) => void): (() => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, settings: TerminalSettings): void => {
+      cb(settings)
+    }
+    ipcRenderer.on(SETTINGS_CHANNELS.CHANGED, listener)
+    return () => ipcRenderer.removeListener(SETTINGS_CHANNELS.CHANGED, listener)
+  }
+}
+
 const windowApi = {
   minimize: (): void => ipcRenderer.send('window:minimize'),
   maximize: (): void => ipcRenderer.send('window:maximize'),
@@ -72,5 +87,6 @@ const windowApi = {
 contextBridge.exposeInMainWorld('api', {
   pty: ptyApi,
   fs: fsApi,
+  settings: settingsApi,
   window: windowApi
 })

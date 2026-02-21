@@ -3,12 +3,26 @@ import { TitleBar } from './components/layout/TitleBar'
 import { TabBar } from './components/layout/TabBar'
 import { SplitPane } from './components/layout/SplitPane'
 import { FileManager } from './components/file-manager/FileManager'
+import { SettingsPanel } from './components/settings/SettingsPanel'
 import { useTabStore } from './stores/tab-store'
 import { useFileManagerStore } from './stores/file-manager-store'
+import { useSettingsStore } from './stores/settings-store'
 
 export default function App(): JSX.Element {
   const { tabs, tabOrder, activeTabId, createTab, closeTab, splitPane } = useTabStore()
   const toggleFileManager = useFileManagerStore((s) => s.toggle)
+  const settingsOpen = useSettingsStore((s) => s.settingsOpen)
+  const activeTheme = useSettingsStore((s) => s.getActiveTheme())
+
+  // Load settings on mount and subscribe to changes from main process
+  useEffect(() => {
+    useSettingsStore.getState().loadSettings()
+
+    const unsub = window.api.settings.onChanged((settings) => {
+      useSettingsStore.setState({ settings })
+    })
+    return unsub
+  }, [])
 
   // Create initial tab
   useEffect(() => {
@@ -22,8 +36,35 @@ export default function App(): JSX.Element {
     (e: KeyboardEvent) => {
       const { ctrlKey, shiftKey, key } = e
       const state = useTabStore.getState()
+      const settingsState = useSettingsStore.getState()
+
+      // Zoom: Ctrl+= / Ctrl+- / Ctrl+0 (no shift)
+      if (ctrlKey && !shiftKey) {
+        if (key === '=' || key === '+') {
+          e.preventDefault()
+          settingsState.zoomIn()
+          return
+        }
+        if (key === '-') {
+          e.preventDefault()
+          settingsState.zoomOut()
+          return
+        }
+        if (key === '0') {
+          e.preventDefault()
+          settingsState.zoomReset()
+          return
+        }
+      }
 
       if (ctrlKey && shiftKey) {
+        // Settings: Ctrl+Shift+,
+        if (key === '<' || key === ',') {
+          e.preventDefault()
+          settingsState.toggleSettings()
+          return
+        }
+
         switch (key) {
           case 'T':
           case 't':
@@ -77,7 +118,10 @@ export default function App(): JSX.Element {
   }, [handleKeyDown])
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#1a1b26]">
+    <div
+      className="flex h-screen w-screen flex-col overflow-hidden"
+      style={{ backgroundColor: activeTheme.colors.background as string }}
+    >
       <TitleBar />
       <TabBar />
       <div className="flex flex-1 overflow-hidden">
@@ -99,6 +143,7 @@ export default function App(): JSX.Element {
           })}
         </div>
       </div>
+      {settingsOpen && <SettingsPanel />}
     </div>
   )
 }

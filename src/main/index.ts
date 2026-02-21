@@ -4,6 +4,7 @@ import { PtyManager } from './pty/pty-manager'
 import { FsService } from './file-system/fs-service'
 import { FsWatcher } from './file-system/fs-watcher'
 import { registerIpcHandlers } from './ipc/handlers'
+import { registerSettingsHandlers } from './ipc/settings-handlers'
 
 app.commandLine.appendSwitch('no-sandbox')
 
@@ -26,6 +27,20 @@ function createWindow(): BrowserWindow {
     }
   })
 
+  // Block native Electron zoom — zoom is handled in renderer via settings
+  win.webContents.on('before-input-event', (_event, input) => {
+    if (
+      input.control &&
+      !input.shift &&
+      !input.alt &&
+      (input.key === '=' || input.key === '+' || input.key === '-' || input.key === '0')
+    ) {
+      // Let the renderer handle these keys for custom zoom
+    }
+  })
+  win.webContents.setZoomFactor(1)
+  win.webContents.setVisualZoomLevelLimits(1, 1)
+
   win.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url)
     return { action: 'deny' }
@@ -46,6 +61,7 @@ function createWindow(): BrowserWindow {
 
 app.whenReady().then(() => {
   registerIpcHandlers(ptyManager, fsService, fsWatcher)
+  registerSettingsHandlers()
 
   ipcMain.on('window:minimize', (event) => {
     BrowserWindow.fromWebContents(event.sender)?.minimize()

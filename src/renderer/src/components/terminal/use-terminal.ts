@@ -5,32 +5,8 @@ import { WebglAddon } from '@xterm/addon-webgl'
 import { CanvasAddon } from '@xterm/addon-canvas'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import { Unicode11Addon } from '@xterm/addon-unicode11'
+import { useSettingsStore } from '@/stores/settings-store'
 import '@xterm/xterm/css/xterm.css'
-
-const THEME = {
-  background: '#1a1b26',
-  foreground: '#c0caf5',
-  cursor: '#c0caf5',
-  cursorAccent: '#1a1b26',
-  selectionBackground: '#33467c',
-  selectionForeground: '#c0caf5',
-  black: '#15161e',
-  red: '#f7768e',
-  green: '#9ece6a',
-  yellow: '#e0af68',
-  blue: '#7aa2f7',
-  magenta: '#bb9af7',
-  cyan: '#7dcfff',
-  white: '#a9b1d6',
-  brightBlack: '#414868',
-  brightRed: '#f7768e',
-  brightGreen: '#9ece6a',
-  brightYellow: '#e0af68',
-  brightBlue: '#7aa2f7',
-  brightMagenta: '#bb9af7',
-  brightCyan: '#7dcfff',
-  brightWhite: '#c0caf5'
-}
 
 export function useTerminal(
   containerRef: React.RefObject<HTMLDivElement | null>,
@@ -39,20 +15,25 @@ export function useTerminal(
 ): void {
   const termRef = useRef<Terminal | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)
+  const settings = useSettingsStore((s) => s.settings)
 
   useEffect(() => {
     const container = containerRef.current
     if (!container || !ptyId) return
 
+    const state = useSettingsStore.getState()
+    const theme = state.getActiveTheme()
+    const effectiveFontSize = state.getEffectiveFontSize()
+
     const terminal = new Terminal({
-      fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', Menlo, monospace",
-      fontSize: 14,
-      lineHeight: 1.2,
-      cursorBlink: true,
-      cursorStyle: 'bar',
-      theme: THEME,
+      fontFamily: state.settings.fontFamily,
+      fontSize: effectiveFontSize,
+      lineHeight: state.settings.lineHeight,
+      cursorBlink: state.settings.cursorBlink,
+      cursorStyle: state.settings.cursorStyle,
+      theme: theme.colors,
       allowProposedApi: true,
-      scrollback: 10000
+      scrollback: state.settings.scrollback
     })
 
     const fitAddon = new FitAddon()
@@ -126,6 +107,33 @@ export function useTerminal(
       fitAddonRef.current = null
     }
   }, [containerRef, ptyId])
+
+  // Reactively apply settings changes to existing terminal
+  useEffect(() => {
+    const terminal = termRef.current
+    const fitAddon = fitAddonRef.current
+    if (!terminal || !fitAddon) return
+
+    const state = useSettingsStore.getState()
+    const theme = state.getActiveTheme()
+    const effectiveFontSize = state.getEffectiveFontSize()
+
+    terminal.options.theme = theme.colors
+    terminal.options.fontFamily = settings.fontFamily
+    terminal.options.fontSize = effectiveFontSize
+    terminal.options.lineHeight = settings.lineHeight
+    terminal.options.cursorBlink = settings.cursorBlink
+    terminal.options.cursorStyle = settings.cursorStyle
+    terminal.options.scrollback = settings.scrollback
+
+    requestAnimationFrame(() => {
+      try {
+        fitAddon.fit()
+      } catch {
+        // ignore
+      }
+    })
+  }, [settings])
 
   // Focus/refit when tab becomes active
   useEffect(() => {

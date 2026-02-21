@@ -16,3 +16,10 @@ export const FS_CHANNELS = {
   UNWATCH: 'fs:unwatch',
   FS_EVENT: 'fs:event'
 } as const
+
+export const SETTINGS_CHANNELS = {
+  GET: 'settings:get',
+  UPDATE: 'settings:update',
+  RESET: 'settings:reset',
+  CHANGED: 'settings:changed'
+} as const
