@@ -7,10 +7,10 @@ export function TabBar(): JSX.Element {
 
   return (
     <div
-      className="flex h-9 items-center gap-1 bg-[#0f0f17] px-2"
+      className="flex h-11 items-center gap-1.5 border-b border-white/[0.04] bg-[#0f0f17] px-3"
       style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
     >
-      <div className="flex items-center gap-1 overflow-x-auto">
+      <div className="flex items-center gap-1.5 overflow-x-auto py-1">
         {tabOrder.map((id) => {
           const tab = tabs[id]
           if (!tab) return null
@@ -26,7 +26,7 @@ export function TabBar(): JSX.Element {
         })}
       </div>
       <button
-        className="ml-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[#565f89] transition-all duration-150 hover:bg-white/[0.06] hover:text-[#c0caf5]"
+        className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[#565f89] transition-all duration-150 hover:bg-white/[0.06] hover:text-[#c0caf5]"
         onClick={() => createTab()}
         title="New tab (Ctrl+Shift+T)"
       >
