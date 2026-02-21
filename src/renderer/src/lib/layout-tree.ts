@@ -180,6 +180,25 @@ export function setPaneCwd(
   return root
 }
 
+export function swapPanes(root: LayoutNode, paneId1: string, paneId2: string): LayoutNode {
+  if (paneId1 === paneId2) return root
+  const node1 = findNode(root, paneId1)
+  const node2 = findNode(root, paneId2)
+  if (!node1 || !node2 || node1.type !== 'pane' || node2.type !== 'pane') return root
+
+  function walk(node: LayoutNode): LayoutNode {
+    if (node.type === 'pane') {
+      if (node.id === paneId1) return node2 as PaneNode
+      if (node.id === paneId2) return node1 as PaneNode
+      return node
+    }
+    const newChildren = node.children.map(walk)
+    if (newChildren.every((c, i) => c === node.children[i])) return node
+    return { ...node, children: newChildren }
+  }
+  return walk(root)
+}
+
 export function setPaneType(
   root: LayoutNode,
   paneId: string,

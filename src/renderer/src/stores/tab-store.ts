@@ -11,7 +11,8 @@ import {
   getAllPaneIds,
   setPaneTerminalId,
   setPaneType as setPaneTypeInTree,
-  setPaneCwd
+  setPaneCwd,
+  swapPanes as swapPanesInTree
 } from '@/lib/layout-tree'
 import { useFileManagerStore } from './file-manager-store'
 import * as terminalManager from '@/lib/terminal-manager'
@@ -67,6 +68,7 @@ interface TabStore {
   updateLayoutRatios: (tabId: string, branchId: string, ratios: number[]) => void
   setPaneTerminal: (tabId: string, paneId: string, terminalId: string) => void
   setPaneType: (tabId: string, paneId: string, paneType: PaneType) => void
+  swapPanes: (tabId: string, paneId1: string, paneId2: string) => void
 
   getSessionSnapshot: () => Promise<SessionSnapshot>
   restoreSession: (snapshot: SessionSnapshot) => void
@@ -233,6 +235,18 @@ export const useTabStore = create<TabStore>((set, get) => ({
         tabs: {
           ...state.tabs,
           [tabId]: { ...tab, layoutTree: setPaneTypeInTree(tab.layoutTree, paneId, paneType) }
+        }
+      }
+    }),
+
+  swapPanes: (tabId, paneId1, paneId2) =>
+    set((state) => {
+      const tab = state.tabs[tabId]
+      if (!tab) return state
+      return {
+        tabs: {
+          ...state.tabs,
+          [tabId]: { ...tab, layoutTree: swapPanesInTree(tab.layoutTree, paneId1, paneId2) }
         }
       }
     }),
