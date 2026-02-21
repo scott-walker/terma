@@ -33,5 +33,6 @@ export const SESSION_CHANNELS = {
 } as const
 
 export const SHELL_CHANNELS = {
-  OPEN_PATH: 'shell:openPath'
+  OPEN_PATH: 'shell:openPath',
+  OPEN_WITH: 'shell:openWith'
 } as const

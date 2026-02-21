@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { spawn } from 'child_process'
 import { join } from 'path'
 import { PtyManager } from './pty/pty-manager'
 import { FsService } from './file-system/fs-service'
@@ -62,6 +63,9 @@ app.whenReady().then(() => {
   registerSessionHandlers()
 
   ipcMain.handle('shell:openPath', (_event, path: string) => shell.openPath(path))
+  ipcMain.handle('shell:openWith', (_event, command: string, filePath: string) => {
+    spawn(command, [filePath], { detached: true, stdio: 'ignore' }).unref()
+  })
 
   ipcMain.on('window:minimize', (event) => {
     BrowserWindow.fromWebContents(event.sender)?.minimize()

@@ -150,7 +150,7 @@ function setupResizeObserver(entry: TerminalEntry, containerEl: HTMLElement): vo
 export async function attach(
   paneId: string,
   containerEl: HTMLElement,
-  opts?: { cwd?: string | null }
+  opts?: { cwd?: string | null; command?: string; args?: string[] }
 ): Promise<string | null> {
   // Reparent existing terminal (synchronous path)
   const existing = terminals.get(paneId)
@@ -178,8 +178,10 @@ export async function attach(
   const tracker = { cancelled: false }
   pendingAttaches.set(paneId, tracker)
 
-  const createOpts: { cwd?: string } = {}
+  const createOpts: { cwd?: string; command?: string; args?: string[] } = {}
   if (opts?.cwd) createOpts.cwd = opts.cwd
+  if (opts?.command) createOpts.command = opts.command
+  if (opts?.args) createOpts.args = opts.args
 
   const ptyId = await window.api.pty.create(createOpts)
 

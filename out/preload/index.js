@@ -1,21 +1,39 @@
 "use strict";
 const electron = require("electron");
+const os = require("os");
 const PTY_CHANNELS = {
   CREATE: "pty:create",
   WRITE: "pty:write",
   RESIZE: "pty:resize",
   DESTROY: "pty:destroy",
   DATA: "pty:data",
-  EXIT: "pty:exit"
+  EXIT: "pty:exit",
+  GET_CWD: "pty:getCwd"
 };
 const FS_CHANNELS = {
   READ_DIR: "fs:readDir",
   STAT: "fs:stat",
   RENAME: "fs:rename",
   DELETE: "fs:delete",
+  COPY: "fs:copy",
+  COPY_PROGRESS: "fs:copyProgress",
   WATCH: "fs:watch",
   UNWATCH: "fs:unwatch",
   FS_EVENT: "fs:event"
+};
+const SETTINGS_CHANNELS = {
+  GET: "settings:get",
+  UPDATE: "settings:update",
+  RESET: "settings:reset",
+  CHANGED: "settings:changed"
+};
+const SESSION_CHANNELS = {
+  SAVE: "session:save",
+  LOAD: "session:load"
+};
+const SHELL_CHANNELS = {
+  OPEN_PATH: "shell:openPath",
+  OPEN_WITH: "shell:openWith"
 };
 const ptyApi = {
   create: (opts) => electron.ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
@@ -28,6 +46,7 @@ const ptyApi = {
   destroy: (id) => {
     electron.ipcRenderer.send(PTY_CHANNELS.DESTROY, id);
   },
+  getCwd: (id) => electron.ipcRenderer.invoke(PTY_CHANNELS.GET_CWD, id),
   onData: (cb) => {
     const listener = (_event, id, data) => {
       cb(id, data);
@@ -48,6 +67,14 @@ const fsApi = {
   stat: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.STAT, filePath),
   rename: (oldPath, newPath) => electron.ipcRenderer.invoke(FS_CHANNELS.RENAME, oldPath, newPath),
   delete: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.DELETE, filePath),
+  copy: (srcPath, destDir) => electron.ipcRenderer.invoke(FS_CHANNELS.COPY, srcPath, destDir),
+  onCopyProgress: (cb) => {
+    const listener = (_event, progress) => {
+      cb(progress);
+    };
+    electron.ipcRenderer.on(FS_CHANNELS.COPY_PROGRESS, listener);
+    return () => electron.ipcRenderer.removeListener(FS_CHANNELS.COPY_PROGRESS, listener);
+  },
   watch: (dirPath) => {
     electron.ipcRenderer.send(FS_CHANNELS.WATCH, dirPath);
   },
@@ -62,6 +89,27 @@ const fsApi = {
     return () => electron.ipcRenderer.removeListener(FS_CHANNELS.FS_EVENT, listener);
   }
 };
+const settingsApi = {
+  get: () => electron.ipcRenderer.invoke(SETTINGS_CHANNELS.GET),
+  update: (partial) => electron.ipcRenderer.invoke(SETTINGS_CHANNELS.UPDATE, partial),
+  reset: () => electron.ipcRenderer.invoke(SETTINGS_CHANNELS.RESET),
+  onChanged: (cb) => {
+    const listener = (_event, settings) => {
+      cb(settings);
+    };
+    electron.ipcRenderer.on(SETTINGS_CHANNELS.CHANGED, listener);
+    return () => electron.ipcRenderer.removeListener(SETTINGS_CHANNELS.CHANGED, listener);
+  }
+};
+const sessionApi = {
+  save: (state) => electron.ipcRenderer.invoke(SESSION_CHANNELS.SAVE, state),
+  load: () => electron.ipcRenderer.invoke(SESSION_CHANNELS.LOAD)
+};
+const shellApi = {
+  openPath: (path) => electron.ipcRenderer.invoke(SHELL_CHANNELS.OPEN_PATH, path),
+  openWith: (command, filePath) => electron.ipcRenderer.invoke(SHELL_CHANNELS.OPEN_WITH, command, filePath),
+  homePath: os.homedir()
+};
 const windowApi = {
   minimize: () => electron.ipcRenderer.send("window:minimize"),
   maximize: () => electron.ipcRenderer.send("window:maximize"),
@@ -70,5 +118,8 @@ const windowApi = {
 electron.contextBridge.exposeInMainWorld("api", {
   pty: ptyApi,
   fs: fsApi,
+  settings: settingsApi,
+  session: sessionApi,
+  shell: shellApi,
   window: windowApi
 });

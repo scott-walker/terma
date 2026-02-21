@@ -10,6 +10,7 @@ interface FileManagerStore {
 
   initPane: (paneId: string, rootPath?: string) => void
   removePane: (paneId: string) => void
+  setRootPath: (paneId: string, rootPath: string) => void
   toggleDir: (paneId: string, path: string) => void
   collapseDir: (paneId: string, path: string) => void
 }
@@ -32,6 +33,18 @@ export const useFileManagerStore = create<FileManagerStore>((set) => ({
     set((state) => {
       const { [paneId]: _, ...rest } = state.panes
       return { panes: rest }
+    }),
+
+  setRootPath: (paneId, rootPath) =>
+    set((state) => {
+      const pane = state.panes[paneId]
+      if (!pane) return state
+      return {
+        panes: {
+          ...state.panes,
+          [paneId]: { ...pane, rootPath, expandedDirs: new Set<string>() }
+        }
+      }
     }),
 
   toggleDir: (paneId, path) =>

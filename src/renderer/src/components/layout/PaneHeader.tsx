@@ -12,12 +12,21 @@ interface PaneHeaderProps {
 
 const paneTypes = Object.keys(PANE_TYPE_CONFIGS) as PaneType[]
 
+const MIME_TYPE = 'application/x-terma-pane'
+
 export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.Element {
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal
   const Icon = config.icon
 
   return (
-    <div className="flex shrink-0 items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2">
+    <div
+      className="flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2 active:cursor-grabbing"
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData(MIME_TYPE, JSON.stringify({ paneId, tabId }))
+        e.dataTransfer.effectAllowed = 'move'
+      }}
+    >
       {/* Left: icon + type tabs */}
       <div className="flex items-center gap-2.5">
         <Icon size={16} className={`${config.colorClass} opacity-90`} />
@@ -72,7 +81,6 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
             useTabStore.getState().closePane(tabId, paneId)
           }}
           title="Close pane"
-          variant="danger"
         />
       </div>
     </div>

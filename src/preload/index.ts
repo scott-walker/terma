@@ -4,7 +4,7 @@ import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_C
 import type { TerminalSettings } from '../shared/settings'
 
 const ptyApi = {
-  create: (opts?: { cols?: number; rows?: number; cwd?: string }): Promise<string> =>
+  create: (opts?: { cols?: number; rows?: number; cwd?: string; command?: string; args?: string[] }): Promise<string> =>
     ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
   write: (id: string, data: string): void => {
     ipcRenderer.send(PTY_CHANNELS.WRITE, id, data)
@@ -105,6 +105,8 @@ const sessionApi = {
 const shellApi = {
   openPath: (path: string): Promise<string> =>
     ipcRenderer.invoke(SHELL_CHANNELS.OPEN_PATH, path),
+  openWith: (command: string, filePath: string): Promise<void> =>
+    ipcRenderer.invoke(SHELL_CHANNELS.OPEN_WITH, command, filePath),
   homePath: homedir()
 }
 

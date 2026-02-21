@@ -35,7 +35,7 @@ export function FileItem({
 
   return (
     <div
-      className={`relative flex w-full cursor-pointer items-center pr-2 hover:bg-surface-hover ${
+      className={`relative flex w-full cursor-default items-center pr-2 hover:bg-surface-hover ${
         isSelected ? 'bg-overlay-subtle' : ''
       }`}
       style={{

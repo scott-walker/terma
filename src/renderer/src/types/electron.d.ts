@@ -67,6 +67,7 @@ interface SessionApi {
 
 interface ShellApi {
   openPath(path: string): Promise<string>
+  openWith(command: string, filePath: string): Promise<void>
   homePath: string
 }
 

@@ -12,7 +12,8 @@ import {
   setPaneTerminalId,
   setPaneType as setPaneTypeInTree,
   setPaneCwd,
-  swapPanes as swapPanesInTree
+  swapPanes as swapPanesInTree,
+  findNode
 } from '@/lib/layout-tree'
 import { useFileManagerStore } from './file-manager-store'
 import * as terminalManager from '@/lib/terminal-manager'
@@ -36,6 +37,19 @@ function collectPaneNodes(node: LayoutNode): PaneNode[] {
   return node.children.flatMap(collectPaneNodes)
 }
 
+async function resolvePaneCwd(paneId: string, layoutTree: LayoutNode): Promise<string | null> {
+  const node = findNode(layoutTree, paneId)
+  if (!node || node.type !== 'pane') return null
+  if (node.paneType === 'terminal') {
+    const ptyId = terminalManager.getPtyId(paneId)
+    if (ptyId) return await window.api.pty.getCwd(ptyId)
+  } else if (node.paneType === 'file-manager') {
+    const fmPane = useFileManagerStore.getState().panes[paneId]
+    if (fmPane) return fmPane.rootPath
+  }
+  return null
+}
+
 function stripTerminalIds(node: LayoutNode): LayoutNode {
   if (node.type === 'pane') {
     return { ...node, terminalId: null }
@@ -55,19 +69,20 @@ interface TabStore {
   reorderTabs: (fromIndex: number, toIndex: number) => void
 
   // Split pane operations
-  splitPane: (tabId: string, paneId: string, direction: 'horizontal' | 'vertical') => void
+  splitPane: (tabId: string, paneId: string, direction: 'horizontal' | 'vertical') => Promise<void>
   splitPaneWithType: (
     tabId: string,
     paneId: string,
     direction: 'horizontal' | 'vertical',
     paneType: PaneType,
     cwd?: string | null
-  ) => void
+  ) => Promise<void>
   closePane: (tabId: string, paneId: string) => void
   setActivePaneId: (tabId: string, paneId: string) => void
   updateLayoutRatios: (tabId: string, branchId: string, ratios: number[]) => void
   setPaneTerminal: (tabId: string, paneId: string, terminalId: string) => void
   setPaneType: (tabId: string, paneId: string, paneType: PaneType) => void
+  updatePaneCwd: (tabId: string, paneId: string, cwd: string) => void
   swapPanes: (tabId: string, paneId1: string, paneId2: string) => void
 
   getSessionSnapshot: () => Promise<SessionSnapshot>
@@ -141,31 +156,39 @@ export const useTabStore = create<TabStore>((set, get) => ({
       return { tabOrder: newOrder }
     }),
 
-  splitPane: (tabId, paneId, direction) =>
+  splitPane: async (tabId, paneId, direction) => {
+    const tab = get().tabs[tabId]
+    const cwd = tab ? await resolvePaneCwd(paneId, tab.layoutTree) : null
     set((state) => {
-      const tab = state.tabs[tabId]
-      if (!tab) return state
-      const { tree, newPaneId } = splitNode(tab.layoutTree, paneId, direction)
+      const currentTab = state.tabs[tabId]
+      if (!currentTab) return state
+      const { tree, newPaneId } = splitNode(currentTab.layoutTree, paneId, direction, 'terminal', cwd)
       return {
         tabs: {
           ...state.tabs,
-          [tabId]: { ...tab, layoutTree: tree, activePaneId: newPaneId }
+          [tabId]: { ...currentTab, layoutTree: tree, activePaneId: newPaneId }
         }
       }
-    }),
+    })
+  },
 
-  splitPaneWithType: (tabId, paneId, direction, paneType, cwd) =>
+  splitPaneWithType: async (tabId, paneId, direction, paneType, cwd) => {
+    if (cwd === undefined || cwd === null) {
+      const tab = get().tabs[tabId]
+      cwd = tab ? await resolvePaneCwd(paneId, tab.layoutTree) : null
+    }
     set((state) => {
-      const tab = state.tabs[tabId]
-      if (!tab) return state
-      const { tree, newPaneId } = splitNode(tab.layoutTree, paneId, direction, paneType, cwd)
+      const currentTab = state.tabs[tabId]
+      if (!currentTab) return state
+      const { tree, newPaneId } = splitNode(currentTab.layoutTree, paneId, direction, paneType, cwd ?? null)
       return {
         tabs: {
           ...state.tabs,
-          [tabId]: { ...tab, layoutTree: tree, activePaneId: newPaneId }
+          [tabId]: { ...currentTab, layoutTree: tree, activePaneId: newPaneId }
         }
       }
-    }),
+    })
+  },
 
   closePane: (tabId, paneId) =>
     set((state) => {
@@ -227,7 +250,9 @@ export const useTabStore = create<TabStore>((set, get) => ({
       }
     }),
 
-  setPaneType: (tabId, paneId, paneType) =>
+  setPaneType: (tabId, paneId, paneType) => {
+    // Destroy existing terminal so the new pane type starts fresh
+    terminalManager.destroy(paneId)
     set((state) => {
       const tab = state.tabs[tabId]
       if (!tab) return state
@@ -235,6 +260,19 @@ export const useTabStore = create<TabStore>((set, get) => ({
         tabs: {
           ...state.tabs,
           [tabId]: { ...tab, layoutTree: setPaneTypeInTree(tab.layoutTree, paneId, paneType) }
+        }
+      }
+    })
+  },
+
+  updatePaneCwd: (tabId, paneId, cwd) =>
+    set((state) => {
+      const tab = state.tabs[tabId]
+      if (!tab) return state
+      return {
+        tabs: {
+          ...state.tabs,
+          [tabId]: { ...tab, layoutTree: setPaneCwd(tab.layoutTree, paneId, cwd) }
         }
       }
     }),

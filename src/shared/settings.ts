@@ -1,3 +1,8 @@
+export interface FileAssociation {
+  pattern: string
+  command: string
+}
+
 export interface TerminalSettings {
   activeThemeId: string
   fontFamily: string
@@ -7,6 +12,7 @@ export interface TerminalSettings {
   cursorStyle: 'bar' | 'block' | 'underline'
   scrollback: number
   zoomLevel: number
+  fileAssociations: FileAssociation[]
 }
 
 export const DEFAULT_SETTINGS: TerminalSettings = {
@@ -17,9 +23,18 @@ export const DEFAULT_SETTINGS: TerminalSettings = {
   cursorBlink: true,
   cursorStyle: 'bar',
   scrollback: 10000,
-  zoomLevel: 0
+  zoomLevel: 0,
+  fileAssociations: []
 }
 
 export function getEffectiveFontSize(settings: TerminalSettings): number {
   return settings.fontSize + settings.zoomLevel * 2
+}
+
+export function matchesGlob(filename: string, pattern: string): boolean {
+  const regex = pattern
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+    .replace(/\*/g, '.*')
+    .replace(/\?/g, '.')
+  return new RegExp(`^${regex}$`, 'i').test(filename)
 }

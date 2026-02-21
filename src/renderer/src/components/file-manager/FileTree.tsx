@@ -4,6 +4,7 @@ import { FileItem } from './FileItem'
 import { ContextMenu, type MenuEntry } from '../ui/ContextMenu'
 import { useSettingsStore } from '@/stores/settings-store'
 import { useToastStore } from '@/stores/toast-store'
+import { matchesGlob } from '@shared/settings'
 
 interface FlatEntry {
   name: string
@@ -21,6 +22,8 @@ interface FileTreeProps {
   rootPath: string
   expandedDirs: Set<string>
   onToggleDir: (path: string) => void
+  onNavigateUp?: () => void
+  onNavigateToDir?: (path: string) => void
 }
 
 function parentDir(p: string): string {
@@ -35,7 +38,9 @@ function baseName(p: string): string {
 export function FileTree({
   rootPath,
   expandedDirs,
-  onToggleDir
+  onToggleDir,
+  onNavigateUp,
+  onNavigateToDir
 }: FileTreeProps): JSX.Element {
   const [entries, setEntries] = useState<FlatEntry[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -49,6 +54,7 @@ export function FileTree({
   const anchorPath = useRef<string | null>(null)
   const addToast = useToastStore((s) => s.addToast)
   const fontSize = useSettingsStore((s) => s.getEffectiveFontSize())
+  const fileAssociations = useSettingsStore((s) => s.settings.fileAssociations)
   const rowHeight = Math.round(fontSize * 1.6)
 
   const loadDir = useCallback(
@@ -78,31 +84,40 @@ export function FileTree({
     [expandedDirs]
   )
 
+  const loadTree = useCallback(async () => {
+    const items = await loadDir(rootPath, 0)
+    if (rootPath !== '/') {
+      const parentPath = rootPath.substring(0, rootPath.lastIndexOf('/')) || '/'
+      items.unshift({
+        name: '..',
+        path: parentPath,
+        isDirectory: true,
+        depth: 0
+      })
+    }
+    setEntries(items)
+  }, [loadDir, rootPath])
+
   useEffect(() => {
-    loadDir(rootPath, 0).then(setEntries)
-  }, [rootPath, expandedDirs, loadDir])
+    loadTree()
+  }, [loadTree])
 
   useEffect(() => {
     window.api.fs.watch(rootPath)
-    const unsub = window.api.fs.onFsEvent(() => {
-      loadDir(rootPath, 0).then(setEntries)
-    })
+    const unsub = window.api.fs.onFsEvent(() => loadTree())
     return () => {
       window.api.fs.unwatch(rootPath)
       unsub()
     }
-  }, [rootPath, loadDir])
-
-  const reload = useCallback(() => {
-    loadDir(rootPath, 0).then(setEntries)
-  }, [loadDir, rootPath])
+  }, [rootPath, loadTree])
 
   // ── Selection logic ──
+
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleItemClick = useCallback(
     (e: React.MouseEvent, entry: FlatEntry, idx: number) => {
       if (e.shiftKey && anchorPath.current) {
-        // Range select from anchor to clicked item
         const anchorIdx = entries.findIndex((en) => en.path === anchorPath.current)
         if (anchorIdx !== -1) {
           const start = Math.min(anchorIdx, idx)
@@ -112,7 +127,6 @@ export function FileTree({
           setSelected(paths)
         }
       } else if (e.ctrlKey || e.metaKey) {
-        // Toggle individual item
         setSelected((prev) => {
           const next = new Set(prev)
           if (next.has(entry.path)) next.delete(entry.path)
@@ -121,13 +135,41 @@ export function FileTree({
         })
         anchorPath.current = entry.path
       } else {
-        // Plain click — single select
         setSelected(new Set([entry.path]))
         anchorPath.current = entry.path
-        if (entry.isDirectory) onToggleDir(entry.path)
+        if (entry.name === '..' && onNavigateUp) {
+          onNavigateUp()
+        } else if (entry.isDirectory) {
+          // Delay toggle so double-click can cancel it
+          if (clickTimerRef.current) clearTimeout(clickTimerRef.current)
+          clickTimerRef.current = setTimeout(() => {
+            clickTimerRef.current = null
+            onToggleDir(entry.path)
+          }, 250)
+        }
       }
     },
-    [entries, onToggleDir]
+    [entries, onToggleDir, onNavigateUp]
+  )
+
+  const handleItemDoubleClick = useCallback(
+    (entry: FlatEntry) => {
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current)
+        clickTimerRef.current = null
+      }
+      if (entry.isDirectory && entry.name !== '..') {
+        onNavigateToDir?.(entry.path)
+      } else if (!entry.isDirectory) {
+        const match = fileAssociations.find((a) => matchesGlob(entry.name, a.pattern))
+        if (match) {
+          window.api.shell.openWith(match.command, entry.path)
+        } else {
+          window.api.shell.openPath(entry.path)
+        }
+      }
+    },
+    [onNavigateToDir, fileAssociations]
   )
 
   // ── File operations ──
@@ -153,7 +195,7 @@ export function FileTree({
           fail++
         }
       }
-      reload()
+      loadTree()
       if (ok > 0) {
         addToast(
           'success',
@@ -164,7 +206,7 @@ export function FileTree({
         addToast('error', fail === 1 ? 'Copy failed' : `Failed to copy ${fail} items`)
       }
     },
-    [clipboard, reload, addToast]
+    [clipboard, loadTree, addToast]
   )
 
   const handleDelete = useCallback(async () => {
@@ -181,7 +223,7 @@ export function FileTree({
       }
     }
     setSelected(new Set())
-    reload()
+    loadTree()
     if (ok > 0) {
       addToast(
         'success',
@@ -191,7 +233,7 @@ export function FileTree({
     if (fail > 0) {
       addToast('error', fail === 1 ? 'Delete failed' : `Failed to delete ${fail} items`)
     }
-  }, [selected, reload, addToast])
+  }, [selected, loadTree, addToast])
 
   // ── Keyboard shortcuts ──
 
@@ -284,11 +326,7 @@ export function FileTree({
                 transform: `translateY(${virtualItem.start}px)`
               }}
               onClick={(e) => handleItemClick(e, entry, virtualItem.index)}
-              onDoubleClick={() => {
-                if (!entry.isDirectory) {
-                  // TODO: open file
-                }
-              }}
+              onDoubleClick={() => handleItemDoubleClick(entry)}
               onContextMenu={(e) => {
                 e.preventDefault()
                 // If right-clicking outside current selection, select only this item

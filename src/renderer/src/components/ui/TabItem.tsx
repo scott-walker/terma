@@ -69,19 +69,20 @@ export function TabItem({ title, isActive, canClose, onClick, onClose, onRename 
           onChange={(e) => setDraft(e.target.value)}
           onBlur={commit}
           onKeyDown={handleKeyDown}
-          className="w-24 border-none bg-transparent text-sm text-fg outline-none focus-visible:outline-none"
+          size={Math.max(draft.length, 1)}
+          className="min-w-0 border-none bg-transparent text-fg outline-none focus-visible:outline-none"
           onClick={(e) => e.stopPropagation()}
         />
       ) : (
         title
       )}
-      {canClose && !editing && (
+      {canClose && (
         <span
           onClick={(e) => {
             e.stopPropagation()
             onClose()
           }}
-          className="ml-1 cursor-pointer text-base leading-none opacity-40 hover:opacity-70"
+          className={`ml-1 cursor-pointer text-base leading-none opacity-40 hover:opacity-70 ${editing ? 'invisible' : ''}`}
         >
           ×
         </span>

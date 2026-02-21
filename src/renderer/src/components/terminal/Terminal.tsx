@@ -38,6 +38,29 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, 
     }
   }, [active, paneId])
 
+  // Poll terminal CWD and sync to layout tree
+  const updatePaneCwd = useTabStore((s) => s.updatePaneCwd)
+  const lastCwdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    const poll = async (): Promise<void> => {
+      const ptyId = getPtyId(paneId)
+      if (!ptyId) return
+      try {
+        const current = await window.api.pty.getCwd(ptyId)
+        if (current && current !== lastCwdRef.current) {
+          lastCwdRef.current = current
+          updatePaneCwd(tabId, paneId, current)
+        }
+      } catch {
+        // PTY may have exited
+      }
+    }
+    poll()
+    const interval = setInterval(poll, 2000)
+    return () => clearInterval(interval)
+  }, [paneId, tabId, updatePaneCwd])
+
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()

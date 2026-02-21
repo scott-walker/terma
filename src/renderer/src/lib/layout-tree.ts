@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 
-export type PaneType = 'terminal' | 'file-manager'
+export type PaneType = 'terminal' | 'file-manager' | 'editor'
 
 export type LayoutNode = PaneNode | BranchNode
 

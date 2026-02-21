@@ -7,6 +7,8 @@ export interface PtyCreateOpts {
   cols?: number
   rows?: number
   cwd?: string
+  command?: string
+  args?: string[]
 }
 
 export class PtyManager {
@@ -17,7 +19,7 @@ export class PtyManager {
   }
 
   create(id: string, win: BrowserWindow, opts: PtyCreateOpts = {}): void {
-    const term = pty.spawn(this.shell, [], {
+    const term = pty.spawn(opts.command || this.shell, opts.args || [], {
       name: 'xterm-256color',
       cols: opts.cols || 80,
       rows: opts.rows || 24,
