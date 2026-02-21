@@ -4,7 +4,8 @@ export const PTY_CHANNELS = {
   RESIZE: 'pty:resize',
   DESTROY: 'pty:destroy',
   DATA: 'pty:data',
-  EXIT: 'pty:exit'
+  EXIT: 'pty:exit',
+  GET_CWD: 'pty:getCwd'
 } as const
 
 export const FS_CHANNELS = {
@@ -12,6 +13,8 @@ export const FS_CHANNELS = {
   STAT: 'fs:stat',
   RENAME: 'fs:rename',
   DELETE: 'fs:delete',
+  COPY: 'fs:copy',
+  COPY_PROGRESS: 'fs:copyProgress',
   WATCH: 'fs:watch',
   UNWATCH: 'fs:unwatch',
   FS_EVENT: 'fs:event'
@@ -22,4 +25,13 @@ export const SETTINGS_CHANNELS = {
   UPDATE: 'settings:update',
   RESET: 'settings:reset',
   CHANGED: 'settings:changed'
+} as const
+
+export const SESSION_CHANNELS = {
+  SAVE: 'session:save',
+  LOAD: 'session:load'
+} as const
+
+export const SHELL_CHANNELS = {
+  OPEN_PATH: 'shell:openPath'
 } as const

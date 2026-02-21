@@ -1,4 +1,5 @@
 import * as pty from 'node-pty'
+import { readlinkSync } from 'fs'
 import { BrowserWindow } from 'electron'
 import { PTY_CHANNELS } from '../../shared/channels'
 
@@ -57,6 +58,16 @@ export class PtyManager {
     if (term) {
       term.kill()
       this.sessions.delete(id)
+    }
+  }
+
+  getCwd(id: string): string | null {
+    const term = this.sessions.get(id)
+    if (!term) return null
+    try {
+      return readlinkSync(`/proc/${term.pid}/cwd`).toString()
+    } catch {
+      return null
     }
   }
 

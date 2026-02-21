@@ -1,11 +1,12 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef, memo } from 'react'
 import { TitleBar } from './components/layout/TitleBar'
 import { TabBar } from './components/layout/TabBar'
 import { SplitPane } from './components/layout/SplitPane'
 import { StatusBar } from './components/layout/StatusBar'
 import { SettingsPanel } from './components/settings/SettingsPanel'
-import { useTabStore } from './stores/tab-store'
+import { useTabStore, type SessionSnapshot } from './stores/tab-store'
 import { useSettingsStore } from './stores/settings-store'
+import { ToastContainer } from './components/ui/Toast'
 import type { ThemePreset } from '@shared/themes'
 
 /* ── Derive UI color tokens from a terminal theme ── */
@@ -76,9 +77,27 @@ function applyThemeToDOM(theme: ThemePreset): void {
   set('--color-directory', blue)
 }
 
+/** Renders a single tab — memoized so hidden tabs don't re-render on tab switch */
+const TabContent = memo(function TabContent({
+  tabId,
+  isActive
+}: {
+  tabId: string
+  isActive: boolean
+}): JSX.Element | null {
+  const tab = useTabStore((s) => s.tabs[tabId])
+  if (!tab) return null
+
+  return (
+    <div className={`h-full w-full ${isActive ? 'block' : 'hidden'}`}>
+      <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
+    </div>
+  )
+})
+
 export default function App(): JSX.Element {
-  const { tabs, tabOrder, activeTabId, createTab, closeTab, splitPane, splitPaneWithType } =
-    useTabStore()
+  const tabOrder = useTabStore((s) => s.tabOrder)
+  const activeTabId = useTabStore((s) => s.activeTabId)
   const settingsOpen = useSettingsStore((s) => s.settingsOpen)
   const activeTheme = useSettingsStore((s) => s.getActiveTheme())
 
@@ -97,102 +116,136 @@ export default function App(): JSX.Element {
     return unsub
   }, [])
 
-  // Create initial tab
+  // Load session or create initial tab
+  const sessionLoaded = useRef(false)
   useEffect(() => {
-    if (tabOrder.length === 0) {
-      createTab()
+    if (sessionLoaded.current) return
+    sessionLoaded.current = true
+
+    window.api.session.load().then((snapshot) => {
+      if (snapshot && snapshot.tabOrder && snapshot.tabOrder.length > 0) {
+        useTabStore.getState().restoreSession(snapshot as unknown as SessionSnapshot)
+      } else {
+        useTabStore.getState().createTab()
+      }
+    }).catch(() => {
+      useTabStore.getState().createTab()
+    })
+  }, [])
+
+  // Session autosave: beforeunload + periodic save
+  useEffect(() => {
+    const saveSession = async (): Promise<void> => {
+      try {
+        const snapshot = await useTabStore.getState().getSessionSnapshot()
+        await window.api.session.save(snapshot)
+      } catch {
+        // Ignore save errors
+      }
+    }
+
+    const handleBeforeUnload = (): void => {
+      // Fire-and-forget save on close
+      saveSession()
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    // Periodic autosave every 2 seconds
+    const interval = setInterval(saveSession, 2000)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      clearInterval(interval)
     }
   }, [])
 
   // Keyboard shortcuts
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      const { ctrlKey, shiftKey, key } = e
-      const state = useTabStore.getState()
-      const settingsState = useSettingsStore.getState()
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    const { ctrlKey, shiftKey, key } = e
+    const state = useTabStore.getState()
+    const settingsState = useSettingsStore.getState()
 
-      // Zoom: Ctrl+= / Ctrl+- / Ctrl+0 (no shift)
-      if (ctrlKey && !shiftKey) {
-        if (key === '=' || key === '+') {
-          e.preventDefault()
-          settingsState.zoomIn()
-          return
-        }
-        if (key === '-') {
-          e.preventDefault()
-          settingsState.zoomOut()
-          return
-        }
-        if (key === '0') {
-          e.preventDefault()
-          settingsState.zoomReset()
-          return
-        }
+    // Zoom: Ctrl+= / Ctrl+- / Ctrl+0 (no shift)
+    if (ctrlKey && !shiftKey) {
+      if (key === '=' || key === '+') {
+        e.preventDefault()
+        settingsState.zoomIn()
+        return
+      }
+      if (key === '-') {
+        e.preventDefault()
+        settingsState.zoomOut()
+        return
+      }
+      if (key === '0') {
+        e.preventDefault()
+        settingsState.zoomReset()
+        return
+      }
+    }
+
+    if (ctrlKey && shiftKey) {
+      // Settings: Ctrl+Shift+,
+      if (key === '<' || key === ',') {
+        e.preventDefault()
+        settingsState.toggleSettings()
+        return
       }
 
-      if (ctrlKey && shiftKey) {
-        // Settings: Ctrl+Shift+,
-        if (key === '<' || key === ',') {
+      switch (key) {
+        case 'T':
+        case 't':
           e.preventDefault()
-          settingsState.toggleSettings()
-          return
-        }
-
-        switch (key) {
-          case 'T':
-          case 't':
-            e.preventDefault()
-            createTab()
-            break
-          case 'W':
-          case 'w':
-            e.preventDefault()
-            if (state.activeTabId) closeTab(state.activeTabId)
-            break
-          case 'D':
-          case 'd':
-            e.preventDefault()
-            if (state.activeTabId) {
-              const tab = state.tabs[state.activeTabId]
-              if (tab) splitPane(state.activeTabId, tab.activePaneId, 'vertical')
-            }
-            break
-          case 'E':
-          case 'e':
-            e.preventDefault()
-            if (state.activeTabId) {
-              const tab = state.tabs[state.activeTabId]
-              if (tab) splitPane(state.activeTabId, tab.activePaneId, 'horizontal')
-            }
-            break
-          case 'B':
-          case 'b':
-            e.preventDefault()
-            if (state.activeTabId) {
-              const tab = state.tabs[state.activeTabId]
-              if (tab)
-                splitPaneWithType(
-                  state.activeTabId,
-                  tab.activePaneId,
-                  'horizontal',
-                  'file-manager'
-                )
-            }
-            break
-        }
-
-        // Tab switching: Ctrl+Shift+1-9
-        if (key >= '1' && key <= '9') {
+          state.createTab()
+          break
+        case 'W':
+        case 'w':
           e.preventDefault()
-          const index = parseInt(key) - 1
-          if (index < state.tabOrder.length) {
-            useTabStore.getState().setActiveTab(state.tabOrder[index])
+          if (state.activeTabId) state.closeTab(state.activeTabId)
+          break
+        case 'D':
+        case 'd':
+          e.preventDefault()
+          if (state.activeTabId) {
+            const tab = state.tabs[state.activeTabId]
+            if (tab) state.splitPane(state.activeTabId, tab.activePaneId, 'vertical')
           }
+          break
+        case 'E':
+        case 'e':
+          e.preventDefault()
+          if (state.activeTabId) {
+            const tab = state.tabs[state.activeTabId]
+            if (tab) state.splitPane(state.activeTabId, tab.activePaneId, 'horizontal')
+          }
+          break
+        case 'B':
+        case 'b':
+          e.preventDefault()
+          if (state.activeTabId) {
+            const tab = state.tabs[state.activeTabId]
+            if (tab)
+              state.splitPaneWithType(
+                state.activeTabId,
+                tab.activePaneId,
+                'horizontal',
+                'file-manager'
+              )
+          }
+          break
+      }
+
+      // Tab switching: Ctrl+Shift+1-9
+      if (key >= '1' && key <= '9') {
+        e.preventDefault()
+        const index = parseInt(key) - 1
+        if (index < state.tabOrder.length) {
+          state.setActiveTab(state.tabOrder[index])
         }
       }
-    },
-    [createTab, closeTab, splitPane, splitPaneWithType]
-  )
+    }
+  }, [])
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
@@ -201,25 +254,16 @@ export default function App(): JSX.Element {
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-base">
-      <TitleBar /> 
+      <TitleBar />
       <TabBar />
       {/* Content area with padding like nexterm (padding: 6) */}
       <div className="flex-1 overflow-hidden p-2">
-        {tabOrder.map((tabId) => {
-          const tab = tabs[tabId]
-          if (!tab) return null
-          const isActive = tabId === activeTabId
-          return (
-            <div
-              key={tabId}
-              className={`h-full w-full ${isActive ? 'block' : 'hidden'}`}
-            >
-              <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
-            </div>
-          )
-        })}
+        {tabOrder.map((tabId) => (
+          <TabContent key={tabId} tabId={tabId} isActive={tabId === activeTabId} />
+        ))}
       </div>
       <StatusBar />
+      <ToastContainer />
       {settingsOpen && <SettingsPanel />}
     </div>
   )

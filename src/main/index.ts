@@ -5,6 +5,7 @@ import { FsService } from './file-system/fs-service'
 import { FsWatcher } from './file-system/fs-watcher'
 import { registerIpcHandlers } from './ipc/handlers'
 import { registerSettingsHandlers } from './ipc/settings-handlers'
+import { registerSessionHandlers } from './ipc/session-handlers'
 
 app.commandLine.appendSwitch('no-sandbox')
 
@@ -58,6 +59,9 @@ function createWindow(): BrowserWindow {
 app.whenReady().then(() => {
   registerIpcHandlers(ptyManager, fsService, fsWatcher)
   registerSettingsHandlers()
+  registerSessionHandlers()
+
+  ipcMain.handle('shell:openPath', (_event, path: string) => shell.openPath(path))
 
   ipcMain.on('window:minimize', (event) => {
     BrowserWindow.fromWebContents(event.sender)?.minimize()

@@ -17,7 +17,7 @@ interface FileManagerStore {
 export const useFileManagerStore = create<FileManagerStore>((set) => ({
   panes: {},
 
-  initPane: (paneId, rootPath = '/') =>
+  initPane: (paneId, rootPath = window.api.shell.homePath) =>
     set((state) => {
       if (state.panes[paneId]) return state
       return {

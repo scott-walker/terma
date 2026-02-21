@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { PaneNode } from '@/lib/layout-tree'
 import { PANE_TYPE_CONFIGS } from '@/lib/pane-types'
 import { PaneHeader } from './PaneHeader'
@@ -9,7 +10,7 @@ interface PaneWrapperProps {
   isActive: boolean
 }
 
-export function PaneWrapper({ node, tabId, isActive }: PaneWrapperProps): JSX.Element {
+export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: PaneWrapperProps): JSX.Element {
   const paneType = node.paneType ?? 'terminal'
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal
 
@@ -22,9 +23,9 @@ export function PaneWrapper({ node, tabId, isActive }: PaneWrapperProps): JSX.El
       <PaneHeader tabId={tabId} paneId={node.id} paneType={paneType} />
       <div className="relative flex-1">
         <div className="absolute inset-0 overflow-hidden">
-          <PaneContent paneType={paneType} tabId={tabId} paneId={node.id} isActive={isActive} />
+          <PaneContent paneType={paneType} tabId={tabId} paneId={node.id} isActive={isActive} cwd={node.cwd} />
         </div>
       </div>
     </div>
   )
-}
+})

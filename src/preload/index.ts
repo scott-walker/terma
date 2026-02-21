@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS } from '../shared/channels'
+import { homedir } from 'os'
+import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS } from '../shared/channels'
 import type { TerminalSettings } from '../shared/settings'
 
 const ptyApi = {
@@ -14,6 +15,8 @@ const ptyApi = {
   destroy: (id: string): void => {
     ipcRenderer.send(PTY_CHANNELS.DESTROY, id)
   },
+  getCwd: (id: string): Promise<string | null> =>
+    ipcRenderer.invoke(PTY_CHANNELS.GET_CWD, id),
   onData: (cb: (id: string, data: string) => void): (() => void) => {
     const listener = (_event: Electron.IpcRendererEvent, id: string, data: string): void => {
       cb(id, data)
@@ -44,6 +47,20 @@ const fsApi = {
     ipcRenderer.invoke(FS_CHANNELS.RENAME, oldPath, newPath),
   delete: (filePath: string): Promise<void> =>
     ipcRenderer.invoke(FS_CHANNELS.DELETE, filePath),
+  copy: (srcPath: string, destDir: string): Promise<void> =>
+    ipcRenderer.invoke(FS_CHANNELS.COPY, srcPath, destDir),
+  onCopyProgress: (
+    cb: (progress: { done: number; total: number }) => void
+  ): (() => void) => {
+    const listener = (
+      _event: Electron.IpcRendererEvent,
+      progress: { done: number; total: number }
+    ): void => {
+      cb(progress)
+    }
+    ipcRenderer.on(FS_CHANNELS.COPY_PROGRESS, listener)
+    return () => ipcRenderer.removeListener(FS_CHANNELS.COPY_PROGRESS, listener)
+  },
   watch: (dirPath: string): void => {
     ipcRenderer.send(FS_CHANNELS.WATCH, dirPath)
   },
@@ -78,6 +95,19 @@ const settingsApi = {
   }
 }
 
+const sessionApi = {
+  save: (state: unknown): Promise<void> =>
+    ipcRenderer.invoke(SESSION_CHANNELS.SAVE, state),
+  load: (): Promise<unknown> =>
+    ipcRenderer.invoke(SESSION_CHANNELS.LOAD)
+}
+
+const shellApi = {
+  openPath: (path: string): Promise<string> =>
+    ipcRenderer.invoke(SHELL_CHANNELS.OPEN_PATH, path),
+  homePath: homedir()
+}
+
 const windowApi = {
   minimize: (): void => ipcRenderer.send('window:minimize'),
   maximize: (): void => ipcRenderer.send('window:maximize'),
@@ -88,5 +118,7 @@ contextBridge.exposeInMainWorld('api', {
   pty: ptyApi,
   fs: fsApi,
   settings: settingsApi,
+  session: sessionApi,
+  shell: shellApi,
   window: windowApi
 })

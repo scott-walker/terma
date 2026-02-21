@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Group, Panel, Separator } from 'react-resizable-panels'
 import { LayoutNode } from '@/lib/layout-tree'
 import { PaneWrapper } from './PaneWrapper'
@@ -9,7 +10,7 @@ interface SplitPaneProps {
   isTabActive: boolean
 }
 
-export function SplitPane({ node, tabId, isTabActive }: SplitPaneProps): JSX.Element {
+export const SplitPane = memo(function SplitPane({ node, tabId, isTabActive }: SplitPaneProps): JSX.Element {
   const activePaneId = useTabStore((s) => s.tabs[tabId]?.activePaneId)
   const setActivePaneId = useTabStore((s) => s.setActivePaneId)
   const updateLayoutRatios = useTabStore((s) => s.updateLayoutRatios)
@@ -45,7 +46,7 @@ export function SplitPane({ node, tabId, isTabActive }: SplitPaneProps): JSX.Ele
       ))}
     </Group>
   )
-}
+})
 
 function SplitPaneEntry({
   children,

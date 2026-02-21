@@ -34,7 +34,7 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
                   e.stopPropagation()
                   if (!isActive) useTabStore.getState().setPaneType(tabId, paneId, pt)
                 }}
-                className={`pane-type-pill ${
+                className={`cursor-pointer rounded-sm border border-transparent bg-transparent px-2.5 py-0.5 text-xs transition-all ${
                   isActive
                     ? `${ptConfig.bgActiveClass} ${ptConfig.borderActiveClass} ${ptConfig.colorClass}`
                     : 'text-fg-muted'

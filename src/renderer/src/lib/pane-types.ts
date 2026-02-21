@@ -22,9 +22,9 @@ export const PANE_TYPE_CONFIGS: Record<PaneType, PaneTypeConfig> = {
   'file-manager': {
     label: 'Files',
     icon: FolderOpen,
-    colorClass: 'text-info',
-    bgActiveClass: 'bg-info/[0.13]',
-    borderActiveClass: 'border-info/[0.27]',
-    paneBorderClass: 'border-info/50'
+    colorClass: 'text-warning',
+    bgActiveClass: 'bg-warning/[0.13]',
+    borderActiveClass: 'border-warning/[0.27]',
+    paneBorderClass: 'border-warning/50'
   }
 }

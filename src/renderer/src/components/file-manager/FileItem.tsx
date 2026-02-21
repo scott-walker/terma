@@ -1,44 +1,85 @@
-import { ChevronDown } from '../ui/icons/ChevronDown'
-import { ChevronRight } from '../ui/icons/ChevronRight'
-import { FolderIcon } from '../ui/icons/FolderIcon'
-import { FileIcon } from '../ui/icons/FileIcon'
+import { ChevronRight } from 'lucide-react'
+import { FileTypeIcon } from './FileTypeIcon'
 
 interface FileItemProps {
   name: string
   path: string
   isDirectory: boolean
   isExpanded: boolean
+  isSelected: boolean
   depth: number
-  onClick: () => void
+  fontSize: number
+  rowHeight: number
+  style?: React.CSSProperties
+  onClick: (e: React.MouseEvent) => void
   onDoubleClick: () => void
+  onContextMenu: (e: React.MouseEvent) => void
 }
 
 export function FileItem({
   name,
   isDirectory,
   isExpanded,
+  isSelected,
   depth,
+  fontSize,
+  rowHeight,
+  style,
   onClick,
-  onDoubleClick
+  onDoubleClick,
+  onContextMenu
 }: FileItemProps): JSX.Element {
+  const indent = Math.round(fontSize * 0.6)
+  const iconSize = Math.round(fontSize * 1.15)
+  const chevronSize = Math.round(fontSize * 0.85)
+
   return (
     <div
-      className="flex h-7 cursor-pointer items-center gap-1.5 rounded-sm px-2 text-xs text-fg-secondary hover:bg-surface"
-      style={{ paddingLeft: `${depth * 16 + 8}px` }}
+      className={`relative flex w-full cursor-pointer items-center pr-2 hover:bg-surface-hover ${
+        isSelected ? 'bg-overlay-subtle' : ''
+      }`}
+      style={{
+        height: rowHeight,
+        fontSize,
+        lineHeight: `${rowHeight}px`,
+        paddingLeft: depth * indent,
+        ...style
+      }}
       onClick={onClick}
       onDoubleClick={onDoubleClick}
+      onContextMenu={onContextMenu}
     >
-      {isDirectory ? (
-        <span className="w-3 shrink-0 text-fg-muted">
-          {isExpanded ? <ChevronDown /> : <ChevronRight />}
-        </span>
-      ) : (
-        <span className="w-3 shrink-0" />
-      )}
-      <span className={isDirectory ? 'text-info' : 'text-fg-secondary'}>
-        {isDirectory ? <FolderIcon /> : <FileIcon />}
+      {/* Indent guides */}
+      {depth > 0 &&
+        Array.from({ length: depth }, (_, i) => (
+          <span
+            key={i}
+            className="pointer-events-none absolute top-0 bottom-0 w-px bg-border opacity-40"
+            style={{ left: i * indent + Math.round(indent * 1.5) }}
+          />
+        ))}
+
+      {/* Chevron */}
+      <span
+        className="flex shrink-0 items-center justify-center"
+        style={{ width: fontSize + 2 }}
+      >
+        {isDirectory && (
+          <ChevronRight
+            size={chevronSize}
+            className="text-fg-muted transition-transform duration-150"
+            style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          />
+        )}
       </span>
-      <span className="truncate">{name}</span>
+
+      {/* Icon */}
+      <span className="mr-1.5 flex shrink-0 items-center">
+        <FileTypeIcon name={name} isDirectory={isDirectory} isExpanded={isExpanded} size={iconSize} />
+      </span>
+
+      {/* Filename */}
+      <span className={`truncate ${isSelected ? 'text-warning' : 'text-fg'}`}>{name}</span>
     </div>
   )
 }

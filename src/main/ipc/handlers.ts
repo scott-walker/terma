@@ -31,6 +31,10 @@ export function registerIpcHandlers(
     ptyManager.destroy(id)
   })
 
+  ipcMain.handle(PTY_CHANNELS.GET_CWD, (_event, id: string) => {
+    return ptyManager.getCwd(id)
+  })
+
   // FS handlers
   ipcMain.handle(FS_CHANNELS.READ_DIR, (_event, dirPath: string) => {
     return fsService.readDir(dirPath)
@@ -46,6 +50,13 @@ export function registerIpcHandlers(
 
   ipcMain.handle(FS_CHANNELS.DELETE, (_event, filePath: string) => {
     return fsService.delete(filePath)
+  })
+
+  ipcMain.handle(FS_CHANNELS.COPY, (event, srcPath: string, destDir: string) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    return fsService.copy(srcPath, destDir, (done, total) => {
+      if (win) win.webContents.send(FS_CHANNELS.COPY_PROGRESS, { done, total })
+    })
   })
 
   ipcMain.on(FS_CHANNELS.WATCH, (event, dirPath: string) => {

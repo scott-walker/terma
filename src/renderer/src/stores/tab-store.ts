@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { nanoid } from 'nanoid'
 import {
   LayoutNode,
+  PaneNode,
   PaneType,
   createPane,
   splitNode,
@@ -9,14 +10,36 @@ import {
   updateRatios,
   getAllPaneIds,
   setPaneTerminalId,
-  setPaneType as setPaneTypeInTree
+  setPaneType as setPaneTypeInTree,
+  setPaneCwd
 } from '@/lib/layout-tree'
+import { useFileManagerStore } from './file-manager-store'
+import * as terminalManager from '@/lib/terminal-manager'
 
 export interface Tab {
   id: string
   title: string
   layoutTree: LayoutNode
   activePaneId: string
+}
+
+export interface SessionSnapshot {
+  tabs: Record<string, Tab>
+  tabOrder: string[]
+  activeTabId: string | null
+  fileManagerPanes: Record<string, { rootPath: string; expandedDirs: string[] }>
+}
+
+function collectPaneNodes(node: LayoutNode): PaneNode[] {
+  if (node.type === 'pane') return [node]
+  return node.children.flatMap(collectPaneNodes)
+}
+
+function stripTerminalIds(node: LayoutNode): LayoutNode {
+  if (node.type === 'pane') {
+    return { ...node, terminalId: null }
+  }
+  return { ...node, children: node.children.map(stripTerminalIds) }
 }
 
 interface TabStore {
@@ -36,13 +59,17 @@ interface TabStore {
     tabId: string,
     paneId: string,
     direction: 'horizontal' | 'vertical',
-    paneType: PaneType
+    paneType: PaneType,
+    cwd?: string | null
   ) => void
   closePane: (tabId: string, paneId: string) => void
   setActivePaneId: (tabId: string, paneId: string) => void
   updateLayoutRatios: (tabId: string, branchId: string, ratios: number[]) => void
   setPaneTerminal: (tabId: string, paneId: string, terminalId: string) => void
   setPaneType: (tabId: string, paneId: string, paneType: PaneType) => void
+
+  getSessionSnapshot: () => Promise<SessionSnapshot>
+  restoreSession: (snapshot: SessionSnapshot) => void
 }
 
 export const useTabStore = create<TabStore>((set, get) => ({
@@ -72,13 +99,10 @@ export const useTabStore = create<TabStore>((set, get) => ({
     const tab = state.tabs[id]
     if (!tab) return
 
-    // Destroy all PTYs in this tab
+    // Destroy all terminals in this tab
     const paneIds = getAllPaneIds(tab.layoutTree)
     for (const paneId of paneIds) {
-      const node = findPaneNode(tab.layoutTree, paneId)
-      if (node?.paneType === 'terminal' && node.terminalId) {
-        window.api.pty.destroy(node.terminalId)
-      }
+      terminalManager.destroy(paneId)
     }
 
     const newOrder = state.tabOrder.filter((tid) => tid !== id)
@@ -128,11 +152,11 @@ export const useTabStore = create<TabStore>((set, get) => ({
       }
     }),
 
-  splitPaneWithType: (tabId, paneId, direction, paneType) =>
+  splitPaneWithType: (tabId, paneId, direction, paneType, cwd) =>
     set((state) => {
       const tab = state.tabs[tabId]
       if (!tab) return state
-      const { tree, newPaneId } = splitNode(tab.layoutTree, paneId, direction, paneType)
+      const { tree, newPaneId } = splitNode(tab.layoutTree, paneId, direction, paneType, cwd)
       return {
         tabs: {
           ...state.tabs,
@@ -145,6 +169,8 @@ export const useTabStore = create<TabStore>((set, get) => ({
     set((state) => {
       const tab = state.tabs[tabId]
       if (!tab) return state
+
+      terminalManager.destroy(paneId)
 
       const newTree = removeNode(tab.layoutTree, paneId)
       if (!newTree) {
@@ -209,19 +235,74 @@ export const useTabStore = create<TabStore>((set, get) => ({
           [tabId]: { ...tab, layoutTree: setPaneTypeInTree(tab.layoutTree, paneId, paneType) }
         }
       }
-    })
-}))
+    }),
 
-function findPaneNode(
-  node: LayoutNode,
-  paneId: string
-): { paneType: string; terminalId: string | null } | null {
-  if (node.type === 'pane' && node.id === paneId) return node
-  if (node.type === 'branch') {
-    for (const child of node.children) {
-      const found = findPaneNode(child, paneId)
-      if (found) return found
+  getSessionSnapshot: async () => {
+    const state = get()
+    const snapshotTabs: Record<string, Tab> = {}
+
+    for (const [tabId, tab] of Object.entries(state.tabs)) {
+      const panes = collectPaneNodes(tab.layoutTree)
+      let tree = tab.layoutTree
+
+      // Resolve cwd for each terminal pane
+      for (const pane of panes) {
+        if (pane.paneType === 'terminal') {
+          const ptyId = terminalManager.getPtyId(pane.id)
+          if (ptyId) {
+            const cwd = await window.api.pty.getCwd(ptyId)
+            if (cwd) {
+              tree = setPaneCwd(tree, pane.id, cwd)
+            }
+          }
+        }
+      }
+
+      // Strip terminalIds — PTYs won't survive restart
+      tree = stripTerminalIds(tree)
+
+      snapshotTabs[tabId] = { ...tab, layoutTree: tree }
+    }
+
+    // Collect file manager state
+    const fmStore = useFileManagerStore.getState()
+    const fileManagerPanes: Record<string, { rootPath: string; expandedDirs: string[] }> = {}
+    for (const [paneId, pane] of Object.entries(fmStore.panes)) {
+      fileManagerPanes[paneId] = {
+        rootPath: pane.rootPath,
+        expandedDirs: Array.from(pane.expandedDirs)
+      }
+    }
+
+    return {
+      tabs: snapshotTabs,
+      tabOrder: state.tabOrder,
+      activeTabId: state.activeTabId,
+      fileManagerPanes
+    }
+  },
+
+  restoreSession: (snapshot) => {
+    set({
+      tabs: snapshot.tabs,
+      tabOrder: snapshot.tabOrder,
+      activeTabId: snapshot.activeTabId
+    })
+
+    // Restore file manager panes
+    if (snapshot.fileManagerPanes) {
+      const fmStore = useFileManagerStore.getState()
+      for (const [paneId, fmState] of Object.entries(snapshot.fileManagerPanes)) {
+        fmStore.initPane(paneId, fmState.rootPath)
+        // Restore expanded dirs
+        const pane = useFileManagerStore.getState().panes[paneId]
+        if (pane) {
+          for (const dir of fmState.expandedDirs) {
+            fmStore.toggleDir(paneId, dir)
+          }
+        }
+      }
     }
   }
-  return null
-}
+}))
+
