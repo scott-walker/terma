@@ -1,0 +1,76 @@
+import { contextBridge, ipcRenderer } from 'electron'
+import { PTY_CHANNELS, FS_CHANNELS } from '../shared/channels'
+
+const ptyApi = {
+  create: (opts?: { cols?: number; rows?: number; cwd?: string }): Promise<string> =>
+    ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
+  write: (id: string, data: string): void => {
+    ipcRenderer.send(PTY_CHANNELS.WRITE, id, data)
+  },
+  resize: (id: string, cols: number, rows: number): void => {
+    ipcRenderer.send(PTY_CHANNELS.RESIZE, id, cols, rows)
+  },
+  destroy: (id: string): void => {
+    ipcRenderer.send(PTY_CHANNELS.DESTROY, id)
+  },
+  onData: (cb: (id: string, data: string) => void): (() => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, id: string, data: string): void => {
+      cb(id, data)
+    }
+    ipcRenderer.on(PTY_CHANNELS.DATA, listener)
+    return () => ipcRenderer.removeListener(PTY_CHANNELS.DATA, listener)
+  },
+  onExit: (cb: (id: string, exitCode: number, signal: number) => void): (() => void) => {
+    const listener = (
+      _event: Electron.IpcRendererEvent,
+      id: string,
+      exitCode: number,
+      signal: number
+    ): void => {
+      cb(id, exitCode, signal)
+    }
+    ipcRenderer.on(PTY_CHANNELS.EXIT, listener)
+    return () => ipcRenderer.removeListener(PTY_CHANNELS.EXIT, listener)
+  }
+}
+
+const fsApi = {
+  readDir: (dirPath: string): Promise<unknown[]> =>
+    ipcRenderer.invoke(FS_CHANNELS.READ_DIR, dirPath),
+  stat: (filePath: string): Promise<unknown> =>
+    ipcRenderer.invoke(FS_CHANNELS.STAT, filePath),
+  rename: (oldPath: string, newPath: string): Promise<void> =>
+    ipcRenderer.invoke(FS_CHANNELS.RENAME, oldPath, newPath),
+  delete: (filePath: string): Promise<void> =>
+    ipcRenderer.invoke(FS_CHANNELS.DELETE, filePath),
+  watch: (dirPath: string): void => {
+    ipcRenderer.send(FS_CHANNELS.WATCH, dirPath)
+  },
+  unwatch: (dirPath: string): void => {
+    ipcRenderer.send(FS_CHANNELS.UNWATCH, dirPath)
+  },
+  onFsEvent: (
+    cb: (event: { event: string; path: string; dirPath: string }) => void
+  ): (() => void) => {
+    const listener = (
+      _event: Electron.IpcRendererEvent,
+      data: { event: string; path: string; dirPath: string }
+    ): void => {
+      cb(data)
+    }
+    ipcRenderer.on(FS_CHANNELS.FS_EVENT, listener)
+    return () => ipcRenderer.removeListener(FS_CHANNELS.FS_EVENT, listener)
+  }
+}
+
+const windowApi = {
+  minimize: (): void => ipcRenderer.send('window:minimize'),
+  maximize: (): void => ipcRenderer.send('window:maximize'),
+  close: (): void => ipcRenderer.send('window:close')
+}
+
+contextBridge.exposeInMainWorld('api', {
+  pty: ptyApi,
+  fs: fsApi,
+  window: windowApi
+})
