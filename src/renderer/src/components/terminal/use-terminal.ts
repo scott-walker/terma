@@ -102,7 +102,11 @@ export function useTerminal(
       onDataDisposable.dispose()
       onResizeDisposable.dispose()
       unsubData()
-      terminal.dispose()
+      try {
+        terminal.dispose()
+      } catch {
+        // WebGL addon may throw during dispose — safe to ignore
+      }
       termRef.current = null
       fitAddonRef.current = null
     }

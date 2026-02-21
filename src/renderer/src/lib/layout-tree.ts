@@ -1,10 +1,13 @@
 import { nanoid } from 'nanoid'
 
+export type PaneType = 'terminal' | 'file-manager'
+
 export type LayoutNode = PaneNode | BranchNode
 
 export interface PaneNode {
   type: 'pane'
   id: string
+  paneType: PaneType
   terminalId: string | null
 }
 
@@ -16,8 +19,8 @@ export interface BranchNode {
   ratios: number[]
 }
 
-export function createPane(terminalId: string | null = null): PaneNode {
-  return { type: 'pane', id: nanoid(), terminalId }
+export function createPane(paneType: PaneType = 'terminal', terminalId: string | null = null): PaneNode {
+  return { type: 'pane', id: nanoid(), paneType, terminalId }
 }
 
 export function findNode(root: LayoutNode, nodeId: string): LayoutNode | null {
@@ -49,9 +52,10 @@ export function findParent(
 export function splitNode(
   root: LayoutNode,
   targetId: string,
-  direction: 'horizontal' | 'vertical'
+  direction: 'horizontal' | 'vertical',
+  paneType: PaneType = 'terminal'
 ): { tree: LayoutNode; newPaneId: string } {
-  const newPane = createPane()
+  const newPane = createPane(paneType)
 
   function walk(node: LayoutNode): LayoutNode {
     if (node.id === targetId && node.type === 'pane') {
@@ -148,6 +152,23 @@ export function setPaneTerminalId(
     return {
       ...root,
       children: root.children.map((child) => setPaneTerminalId(child, paneId, terminalId))
+    }
+  }
+  return root
+}
+
+export function setPaneType(
+  root: LayoutNode,
+  paneId: string,
+  paneType: PaneType
+): LayoutNode {
+  if (root.type === 'pane' && root.id === paneId) {
+    return { ...root, paneType, terminalId: paneType !== 'terminal' ? null : root.terminalId }
+  }
+  if (root.type === 'branch') {
+    return {
+      ...root,
+      children: root.children.map((child) => setPaneType(child, paneId, paneType))
     }
   }
   return root

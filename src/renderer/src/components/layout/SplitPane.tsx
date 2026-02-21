@@ -1,6 +1,6 @@
 import { Group, Panel, Separator } from 'react-resizable-panels'
 import { LayoutNode } from '@/lib/layout-tree'
-import { TerminalPane } from '../terminal/Terminal'
+import { PaneWrapper } from './PaneWrapper'
 import { useTabStore } from '@/stores/tab-store'
 
 interface SplitPaneProps {
@@ -20,10 +20,10 @@ export function SplitPane({ node, tabId, isTabActive }: SplitPaneProps): JSX.Ele
         className="h-full w-full"
         onMouseDown={() => setActivePaneId(tabId, node.id)}
       >
-        <TerminalPane
+        <PaneWrapper
+          node={node}
           tabId={tabId}
-          paneId={node.id}
-          active={isTabActive && node.id === activePaneId}
+          isActive={isTabActive && node.id === activePaneId}
         />
       </div>
     )
@@ -57,8 +57,8 @@ function SplitPaneEntry({
   return (
     <>
       {index > 0 && (
-        <Separator className="group relative flex items-center justify-center data-[state=drag]:bg-[#7aa2f7]/30">
-          <div className="h-full w-1 group-hover:bg-[#7aa2f7]/30" />
+        <Separator className="group relative flex items-center justify-center data-[state=drag]:bg-accent/30">
+          <div className="h-full w-1 group-hover:bg-accent/30" />
         </Separator>
       )}
       <Panel min="10%" default={`${100 / total}%`}>

@@ -2,12 +2,14 @@ import { create } from 'zustand'
 import { nanoid } from 'nanoid'
 import {
   LayoutNode,
+  PaneType,
   createPane,
   splitNode,
   removeNode,
   updateRatios,
   getAllPaneIds,
-  setPaneTerminalId
+  setPaneTerminalId,
+  setPaneType as setPaneTypeInTree
 } from '@/lib/layout-tree'
 
 export interface Tab {
@@ -30,10 +32,17 @@ interface TabStore {
 
   // Split pane operations
   splitPane: (tabId: string, paneId: string, direction: 'horizontal' | 'vertical') => void
+  splitPaneWithType: (
+    tabId: string,
+    paneId: string,
+    direction: 'horizontal' | 'vertical',
+    paneType: PaneType
+  ) => void
   closePane: (tabId: string, paneId: string) => void
   setActivePaneId: (tabId: string, paneId: string) => void
   updateLayoutRatios: (tabId: string, branchId: string, ratios: number[]) => void
   setPaneTerminal: (tabId: string, paneId: string, terminalId: string) => void
+  setPaneType: (tabId: string, paneId: string, paneType: PaneType) => void
 }
 
 export const useTabStore = create<TabStore>((set, get) => ({
@@ -67,7 +76,7 @@ export const useTabStore = create<TabStore>((set, get) => ({
     const paneIds = getAllPaneIds(tab.layoutTree)
     for (const paneId of paneIds) {
       const node = findPaneNode(tab.layoutTree, paneId)
-      if (node?.terminalId) {
+      if (node?.paneType === 'terminal' && node.terminalId) {
         window.api.pty.destroy(node.terminalId)
       }
     }
@@ -111,6 +120,19 @@ export const useTabStore = create<TabStore>((set, get) => ({
       const tab = state.tabs[tabId]
       if (!tab) return state
       const { tree, newPaneId } = splitNode(tab.layoutTree, paneId, direction)
+      return {
+        tabs: {
+          ...state.tabs,
+          [tabId]: { ...tab, layoutTree: tree, activePaneId: newPaneId }
+        }
+      }
+    }),
+
+  splitPaneWithType: (tabId, paneId, direction, paneType) =>
+    set((state) => {
+      const tab = state.tabs[tabId]
+      if (!tab) return state
+      const { tree, newPaneId } = splitNode(tab.layoutTree, paneId, direction, paneType)
       return {
         tabs: {
           ...state.tabs,
@@ -175,13 +197,25 @@ export const useTabStore = create<TabStore>((set, get) => ({
           [tabId]: { ...tab, layoutTree: setPaneTerminalId(tab.layoutTree, paneId, terminalId) }
         }
       }
+    }),
+
+  setPaneType: (tabId, paneId, paneType) =>
+    set((state) => {
+      const tab = state.tabs[tabId]
+      if (!tab) return state
+      return {
+        tabs: {
+          ...state.tabs,
+          [tabId]: { ...tab, layoutTree: setPaneTypeInTree(tab.layoutTree, paneId, paneType) }
+        }
+      }
     })
 }))
 
 function findPaneNode(
   node: LayoutNode,
   paneId: string
-): { terminalId: string | null } | null {
+): { paneType: string; terminalId: string | null } | null {
   if (node.type === 'pane' && node.id === paneId) return node
   if (node.type === 'branch') {
     for (const child of node.children) {

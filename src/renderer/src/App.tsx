@@ -2,15 +2,14 @@ import { useEffect, useCallback } from 'react'
 import { TitleBar } from './components/layout/TitleBar'
 import { TabBar } from './components/layout/TabBar'
 import { SplitPane } from './components/layout/SplitPane'
-import { FileManager } from './components/file-manager/FileManager'
+import { StatusBar } from './components/layout/StatusBar'
 import { SettingsPanel } from './components/settings/SettingsPanel'
 import { useTabStore } from './stores/tab-store'
-import { useFileManagerStore } from './stores/file-manager-store'
 import { useSettingsStore } from './stores/settings-store'
 
 export default function App(): JSX.Element {
-  const { tabs, tabOrder, activeTabId, createTab, closeTab, splitPane } = useTabStore()
-  const toggleFileManager = useFileManagerStore((s) => s.toggle)
+  const { tabs, tabOrder, activeTabId, createTab, closeTab, splitPane, splitPaneWithType } =
+    useTabStore()
   const settingsOpen = useSettingsStore((s) => s.settingsOpen)
   const activeTheme = useSettingsStore((s) => s.getActiveTheme())
 
@@ -95,7 +94,16 @@ export default function App(): JSX.Element {
           case 'B':
           case 'b':
             e.preventDefault()
-            toggleFileManager()
+            if (state.activeTabId) {
+              const tab = state.tabs[state.activeTabId]
+              if (tab)
+                splitPaneWithType(
+                  state.activeTabId,
+                  tab.activePaneId,
+                  'horizontal',
+                  'file-manager'
+                )
+            }
             break
         }
 
@@ -109,7 +117,7 @@ export default function App(): JSX.Element {
         }
       }
     },
-    [createTab, closeTab, splitPane, toggleFileManager]
+    [createTab, closeTab, splitPane, splitPaneWithType]
   )
 
   useEffect(() => {
@@ -124,25 +132,24 @@ export default function App(): JSX.Element {
     >
       <TitleBar />
       <TabBar />
-      <div className="flex flex-1 overflow-hidden">
-        <FileManager />
-        <div className="flex-1 overflow-hidden">
-          {tabOrder.map((tabId) => {
-            const tab = tabs[tabId]
-            if (!tab) return null
-            const isActive = tabId === activeTabId
-            return (
-              <div
-                key={tabId}
-                className="h-full w-full"
-                style={{ display: isActive ? 'block' : 'none' }}
-              >
-                <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
-              </div>
-            )
-          })}
-        </div>
+      {/* Content area with padding like nexterm (padding: 6) */}
+      <div className="flex-1 overflow-hidden" style={{ padding: 8 }}>
+        {tabOrder.map((tabId) => {
+          const tab = tabs[tabId]
+          if (!tab) return null
+          const isActive = tabId === activeTabId
+          return (
+            <div
+              key={tabId}
+              className="h-full w-full"
+              style={{ display: isActive ? 'block' : 'none' }}
+            >
+              <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
+            </div>
+          )
+        })}
       </div>
+      <StatusBar />
       {settingsOpen && <SettingsPanel />}
     </div>
   )

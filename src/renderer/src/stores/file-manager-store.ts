@@ -1,41 +1,62 @@
 import { create } from 'zustand'
 
-interface FileManagerStore {
-  visible: boolean
+interface PaneFileState {
   rootPath: string
   expandedDirs: Set<string>
+}
 
-  toggle: () => void
-  setVisible: (visible: boolean) => void
-  setRootPath: (path: string) => void
-  toggleDir: (path: string) => void
-  collapseDir: (path: string) => void
+interface FileManagerStore {
+  panes: Record<string, PaneFileState>
+
+  initPane: (paneId: string, rootPath?: string) => void
+  removePane: (paneId: string) => void
+  toggleDir: (paneId: string, path: string) => void
+  collapseDir: (paneId: string, path: string) => void
 }
 
 export const useFileManagerStore = create<FileManagerStore>((set) => ({
-  visible: false,
-  rootPath: '/',
-  expandedDirs: new Set<string>(),
+  panes: {},
 
-  toggle: () => set((state) => ({ visible: !state.visible })),
-  setVisible: (visible) => set({ visible }),
-  setRootPath: (path) => set({ rootPath: path, expandedDirs: new Set() }),
-
-  toggleDir: (path) =>
+  initPane: (paneId, rootPath = '/') =>
     set((state) => {
-      const next = new Set(state.expandedDirs)
+      if (state.panes[paneId]) return state
+      return {
+        panes: {
+          ...state.panes,
+          [paneId]: { rootPath, expandedDirs: new Set<string>() }
+        }
+      }
+    }),
+
+  removePane: (paneId) =>
+    set((state) => {
+      const { [paneId]: _, ...rest } = state.panes
+      return { panes: rest }
+    }),
+
+  toggleDir: (paneId, path) =>
+    set((state) => {
+      const pane = state.panes[paneId]
+      if (!pane) return state
+      const next = new Set(pane.expandedDirs)
       if (next.has(path)) {
         next.delete(path)
       } else {
         next.add(path)
       }
-      return { expandedDirs: next }
+      return {
+        panes: { ...state.panes, [paneId]: { ...pane, expandedDirs: next } }
+      }
     }),
 
-  collapseDir: (path) =>
+  collapseDir: (paneId, path) =>
     set((state) => {
-      const next = new Set(state.expandedDirs)
+      const pane = state.panes[paneId]
+      if (!pane) return state
+      const next = new Set(pane.expandedDirs)
       next.delete(path)
-      return { expandedDirs: next }
+      return {
+        panes: { ...state.panes, [paneId]: { ...pane, expandedDirs: next } }
+      }
     })
 }))

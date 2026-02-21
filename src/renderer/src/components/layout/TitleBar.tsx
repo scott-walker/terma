@@ -1,63 +1,92 @@
-import { Settings, Minus, Square, X } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { useSettingsStore } from '@/stores/settings-store'
-
-function TitleButton({
-  children,
-  onClick,
-  title,
-  hoverClass = 'hover:bg-white/[0.06] hover:text-[#c0caf5]'
-}: {
-  children: React.ReactNode
-  onClick: () => void
-  title?: string
-  hoverClass?: string
-}): JSX.Element {
-  return (
-    <button
-      className={`flex h-full w-11 items-center justify-center text-[#565f89] transition-all duration-150 ${hoverClass}`}
-      onClick={onClick}
-      title={title}
-    >
-      {children}
-    </button>
-  )
-}
 
 export function TitleBar(): JSX.Element {
   const toggleSettings = useSettingsStore((s) => s.toggleSettings)
 
   return (
     <div
-      className="flex h-10 items-center justify-between border-b border-white/[0.04] bg-[#0f0f17] select-none"
-      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+      className="flex shrink-0 items-center border-b border-border"
+      style={{
+        padding: '10px 20px',
+        gap: 14,
+        WebkitAppRegion: 'drag'
+      } as React.CSSProperties}
     >
-      <div className="flex items-center gap-2.5 pl-4">
-        <div className="flex h-5 w-5 items-center justify-center rounded-md bg-gradient-to-br from-[#7aa2f7] to-[#bb9af7]">
-          <span className="text-[10px] font-bold text-white">T</span>
-        </div>
-        <span className="text-[13px] font-semibold tracking-tight text-[#c0caf5]/90">Terma</span>
-      </div>
+      {/* Logo — gradient text */}
       <div
-        className="flex h-full items-center"
-        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+        style={{
+          fontSize: 17,
+          fontWeight: 600,
+          background: 'linear-gradient(135deg, #00d25b, #57caeb)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          letterSpacing: -0.5
+        }}
       >
-        <TitleButton onClick={toggleSettings} title="Settings (Ctrl+Shift+,)">
-          <Settings size={14} strokeWidth={1.8} />
-        </TitleButton>
-        <div className="mx-1 h-4 w-px bg-white/[0.06]" />
-        <TitleButton onClick={() => window.api.window.minimize()} title="Minimize">
-          <Minus size={14} strokeWidth={1.8} />
-        </TitleButton>
-        <TitleButton onClick={() => window.api.window.maximize()} title="Maximize">
-          <Square size={11} strokeWidth={1.8} />
-        </TitleButton>
-        <TitleButton
-          onClick={() => window.api.window.close()}
-          title="Close"
-          hoverClass="hover:bg-[#f7768e] hover:text-white"
+        terma
+      </div>
+
+      <div style={{ flex: 1 }} />
+
+      {/* Right: settings + window controls */}
+      <div
+        className="flex items-center"
+        style={{ gap: 12, WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+      >
+        <button
+          onClick={toggleSettings}
+          title="Settings (Ctrl+Shift+,)"
+          className="text-fg-muted"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '4px 6px',
+            lineHeight: 1
+          }}
         >
-          <X size={14} strokeWidth={1.8} />
-        </TitleButton>
+          <Settings size={16} strokeWidth={1.8} />
+        </button>
+
+        <div style={{ display: 'flex', gap: 10 }}>
+          <div
+            onClick={() => window.api.window.minimize()}
+            title="Minimize"
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: '50%',
+              background: '#ffab00',
+              opacity: 0.7,
+              cursor: 'pointer'
+            }}
+          />
+          <div
+            onClick={() => window.api.window.maximize()}
+            title="Maximize"
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: '50%',
+              background: '#00d25b',
+              opacity: 0.7,
+              cursor: 'pointer'
+            }}
+          />
+          <div
+            onClick={() => window.api.window.close()}
+            title="Close"
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: '50%',
+              background: '#fc424a',
+              opacity: 0.7,
+              cursor: 'pointer'
+            }}
+          />
+        </div>
       </div>
     </div>
   )
