@@ -53,17 +53,17 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
           icon={Columns2}
           onClick={(e) => {
             e.stopPropagation()
-            useTabStore.getState().splitPane(tabId, paneId, 'horizontal')
+            useTabStore.getState().splitPane(tabId, paneId, 'vertical')
           }}
-          title="Split horizontal"
+          title="Split vertical"
         />
         <IconButton
           icon={Rows2}
           onClick={(e) => {
             e.stopPropagation()
-            useTabStore.getState().splitPane(tabId, paneId, 'vertical')
+            useTabStore.getState().splitPane(tabId, paneId, 'horizontal')
           }}
-          title="Split vertical"
+          title="Split horizontal"
         />
         <IconButton
           icon={X}

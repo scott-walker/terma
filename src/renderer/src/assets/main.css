@@ -19,7 +19,7 @@
   --palette-blue-400: #60a5fa;
   --palette-amber-500: #ffab00;
   --shadow-accent-glow: 0 0 20px color-mix(in oklch, var(--color-accent) 8%, transparent);
-  --gradient-logo: linear-gradient(135deg, var(--palette-green-500), var(--palette-cyan-500));
+  --gradient-logo: linear-gradient(135deg, var(--color-accent), var(--color-info));
 }
 
 /* ─── Semantic tokens → Tailwind utilities ─── */
@@ -47,18 +47,13 @@
   --radius-lg: 12px;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 body {
   overflow: hidden;
   background: var(--color-base);
   color: var(--color-fg);
   font-family: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  font-size: 13px;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -78,7 +73,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--color-overlay);
 }
 
 /* Selection */

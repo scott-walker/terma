@@ -29,11 +29,13 @@ export function SplitPane({ node, tabId, isTabActive }: SplitPaneProps): JSX.Ele
     )
   }
 
-  const direction = node.direction === 'horizontal' ? 'horizontal' : 'vertical'
+  // Layout tree 'vertical' = vertical divider = panels side by side → orientation 'horizontal'
+  // Layout tree 'horizontal' = horizontal divider = panels stacked → orientation 'vertical'
+  const orientation = node.direction === 'vertical' ? 'horizontal' : 'vertical'
 
   return (
     <Group
-      direction={direction}
+      orientation={orientation}
       onLayout={(sizes: number[]) => updateLayoutRatios(tabId, node.id, sizes)}
     >
       {node.children.map((child, i) => (

@@ -10,7 +10,7 @@ export function TabItem({ title, isActive, canClose, onClick, onClose }: TabItem
   return (
     <div
       onClick={onClick}
-      className={`flex cursor-pointer select-none items-center gap-2.5 whitespace-nowrap px-5 py-2.5 text-[13px] transition-all ${
+      className={`flex select-none items-center gap-2.5 whitespace-nowrap px-6 py-2.5 text-base transition-all ${
         isActive
           ? 'border-b-2 border-accent bg-elevated text-fg'
           : 'border-b-2 border-transparent text-fg-muted'
