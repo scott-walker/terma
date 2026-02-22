@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { RefreshCw } from 'lucide-react'
 import { FileTree } from './FileTree'
+import { IconButton } from '@/components/ui/IconButton'
 import { useFileManagerStore } from '@/stores/file-manager-store'
 import { useTabStore } from '@/stores/tab-store'
 import { useToastStore } from '@/stores/toast-store'
@@ -21,6 +23,7 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
 
   const [pathInput, setPathInput] = useState('')
   const [isEditing, setIsEditing] = useState(false)
+  const [refreshToken, setRefreshToken] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -38,7 +41,19 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
     async (path: string) => {
       const trimmed = path.trim()
       if (!trimmed) return
-      const normalized = trimmed === '/' ? '/' : trimmed.replace(/\/+$/, '')
+      // Resolve relative paths against current rootPath
+      const resolved = trimmed.startsWith('/')
+        ? trimmed
+        : (pane?.rootPath ?? '/') + '/' + trimmed
+      // Normalize: collapse //, resolve . and ..
+      const parts = resolved.split('/').filter(Boolean)
+      const stack: string[] = []
+      for (const p of parts) {
+        if (p === '.') continue
+        else if (p === '..') stack.pop()
+        else stack.push(p)
+      }
+      const normalized = '/' + stack.join('/')
       try {
         const items = await window.api.fs.readDir(normalized)
         if (items !== undefined) {
@@ -51,7 +66,7 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
         addToast('error', `Directory not found: ${normalized}`)
       }
     },
-    [paneId, tabId, setRootPath, updatePaneCwd, addToast]
+    [paneId, tabId, pane?.rootPath, setRootPath, updatePaneCwd, addToast]
   )
 
   const handleKeyDown = useCallback(
@@ -101,8 +116,13 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
           }}
           onKeyDown={handleKeyDown}
           spellCheck={false}
-          className="min-w-0 flex-1 bg-transparent px-3 py-1.5 text-[12px] text-fg outline-none placeholder:text-fg-muted"
+          className="min-w-0 flex-1 bg-transparent px-3 py-2 text-md text-fg outline-none placeholder:text-fg-muted"
           placeholder="/"
+        />
+        <IconButton
+          icon={RefreshCw}
+          onClick={() => setRefreshToken((n) => n + 1)}
+          title="Refresh"
         />
       </div>
       {/* File tree */}
@@ -114,6 +134,7 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
             onToggleDir={(path) => toggleDir(paneId, path)}
             onNavigateUp={handleNavigateUp}
             onNavigateToDir={handleNavigateToDir}
+            refreshToken={refreshToken}
           />
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Terminal, FolderOpen, FileCode, type LucideIcon } from 'lucide-react'
+import { Terminal, FolderOpen, /* FileCode, */ type LucideIcon } from 'lucide-react'
 import type { PaneType } from './layout-tree'
 
 export interface PaneTypeConfig {
@@ -26,13 +26,13 @@ export const PANE_TYPE_CONFIGS: Record<PaneType, PaneTypeConfig> = {
     bgActiveClass: 'bg-warning/[0.13]',
     borderActiveClass: 'border-warning/[0.27]',
     paneBorderClass: 'border-warning/50'
-  },
-  editor: {
-    label: 'Editor',
-    icon: FileCode,
-    colorClass: 'text-info',
-    bgActiveClass: 'bg-info/[0.13]',
-    borderActiveClass: 'border-info/[0.27]',
-    paneBorderClass: 'border-info/50'
   }
+  // editor: {
+  //   label: 'Editor',
+  //   icon: FileCode,
+  //   colorClass: 'text-info',
+  //   bgActiveClass: 'bg-info/[0.13]',
+  //   borderActiveClass: 'border-info/[0.27]',
+  //   paneBorderClass: 'border-info/50'
+  // }
 }

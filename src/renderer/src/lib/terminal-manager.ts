@@ -92,6 +92,82 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
     }
   }
 
+  // Selection-aware editing: typing/backspace/delete replaces selected text
+  terminal.attachCustomKeyEventHandler((event) => {
+    // Ctrl+A — select all (layout-independent via event.code)
+    if (event.code === 'KeyA' && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
+      if (event.type === 'keydown') terminal.selectAll()
+      return false
+    }
+
+    if (!terminal.hasSelection()) return true
+    if (event.type !== 'keydown') return false
+
+    // Determine what to insert after deleting the selection
+    let insert = ''
+    const isCut =
+      event.code === 'KeyX' && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey
+
+    if (isCut || event.key === 'Delete' || event.key === 'Backspace') {
+      // Pure deletion — insert nothing
+    } else if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+      // Printable character — replaces selection
+      insert = event.key
+    } else {
+      // Modifier combos, arrows, etc. — let xterm handle normally
+      return true
+    }
+
+    const selection = terminal.getSelection()
+    const selPos = terminal.getSelectionPosition()
+    if (!selection || !selPos) return true
+
+    const buf = terminal.buffer.active
+    if (buf.type !== 'normal') return true
+
+    const cols = terminal.cols
+    const cursorAbsY = buf.baseY + buf.cursorY
+    const cursorX = buf.cursorX
+
+    // Find extent of the current logical (wrapped) line
+    let logicalStartY = cursorAbsY
+    while (logicalStartY > 0 && buf.getLine(logicalStartY)?.isWrapped) logicalStartY--
+
+    let logicalEndY = cursorAbsY
+    while (logicalEndY < buf.length - 1 && buf.getLine(logicalEndY + 1)?.isWrapped) logicalEndY++
+
+    // Selection must be within this logical line
+    if (selPos.start.y < logicalStartY || selPos.end.y > logicalEndY) return true
+
+    // Every row in the selection range must be part of the same wrapped chain
+    for (let y = selPos.start.y + 1; y <= selPos.end.y; y++) {
+      if (!buf.getLine(y)?.isWrapped) return true
+    }
+
+    // Linear offsets relative to logical line start
+    const cursorOff = (cursorAbsY - logicalStartY) * cols + cursorX
+    const selEndOff = (selPos.end.y - logicalStartY) * cols + selPos.end.x
+    const selStartOff = (selPos.start.y - logicalStartY) * cols + selPos.start.x
+    const selLen = selEndOff - selStartOff
+    if (selLen <= 0) return true
+
+    if (isCut) {
+      navigator.clipboard.writeText(selection)
+    }
+
+    // Move cursor to selection end, backspace to delete, then insert replacement
+    let seq = ''
+    const diff = selEndOff - cursorOff
+    if (diff > 0) seq += '\x1b[C'.repeat(diff)
+    else if (diff < 0) seq += '\x1b[D'.repeat(-diff)
+    seq += '\x7f'.repeat(selLen)
+    seq += insert
+
+    terminal.clearSelection()
+    window.api.pty.write(ptyId, seq)
+    return false
+  })
+
   // PTY data → xterm
   const unsubData = window.api.pty.onData((id, data) => {
     if (id === ptyId) {

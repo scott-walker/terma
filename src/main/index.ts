@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, clipboard, ipcMain, shell } from 'electron'
 import { spawn } from 'child_process'
 import { join } from 'path'
 import { PtyManager } from './pty/pty-manager'
@@ -62,6 +62,19 @@ app.whenReady().then(() => {
   registerSettingsHandlers()
   registerSessionHandlers()
 
+  ipcMain.handle('clipboard:readFilePaths', () => {
+    const formats = ['x-special/gnome-copied-files', 'x-special/kde-copied-files', 'text/uri-list']
+    for (const fmt of formats) {
+      const raw = clipboard.readBuffer(fmt).toString('utf-8')
+      if (!raw.trim()) continue
+      return raw
+        .split(/\r?\n/)
+        .filter((line) => line.startsWith('file://'))
+        .map((uri) => decodeURIComponent(new URL(uri.trim()).pathname))
+    }
+    return []
+  })
+
   ipcMain.handle('shell:openPath', (_event, path: string) => shell.openPath(path))
   ipcMain.handle('shell:openWith', (_event, command: string, filePath: string) => {
     spawn(command, [filePath], { detached: true, stdio: 'ignore' }).unref()
@@ -81,8 +94,13 @@ app.whenReady().then(() => {
   ipcMain.on('window:close', (event) => {
     BrowserWindow.fromWebContents(event.sender)?.close()
   })
+  ipcMain.handle('window:isMaximized', (event) => {
+    return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
+  })
 
-  createWindow()
+  const mainWin = createWindow()
+  mainWin.on('maximize', () => mainWin.webContents.send('window:maximized-change', true))
+  mainWin.on('unmaximize', () => mainWin.webContents.send('window:maximized-change', false))
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

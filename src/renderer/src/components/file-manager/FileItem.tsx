@@ -14,6 +14,7 @@ interface FileItemProps {
   onClick: (e: React.MouseEvent) => void
   onDoubleClick: () => void
   onContextMenu: (e: React.MouseEvent) => void
+  onDragStart: (e: React.DragEvent) => void
 }
 
 export function FileItem({
@@ -27,7 +28,8 @@ export function FileItem({
   style,
   onClick,
   onDoubleClick,
-  onContextMenu
+  onContextMenu,
+  onDragStart
 }: FileItemProps): JSX.Element {
   const indent = Math.round(fontSize * 0.6)
   const iconSize = Math.round(fontSize * 1.15)
@@ -45,9 +47,11 @@ export function FileItem({
         paddingLeft: depth * indent,
         ...style
       }}
+      draggable={name !== '..'}
       onClick={onClick}
       onDoubleClick={onDoubleClick}
       onContextMenu={onContextMenu}
+      onDragStart={onDragStart}
     >
       {/* Indent guides */}
       {depth > 0 &&

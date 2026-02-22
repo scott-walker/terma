@@ -2,7 +2,7 @@ import { memo } from 'react'
 import type { PaneType } from '@/lib/layout-tree'
 import { TerminalPane } from '../terminal/Terminal'
 import { FileManagerPane } from '../file-manager/FileManagerPane'
-import { EditorPane } from '../editor/EditorPane'
+// import { EditorPane } from '../editor/EditorPane'
 import { ErrorBoundary } from './ErrorBoundary'
 
 interface PaneContentProps {
@@ -19,9 +19,9 @@ export const PaneContent = memo(function PaneContent({ paneType, tabId, paneId, 
     case 'file-manager':
       content = <FileManagerPane tabId={tabId} paneId={paneId} cwd={cwd} />
       break
-    case 'editor':
-      content = <EditorPane tabId={tabId} paneId={paneId} active={isActive} cwd={cwd} />
-      break
+    // case 'editor':
+    //   content = <EditorPane tabId={tabId} paneId={paneId} active={isActive} cwd={cwd} />
+    //   break
     case 'terminal':
     default:
       content = <TerminalPane tabId={tabId} paneId={paneId} active={isActive} cwd={cwd} />

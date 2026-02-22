@@ -12530,14 +12530,40 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$f = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$f);
-const __iconNode$e = [
+const __iconNode$j = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$j);
+const __iconNode$i = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M12 3v18", key: "108xh3" }]
 ];
-const Columns2 = createLucideIcon("columns-2", __iconNode$e);
-const __iconNode$d = [
+const Columns2 = createLucideIcon("columns-2", __iconNode$i);
+const __iconNode$h = [
+  [
+    "path",
+    {
+      d: "M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35",
+      key: "1wthlu"
+    }
+  ],
+  ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
+  ["path", { d: "m5 16-3 3 3 3", key: "331omg" }],
+  ["path", { d: "m9 22 3-3-3-3", key: "lsp7cz" }]
+];
+const FileCodeCorner = createLucideIcon("file-code-corner", __iconNode$h);
+const __iconNode$g = [
+  [
+    "path",
+    {
+      d: "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z",
+      key: "1oefj6"
+    }
+  ],
+  ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
+  ["path", { d: "M10 12.5 8 15l2 2.5", key: "1tg20x" }],
+  ["path", { d: "m14 12.5 2 2.5-2 2.5", key: "yinavb" }]
+];
+const FileCode = createLucideIcon("file-code", __iconNode$g);
+const __iconNode$f = [
   [
     "path",
     {
@@ -12546,8 +12572,8 @@ const __iconNode$d = [
     }
   ]
 ];
-const FolderOpen = createLucideIcon("folder-open", __iconNode$d);
-const __iconNode$c = [
+const FolderOpen = createLucideIcon("folder-open", __iconNode$f);
+const __iconNode$e = [
   [
     "path",
     {
@@ -12556,16 +12582,34 @@ const __iconNode$c = [
     }
   ]
 ];
-const Folder = createLucideIcon("folder", __iconNode$c);
-const __iconNode$b = [["path", { d: "M5 12h14", key: "1ays0h" }]];
-const Minus = createLucideIcon("minus", __iconNode$b);
-const __iconNode$a = [
+const Folder = createLucideIcon("folder", __iconNode$e);
+const __iconNode$d = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+const Minus = createLucideIcon("minus", __iconNode$d);
+const __iconNode$c = [
   ["rect", { width: "20", height: "14", x: "2", y: "3", rx: "2", key: "48i651" }],
   ["line", { x1: "8", x2: "16", y1: "21", y2: "21", key: "1svkeh" }],
   ["line", { x1: "12", x2: "12", y1: "17", y2: "21", key: "vw1qmm" }]
 ];
-const Monitor = createLucideIcon("monitor", __iconNode$a);
-const __iconNode$9 = [
+const Monitor = createLucideIcon("monitor", __iconNode$c);
+const __iconNode$b = [
+  ["path", { d: "m14.622 17.897-10.68-2.913", key: "vj2p1u" }],
+  [
+    "path",
+    {
+      d: "M18.376 2.622a1 1 0 1 1 3.002 3.002L17.36 9.643a.5.5 0 0 0 0 .707l.944.944a2.41 2.41 0 0 1 0 3.408l-.944.944a.5.5 0 0 1-.707 0L8.354 7.348a.5.5 0 0 1 0-.707l.944-.944a2.41 2.41 0 0 1 3.408 0l.944.944a.5.5 0 0 0 .707 0z",
+      key: "18tc5c"
+    }
+  ],
+  [
+    "path",
+    {
+      d: "M9 8c-1.804 2.71-3.97 3.46-6.583 3.948a.507.507 0 0 0-.302.819l7.32 8.883a1 1 0 0 0 1.185.204C12.735 20.405 16 16.792 16 15",
+      key: "ytzfxy"
+    }
+  ]
+];
+const Paintbrush = createLucideIcon("paintbrush", __iconNode$b);
+const __iconNode$a = [
   [
     "path",
     {
@@ -12578,23 +12622,23 @@ const __iconNode$9 = [
   ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
   ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
 ];
-const Palette = createLucideIcon("palette", __iconNode$9);
-const __iconNode$8 = [
+const Palette = createLucideIcon("palette", __iconNode$a);
+const __iconNode$9 = [
   ["path", { d: "M5 12h14", key: "1ays0h" }],
   ["path", { d: "M12 5v14", key: "s699le" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$8);
-const __iconNode$7 = [
+const Plus = createLucideIcon("plus", __iconNode$9);
+const __iconNode$8 = [
   ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
   ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
 ];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$7);
-const __iconNode$6 = [
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$8);
+const __iconNode$7 = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M3 12h18", key: "1i2n21" }]
 ];
-const Rows2 = createLucideIcon("rows-2", __iconNode$6);
-const __iconNode$5 = [
+const Rows2 = createLucideIcon("rows-2", __iconNode$7);
+const __iconNode$6 = [
   ["path", { d: "M15 12h-5", key: "r7krc0" }],
   ["path", { d: "M15 8h-5", key: "1khuty" }],
   ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -12606,7 +12650,14 @@ const __iconNode$5 = [
     }
   ]
 ];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$5);
+const ScrollText = createLucideIcon("scroll-text", __iconNode$6);
+const __iconNode$5 = [
+  ["path", { d: "M14 17H5", key: "gfn3mx" }],
+  ["path", { d: "M19 7h-9", key: "6i9tg" }],
+  ["circle", { cx: "17", cy: "17", r: "3", key: "18b49y" }],
+  ["circle", { cx: "7", cy: "7", r: "3", key: "dfmy0x" }]
+];
+const Settings2 = createLucideIcon("settings-2", __iconNode$5);
 const __iconNode$4 = [
   [
     "path",
@@ -12830,10 +12881,15 @@ const DEFAULT_SETTINGS = {
   cursorBlink: true,
   cursorStyle: "bar",
   scrollback: 1e4,
-  zoomLevel: 0
+  zoomLevel: 0,
+  fileAssociations: []
 };
 function getEffectiveFontSize(settings) {
   return settings.fontSize + settings.zoomLevel * 2;
+}
+function matchesGlob(filename, pattern) {
+  const regex = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".");
+  return new RegExp(`^${regex}$`, "i").test(filename);
 }
 const useSettingsStore = create((set, get) => ({
   settings: DEFAULT_SETTINGS,
@@ -12965,6 +13021,16 @@ let nanoid = (size = 21) => {
 function createPane(paneType = "terminal", terminalId = null, cwd = null) {
   return { type: "pane", id: nanoid(), paneType, terminalId, cwd };
 }
+function findNode(root, nodeId) {
+  if (root.id === nodeId) return root;
+  if (root.type === "branch") {
+    for (const child of root.children) {
+      const found = findNode(child, nodeId);
+      if (found) return found;
+    }
+  }
+  return null;
+}
 function splitNode(root, targetId, direction, paneType = "terminal", cwd = null) {
   const newPane = createPane(paneType, null, cwd);
   function walk(node) {
@@ -13053,6 +13119,23 @@ function setPaneCwd(root, paneId, cwd) {
   }
   return root;
 }
+function swapPanes(root, paneId1, paneId2) {
+  if (paneId1 === paneId2) return root;
+  const node1 = findNode(root, paneId1);
+  const node2 = findNode(root, paneId2);
+  if (!node1 || !node2 || node1.type !== "pane" || node2.type !== "pane") return root;
+  function walk(node) {
+    if (node.type === "pane") {
+      if (node.id === paneId1) return node2;
+      if (node.id === paneId2) return node1;
+      return node;
+    }
+    const newChildren = node.children.map(walk);
+    if (newChildren.every((c, i8) => c === node.children[i8])) return node;
+    return { ...node, children: newChildren };
+  }
+  return walk(root);
+}
 function setPaneType(root, paneId, paneType) {
   if (root.type === "pane" && root.id === paneId) {
     return { ...root, paneType, terminalId: paneType !== "terminal" ? null : root.terminalId };
@@ -13079,6 +13162,16 @@ const useFileManagerStore = create((set) => ({
   removePane: (paneId) => set((state) => {
     const { [paneId]: _3, ...rest } = state.panes;
     return { panes: rest };
+  }),
+  setRootPath: (paneId, rootPath) => set((state) => {
+    const pane = state.panes[paneId];
+    if (!pane) return state;
+    return {
+      panes: {
+        ...state.panes,
+        [paneId]: { ...pane, rootPath, expandedDirs: /* @__PURE__ */ new Set() }
+      }
+    };
   }),
   toggleDir: (paneId, path) => set((state) => {
     const pane = state.panes[paneId];
@@ -25008,6 +25101,8 @@ async function attach(paneId, containerEl, opts) {
   pendingAttaches.set(paneId, tracker);
   const createOpts = {};
   if (opts?.cwd) createOpts.cwd = opts.cwd;
+  if (opts?.command) createOpts.command = opts.command;
+  if (opts?.args) createOpts.args = opts.args;
   const ptyId = await window.api.pty.create(createOpts);
   pendingAttaches.delete(paneId);
   if (tracker.cancelled) {
@@ -25071,6 +25166,18 @@ function collectPaneNodes(node) {
   if (node.type === "pane") return [node];
   return node.children.flatMap(collectPaneNodes);
 }
+async function resolvePaneCwd(paneId, layoutTree) {
+  const node = findNode(layoutTree, paneId);
+  if (!node || node.type !== "pane") return null;
+  if (node.paneType === "terminal") {
+    const ptyId = getPtyId(paneId);
+    if (ptyId) return await window.api.pty.getCwd(ptyId);
+  } else if (node.paneType === "file-manager") {
+    const fmPane = useFileManagerStore.getState().panes[paneId];
+    if (fmPane) return fmPane.rootPath;
+  }
+  return null;
+}
 function stripTerminalIds(node) {
   if (node.type === "pane") {
     return { ...node, terminalId: null };
@@ -25131,28 +25238,38 @@ const useTabStore = create((set, get) => ({
     newOrder.splice(toIndex, 0, moved);
     return { tabOrder: newOrder };
   }),
-  splitPane: (tabId, paneId, direction) => set((state) => {
-    const tab = state.tabs[tabId];
-    if (!tab) return state;
-    const { tree, newPaneId } = splitNode(tab.layoutTree, paneId, direction);
-    return {
-      tabs: {
-        ...state.tabs,
-        [tabId]: { ...tab, layoutTree: tree, activePaneId: newPaneId }
-      }
-    };
-  }),
-  splitPaneWithType: (tabId, paneId, direction, paneType, cwd) => set((state) => {
-    const tab = state.tabs[tabId];
-    if (!tab) return state;
-    const { tree, newPaneId } = splitNode(tab.layoutTree, paneId, direction, paneType, cwd);
-    return {
-      tabs: {
-        ...state.tabs,
-        [tabId]: { ...tab, layoutTree: tree, activePaneId: newPaneId }
-      }
-    };
-  }),
+  splitPane: async (tabId, paneId, direction) => {
+    const tab = get().tabs[tabId];
+    const cwd = tab ? await resolvePaneCwd(paneId, tab.layoutTree) : null;
+    set((state) => {
+      const currentTab = state.tabs[tabId];
+      if (!currentTab) return state;
+      const { tree, newPaneId } = splitNode(currentTab.layoutTree, paneId, direction, "terminal", cwd);
+      return {
+        tabs: {
+          ...state.tabs,
+          [tabId]: { ...currentTab, layoutTree: tree, activePaneId: newPaneId }
+        }
+      };
+    });
+  },
+  splitPaneWithType: async (tabId, paneId, direction, paneType, cwd) => {
+    if (cwd === void 0 || cwd === null) {
+      const tab = get().tabs[tabId];
+      cwd = tab ? await resolvePaneCwd(paneId, tab.layoutTree) : null;
+    }
+    set((state) => {
+      const currentTab = state.tabs[tabId];
+      if (!currentTab) return state;
+      const { tree, newPaneId } = splitNode(currentTab.layoutTree, paneId, direction, paneType, cwd ?? null);
+      return {
+        tabs: {
+          ...state.tabs,
+          [tabId]: { ...currentTab, layoutTree: tree, activePaneId: newPaneId }
+        }
+      };
+    });
+  },
   closePane: (tabId, paneId) => set((state) => {
     const tab = state.tabs[tabId];
     if (!tab) return state;
@@ -25198,13 +25315,36 @@ const useTabStore = create((set, get) => ({
       }
     };
   }),
-  setPaneType: (tabId, paneId, paneType) => set((state) => {
+  setPaneType: (tabId, paneId, paneType) => {
+    destroy(paneId);
+    set((state) => {
+      const tab = state.tabs[tabId];
+      if (!tab) return state;
+      return {
+        tabs: {
+          ...state.tabs,
+          [tabId]: { ...tab, layoutTree: setPaneType(tab.layoutTree, paneId, paneType) }
+        }
+      };
+    });
+  },
+  updatePaneCwd: (tabId, paneId, cwd) => set((state) => {
     const tab = state.tabs[tabId];
     if (!tab) return state;
     return {
       tabs: {
         ...state.tabs,
-        [tabId]: { ...tab, layoutTree: setPaneType(tab.layoutTree, paneId, paneType) }
+        [tabId]: { ...tab, layoutTree: setPaneCwd(tab.layoutTree, paneId, cwd) }
+      }
+    };
+  }),
+  swapPanes: (tabId, paneId1, paneId2) => set((state) => {
+    const tab = state.tabs[tabId];
+    if (!tab) return state;
+    return {
+      tabs: {
+        ...state.tabs,
+        [tabId]: { ...tab, layoutTree: swapPanes(tab.layoutTree, paneId1, paneId2) }
       }
     };
   }),
@@ -25319,18 +25459,19 @@ function TabItem({ title, isActive, canClose, onClick, onClose, onRename }) {
             onChange: (e) => setDraft(e.target.value),
             onBlur: commit,
             onKeyDown: handleKeyDown,
-            className: "w-24 border-none bg-transparent text-sm text-fg outline-none focus-visible:outline-none",
+            size: Math.max(draft.length, 1),
+            className: "min-w-0 border-none bg-transparent text-fg outline-none focus-visible:outline-none",
             onClick: (e) => e.stopPropagation()
           }
         ) : title,
-        canClose && !editing && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        canClose && /* @__PURE__ */ jsxRuntimeExports.jsx(
           "span",
           {
             onClick: (e) => {
               e.stopPropagation();
               onClose();
             },
-            className: "ml-1 cursor-pointer text-base leading-none opacity-40 hover:opacity-70",
+            className: `ml-1 cursor-pointer text-base leading-none opacity-40 hover:opacity-70 ${editing ? "invisible" : ""}`,
             children: "×"
           }
         )
@@ -27349,69 +27490,88 @@ const PANE_TYPE_CONFIGS = {
     bgActiveClass: "bg-warning/[0.13]",
     borderActiveClass: "border-warning/[0.27]",
     paneBorderClass: "border-warning/50"
+  },
+  editor: {
+    label: "Editor",
+    icon: FileCode,
+    colorClass: "text-info",
+    bgActiveClass: "bg-info/[0.13]",
+    borderActiveClass: "border-info/[0.27]",
+    paneBorderClass: "border-info/50"
   }
 };
 const paneTypes = Object.keys(PANE_TYPE_CONFIGS);
+const MIME_TYPE$1 = "application/x-terma-pane";
 function PaneHeader({ tabId, paneId, paneType }) {
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
   const Icon2 = config.icon;
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2.5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { size: 16, className: `${config.colorClass} opacity-90` }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-0.5", children: paneTypes.map((pt2) => {
-        const ptConfig = PANE_TYPE_CONFIGS[pt2];
-        const isActive = pt2 === paneType;
-        return /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "button",
-          {
-            onClick: (e) => {
-              e.stopPropagation();
-              if (!isActive) useTabStore.getState().setPaneType(tabId, paneId, pt2);
-            },
-            className: `cursor-pointer rounded-sm border border-transparent bg-transparent px-2.5 py-0.5 text-xs transition-all ${isActive ? `${ptConfig.bgActiveClass} ${ptConfig.borderActiveClass} ${ptConfig.colorClass}` : "text-fg-muted"}`,
-            children: ptConfig.label
-          },
-          pt2
-        );
-      }) })
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-1.5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        IconButton,
-        {
-          icon: Columns2,
-          onClick: (e) => {
-            e.stopPropagation();
-            useTabStore.getState().splitPane(tabId, paneId, "vertical");
-          },
-          title: "Split vertical"
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        IconButton,
-        {
-          icon: Rows2,
-          onClick: (e) => {
-            e.stopPropagation();
-            useTabStore.getState().splitPane(tabId, paneId, "horizontal");
-          },
-          title: "Split horizontal"
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        IconButton,
-        {
-          icon: X$1,
-          onClick: (e) => {
-            e.stopPropagation();
-            useTabStore.getState().closePane(tabId, paneId);
-          },
-          title: "Close pane",
-          variant: "danger"
-        }
-      )
-    ] })
-  ] });
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      className: "flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2 active:cursor-grabbing",
+      draggable: true,
+      onDragStart: (e) => {
+        e.dataTransfer.setData(MIME_TYPE$1, JSON.stringify({ paneId, tabId }));
+        e.dataTransfer.effectAllowed = "move";
+      },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { size: 16, className: `${config.colorClass} opacity-90` }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-0.5", children: paneTypes.map((pt2) => {
+            const ptConfig = PANE_TYPE_CONFIGS[pt2];
+            const isActive = pt2 === paneType;
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                onClick: (e) => {
+                  e.stopPropagation();
+                  if (!isActive) useTabStore.getState().setPaneType(tabId, paneId, pt2);
+                },
+                className: `cursor-pointer rounded-sm border border-transparent bg-transparent px-2.5 py-0.5 text-xs transition-all ${isActive ? `${ptConfig.bgActiveClass} ${ptConfig.borderActiveClass} ${ptConfig.colorClass}` : "text-fg-muted"}`,
+                children: ptConfig.label
+              },
+              pt2
+            );
+          }) })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            IconButton,
+            {
+              icon: Columns2,
+              onClick: (e) => {
+                e.stopPropagation();
+                useTabStore.getState().splitPane(tabId, paneId, "vertical");
+              },
+              title: "Split vertical"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            IconButton,
+            {
+              icon: Rows2,
+              onClick: (e) => {
+                e.stopPropagation();
+                useTabStore.getState().splitPane(tabId, paneId, "horizontal");
+              },
+              title: "Split horizontal"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            IconButton,
+            {
+              icon: X$1,
+              onClick: (e) => {
+                e.stopPropagation();
+                useTabStore.getState().closePane(tabId, paneId);
+              },
+              title: "Close pane"
+            }
+          )
+        ] })
+      ]
+    }
+  );
 }
 const LayoutGroupContext = reactExports.createContext({});
 function useConstant(init) {
@@ -35343,6 +35503,25 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, a
       focus(paneId);
     }
   }, [active, paneId]);
+  const updatePaneCwd = useTabStore((s) => s.updatePaneCwd);
+  const lastCwdRef = reactExports.useRef(null);
+  reactExports.useEffect(() => {
+    const poll = async () => {
+      const ptyId = getPtyId(paneId);
+      if (!ptyId) return;
+      try {
+        const current = await window.api.pty.getCwd(ptyId);
+        if (current && current !== lastCwdRef.current) {
+          lastCwdRef.current = current;
+          updatePaneCwd(tabId, paneId, current);
+        }
+      } catch {
+      }
+    };
+    poll();
+    const interval = setInterval(poll, 2e3);
+    return () => clearInterval(interval);
+  }, [paneId, tabId, updatePaneCwd]);
   const handleContextMenu = reactExports.useCallback(
     (e) => {
       e.preventDefault();
@@ -39706,7 +39885,7 @@ function FileItem({
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
-      className: `relative flex w-full cursor-pointer items-center pr-2 hover:bg-surface-hover ${isSelected ? "bg-overlay-subtle" : ""}`,
+      className: `relative flex w-full cursor-default items-center pr-2 hover:bg-surface-hover ${isSelected ? "bg-overlay-subtle" : ""}`,
       style: {
         height: rowHeight,
         fontSize,
@@ -39770,7 +39949,9 @@ function baseName(p) {
 function FileTree({
   rootPath,
   expandedDirs,
-  onToggleDir
+  onToggleDir,
+  onNavigateUp,
+  onNavigateToDir
 }) {
   const [entries, setEntries] = reactExports.useState([]);
   const [selected, setSelected] = reactExports.useState(/* @__PURE__ */ new Set());
@@ -39780,6 +39961,7 @@ function FileTree({
   const anchorPath = reactExports.useRef(null);
   const addToast = useToastStore((s) => s.addToast);
   const fontSize = useSettingsStore((s) => s.getEffectiveFontSize());
+  const fileAssociations = useSettingsStore((s) => s.settings.fileAssociations);
   const rowHeight = Math.round(fontSize * 1.6);
   const loadDir = reactExports.useCallback(
     async (dirPath, depth) => {
@@ -39805,22 +39987,31 @@ function FileTree({
     },
     [expandedDirs]
   );
+  const loadTree = reactExports.useCallback(async () => {
+    const items = await loadDir(rootPath, 0);
+    if (rootPath !== "/") {
+      const parentPath = rootPath.substring(0, rootPath.lastIndexOf("/")) || "/";
+      items.unshift({
+        name: "..",
+        path: parentPath,
+        isDirectory: true,
+        depth: 0
+      });
+    }
+    setEntries(items);
+  }, [loadDir, rootPath]);
   reactExports.useEffect(() => {
-    loadDir(rootPath, 0).then(setEntries);
-  }, [rootPath, expandedDirs, loadDir]);
+    loadTree();
+  }, [loadTree]);
   reactExports.useEffect(() => {
     window.api.fs.watch(rootPath);
-    const unsub = window.api.fs.onFsEvent(() => {
-      loadDir(rootPath, 0).then(setEntries);
-    });
+    const unsub = window.api.fs.onFsEvent(() => loadTree());
     return () => {
       window.api.fs.unwatch(rootPath);
       unsub();
     };
-  }, [rootPath, loadDir]);
-  const reload = reactExports.useCallback(() => {
-    loadDir(rootPath, 0).then(setEntries);
-  }, [loadDir, rootPath]);
+  }, [rootPath, loadTree]);
+  const clickTimerRef = reactExports.useRef(null);
   const handleItemClick = reactExports.useCallback(
     (e, entry, idx) => {
       if (e.shiftKey && anchorPath.current) {
@@ -39843,10 +40034,37 @@ function FileTree({
       } else {
         setSelected(/* @__PURE__ */ new Set([entry.path]));
         anchorPath.current = entry.path;
-        if (entry.isDirectory) onToggleDir(entry.path);
+        if (entry.name === ".." && onNavigateUp) {
+          onNavigateUp();
+        } else if (entry.isDirectory) {
+          if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+          clickTimerRef.current = setTimeout(() => {
+            clickTimerRef.current = null;
+            onToggleDir(entry.path);
+          }, 250);
+        }
       }
     },
-    [entries, onToggleDir]
+    [entries, onToggleDir, onNavigateUp]
+  );
+  const handleItemDoubleClick = reactExports.useCallback(
+    (entry) => {
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+        clickTimerRef.current = null;
+      }
+      if (entry.isDirectory && entry.name !== "..") {
+        onNavigateToDir?.(entry.path);
+      } else if (!entry.isDirectory) {
+        const match = fileAssociations.find((a) => matchesGlob(entry.name, a.pattern));
+        if (match) {
+          window.api.shell.openWith(match.command, entry.path);
+        } else {
+          window.api.shell.openPath(entry.path);
+        }
+      }
+    },
+    [onNavigateToDir, fileAssociations]
   );
   const handleCopy = reactExports.useCallback(() => {
     const items = entries.filter((e) => selected.has(e.path)).map((e) => ({ path: e.path, isDirectory: e.isDirectory }));
@@ -39866,7 +40084,7 @@ function FileTree({
           fail++;
         }
       }
-      reload();
+      loadTree();
       if (ok > 0) {
         addToast(
           "success",
@@ -39877,7 +40095,7 @@ function FileTree({
         addToast("error", fail === 1 ? "Copy failed" : `Failed to copy ${fail} items`);
       }
     },
-    [clipboard, reload, addToast]
+    [clipboard, loadTree, addToast]
   );
   const handleDelete = reactExports.useCallback(async () => {
     const paths = Array.from(selected);
@@ -39893,7 +40111,7 @@ function FileTree({
       }
     }
     setSelected(/* @__PURE__ */ new Set());
-    reload();
+    loadTree();
     if (ok > 0) {
       addToast(
         "success",
@@ -39903,7 +40121,7 @@ function FileTree({
     if (fail > 0) {
       addToast("error", fail === 1 ? "Delete failed" : `Failed to delete ${fail} items`);
     }
-  }, [selected, reload, addToast]);
+  }, [selected, loadTree, addToast]);
   reactExports.useEffect(() => {
     const container = parentRef.current;
     if (!container) return;
@@ -39980,9 +40198,7 @@ function FileTree({
                 transform: `translateY(${virtualItem.start}px)`
               },
               onClick: (e) => handleItemClick(e, entry, virtualItem.index),
-              onDoubleClick: () => {
-                if (!entry.isDirectory) ;
-              },
+              onDoubleClick: () => handleItemDoubleClick(entry),
               onContextMenu: (e) => {
                 e.preventDefault();
                 if (!selected.has(entry.path)) {
@@ -40011,33 +40227,150 @@ function FileTree({
     )
   ] });
 }
-function FileManagerPane({ paneId, cwd }) {
+function FileManagerPane({ tabId, paneId, cwd }) {
   const pane = useFileManagerStore((s) => s.panes[paneId]);
   const initPane = useFileManagerStore((s) => s.initPane);
   const removePane = useFileManagerStore((s) => s.removePane);
+  const setRootPath = useFileManagerStore((s) => s.setRootPath);
   const toggleDir = useFileManagerStore((s) => s.toggleDir);
+  const updatePaneCwd = useTabStore((s) => s.updatePaneCwd);
+  const addToast = useToastStore((s) => s.addToast);
+  const [pathInput, setPathInput] = reactExports.useState("");
+  const [isEditing, setIsEditing] = reactExports.useState(false);
+  const inputRef = reactExports.useRef(null);
   reactExports.useEffect(() => {
     initPane(paneId, cwd ?? void 0);
     return () => removePane(paneId);
   }, [paneId, initPane, removePane]);
+  reactExports.useEffect(() => {
+    if (pane && !isEditing) {
+      setPathInput(pane.rootPath);
+    }
+  }, [pane?.rootPath, isEditing]);
+  const navigateTo = reactExports.useCallback(
+    async (path) => {
+      const trimmed = path.trim();
+      if (!trimmed) return;
+      const normalized = trimmed === "/" ? "/" : trimmed.replace(/\/+$/, "");
+      try {
+        const items = await window.api.fs.readDir(normalized);
+        if (items !== void 0) {
+          setRootPath(paneId, normalized);
+          updatePaneCwd(tabId, paneId, normalized);
+          setIsEditing(false);
+          inputRef.current?.blur();
+        }
+      } catch {
+        addToast("error", `Directory not found: ${normalized}`);
+      }
+    },
+    [paneId, tabId, setRootPath, updatePaneCwd, addToast]
+  );
+  const handleKeyDown = reactExports.useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        navigateTo(pathInput);
+      } else if (e.key === "Escape") {
+        setPathInput(pane?.rootPath ?? "");
+        setIsEditing(false);
+        inputRef.current?.blur();
+      }
+    },
+    [pathInput, navigateTo, pane?.rootPath]
+  );
+  const handleNavigateToDir = reactExports.useCallback(
+    (path) => {
+      setRootPath(paneId, path);
+      updatePaneCwd(tabId, paneId, path);
+    },
+    [paneId, tabId, setRootPath, updatePaneCwd]
+  );
+  const handleNavigateUp = reactExports.useCallback(() => {
+    if (!pane || pane.rootPath === "/") return;
+    const parent = pane.rootPath.substring(0, pane.rootPath.lastIndexOf("/")) || "/";
+    setRootPath(paneId, parent);
+    updatePaneCwd(tabId, paneId, parent);
+  }, [pane?.rootPath, paneId, tabId, setRootPath, updatePaneCwd]);
   if (!pane) return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full w-full" });
-  const folderName = pane.rootPath.split("/").pop() || pane.rootPath;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-full w-full flex-col", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center border-b border-border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-fg-muted", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Explorer" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mx-1.5 text-fg-muted/50", children: "—" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate font-normal normal-case tracking-normal", children: folderName })
-    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex shrink-0 items-center border-b border-border", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "input",
+      {
+        ref: inputRef,
+        type: "text",
+        value: pathInput,
+        onChange: (e) => setPathInput(e.target.value),
+        onFocus: () => setIsEditing(true),
+        onBlur: () => {
+          setIsEditing(false);
+          setPathInput(pane.rootPath);
+        },
+        onKeyDown: handleKeyDown,
+        spellCheck: false,
+        className: "min-w-0 flex-1 bg-transparent px-3 py-1.5 text-[12px] text-fg outline-none placeholder:text-fg-muted",
+        placeholder: "/"
+      }
+    ) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative flex-1", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
       FileTree,
       {
         rootPath: pane.rootPath,
         expandedDirs: pane.expandedDirs,
-        onToggleDir: (path) => toggleDir(paneId, path)
+        onToggleDir: (path) => toggleDir(paneId, path),
+        onNavigateUp: handleNavigateUp,
+        onNavigateToDir: handleNavigateToDir
       }
     ) }) })
   ] });
 }
+const EditorPane = reactExports.memo(function EditorPane2({ tabId, paneId, active, cwd }) {
+  const containerRef = reactExports.useRef(null);
+  const setPaneTerminal = useTabStore((s) => s.setPaneTerminal);
+  reactExports.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    attach(paneId, container, { cwd, command: "vim", args: ["."] }).then((ptyId) => {
+      if (ptyId) {
+        setPaneTerminal(tabId, paneId, ptyId);
+      }
+    });
+    return () => {
+      detach(paneId);
+    };
+  }, [paneId]);
+  reactExports.useEffect(() => {
+    if (active) {
+      focus(paneId);
+    }
+  }, [active, paneId]);
+  const updatePaneCwd = useTabStore((s) => s.updatePaneCwd);
+  const lastCwdRef = reactExports.useRef(null);
+  reactExports.useEffect(() => {
+    const poll = async () => {
+      const ptyId = getPtyId(paneId);
+      if (!ptyId) return;
+      try {
+        const current = await window.api.pty.getCwd(ptyId);
+        if (current && current !== lastCwdRef.current) {
+          lastCwdRef.current = current;
+          updatePaneCwd(tabId, paneId, current);
+        }
+      } catch {
+      }
+    };
+    poll();
+    const interval = setInterval(poll, 2e3);
+    return () => clearInterval(interval);
+  }, [paneId, tabId, updatePaneCwd]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      ref: containerRef,
+      className: "h-full w-full px-2 py-1"
+    }
+  );
+});
 class ErrorBoundary extends reactExports.Component {
   constructor(props) {
     super(props);
@@ -40072,7 +40405,10 @@ const PaneContent = reactExports.memo(function PaneContent2({ paneType, tabId, p
   let content;
   switch (paneType) {
     case "file-manager":
-      content = /* @__PURE__ */ jsxRuntimeExports.jsx(FileManagerPane, { paneId, cwd });
+      content = /* @__PURE__ */ jsxRuntimeExports.jsx(FileManagerPane, { tabId, paneId, cwd });
+      break;
+    case "editor":
+      content = /* @__PURE__ */ jsxRuntimeExports.jsx(EditorPane, { tabId, paneId, active: isActive, cwd });
       break;
     case "terminal":
     default:
@@ -40081,16 +40417,50 @@ const PaneContent = reactExports.memo(function PaneContent2({ paneType, tabId, p
   }
   return /* @__PURE__ */ jsxRuntimeExports.jsx(ErrorBoundary, { children: content }, paneId + paneType);
 });
+const MIME_TYPE = "application/x-terma-pane";
 const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isActive }) {
   const paneType = node.paneType ?? "terminal";
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
+  const [isDragOver, setIsDragOver] = reactExports.useState(false);
+  const handleDragOver = reactExports.useCallback((e) => {
+    if (e.dataTransfer.types.includes(MIME_TYPE)) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      setIsDragOver(true);
+    }
+  }, []);
+  const handleDragLeave = reactExports.useCallback((e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setIsDragOver(false);
+    }
+  }, []);
+  const handleDrop = reactExports.useCallback(
+    (e) => {
+      e.preventDefault();
+      setIsDragOver(false);
+      const raw = e.dataTransfer.getData(MIME_TYPE);
+      if (!raw) return;
+      try {
+        const { paneId: srcPaneId, tabId: srcTabId } = JSON.parse(raw);
+        if (srcTabId === tabId && srcPaneId !== node.id) {
+          useTabStore.getState().swapPanes(tabId, srcPaneId, node.id);
+        }
+      } catch {
+      }
+    },
+    [tabId, node.id]
+  );
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
-      className: `flex h-full w-full flex-col overflow-hidden rounded-lg border-2 bg-base transition-[border-color] duration-200 ${isActive ? config.paneBorderClass : "border-border"}`,
+      className: `relative flex h-full w-full flex-col overflow-hidden rounded-lg border-2 bg-base transition-[border-color] duration-200 ${isActive ? config.paneBorderClass : "border-border"}`,
+      onDragOver: handleDragOver,
+      onDragLeave: handleDragLeave,
+      onDrop: handleDrop,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(PaneHeader, { tabId, paneId: node.id, paneType }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative flex-1", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PaneContent, { paneType, tabId, paneId: node.id, isActive, cwd: node.cwd }) }) })
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative flex-1", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PaneContent, { paneType, tabId, paneId: node.id, isActive, cwd: node.cwd }) }) }),
+        isDragOver && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-accent bg-accent/10" })
       ]
     }
   );
@@ -40137,24 +40507,21 @@ function SplitPaneEntry({
   ] });
 }
 function StatusBar() {
-  useTabStore((s) => s.tabOrder);
   const activeTab = useTabStore((s) => s.activeTabId ? s.tabs[s.activeTabId] : null);
   const paneCount = activeTab ? getAllPaneIds(activeTab.layoutTree).length : 0;
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center justify-between border-t border-border px-4 py-1.5 text-xs text-fg-muted", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-accent", children: "●" }),
-        " SSH: connected"
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "zsh" })
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
-        paneCount,
-        " sessions"
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "UTF-8" })
-    ] })
+  let activeCwd = null;
+  if (activeTab) {
+    const node = findNode(activeTab.layoutTree, activeTab.activePaneId);
+    if (node && node.type === "pane") {
+      activeCwd = node.cwd;
+    }
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center justify-between border-t border-border px-4 py-2 text-sm text-fg-muted", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "min-w-0 flex-1", children: activeCwd && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate", children: activeCwd }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+      paneCount,
+      " panes"
+    ] }) })
   ] });
 }
 function Section({ icon: Icon2, title, children }) {
@@ -40302,7 +40669,12 @@ function ThemeCard({ name, colors, active, onClick }) {
     }
   );
 }
+const TABS = [
+  { id: "general", label: "General", icon: Settings2 },
+  { id: "style", label: "Style", icon: Paintbrush }
+];
 function SettingsPanel() {
+  const [activeTab, setActiveTab] = reactExports.useState("general");
   const { settings, updateSettings, resetSettings, zoomIn, zoomOut, zoomReset, toggleSettings } = useSettingsStore();
   const effectiveFontSize = useSettingsStore((s) => s.getEffectiveFontSize());
   reactExports.useEffect(() => {
@@ -40349,167 +40721,242 @@ function SettingsPanel() {
               }
             )
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 space-y-8 overflow-y-auto px-7 py-6", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: Palette, title: "Theme", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-3", children: PRESET_THEMES.map((theme) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-              ThemeCard,
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-1 px-7 pt-4 pb-2", children: TABS.map((tab) => {
+            const Icon2 = tab.icon;
+            const isActive = activeTab === tab.id;
+            return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
               {
-                name: theme.name,
-                colors: theme.colors,
-                active: settings.activeThemeId === theme.id,
-                onClick: () => updateSettings({ activeThemeId: theme.id })
-              },
-              theme.id
-            )) }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: Type, title: "Font", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Family" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Input,
-                  {
-                    value: settings.fontFamily,
-                    onChange: (e) => updateSettings({ fontFamily: e.target.value })
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-4", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Size" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    NumberStepper,
-                    {
-                      value: settings.fontSize,
-                      min: 8,
-                      max: 32,
-                      onChange: (v2) => updateSettings({ fontSize: v2 }),
-                      suffix: "px"
-                    }
-                  )
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Line Height" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    NumberStepper,
-                    {
-                      value: settings.lineHeight,
-                      min: 1,
-                      max: 2,
-                      step: 0.1,
-                      onChange: (v2) => updateSettings({ lineHeight: v2 })
-                    }
-                  )
-                ] })
-              ] })
-            ] }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: ZoomIn, title: "Zoom", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between rounded-xl bg-surface p-4", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-base font-medium text-fg", children: [
-                  effectiveFontSize,
-                  "px"
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-0.5 text-[11px] text-fg-muted", children: [
-                  settings.fontSize,
-                  "px base ",
-                  settings.zoomLevel >= 0 ? "+" : "",
-                  settings.zoomLevel,
-                  " zoom"
-                ] })
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  motion.button,
-                  {
-                    whileHover: { scale: 1.1 },
-                    whileTap: { scale: 0.9 },
-                    onClick: zoomOut,
-                    className: "flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
-                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(Minus, { size: 16 })
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  motion.button,
-                  {
-                    whileHover: { scale: 1.05 },
-                    whileTap: { scale: 0.95 },
-                    onClick: zoomReset,
-                    className: "flex h-9 w-9 items-center justify-center rounded-lg text-xs font-semibold text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
-                    children: "0"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  motion.button,
-                  {
-                    whileHover: { scale: 1.1 },
-                    whileTap: { scale: 0.9 },
-                    onClick: zoomIn,
-                    className: "flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
-                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { size: 16 })
-                  }
-                )
-              ] })
-            ] }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: Monitor, title: "Cursor", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Style" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  SegmentedControl,
-                  {
-                    value: settings.cursorStyle,
-                    options: [
-                      { value: "bar", label: "Bar" },
-                      { value: "block", label: "Block" },
-                      { value: "underline", label: "Underline" }
-                    ],
-                    onChange: (v2) => updateSettings({ cursorStyle: v2 })
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between rounded-xl bg-surface px-4 py-3.5", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-fg-secondary", children: "Cursor Blink" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Toggle,
-                  {
-                    checked: settings.cursorBlink,
-                    onChange: (v2) => updateSettings({ cursorBlink: v2 })
-                  }
-                )
-              ] })
-            ] }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: ScrollText, title: "Buffer", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between rounded-xl bg-surface p-4", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-sm font-medium text-fg", children: [
-                  settings.scrollback.toLocaleString(),
-                  " lines"
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-0.5 text-[11px] text-fg-muted", children: "Scrollback buffer" })
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                NumberStepper,
-                {
-                  value: settings.scrollback,
-                  min: 1e3,
-                  max: 1e5,
-                  step: 1e3,
-                  onChange: (v2) => updateSettings({ scrollback: v2 })
-                }
-              )
-            ] }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pt-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              motion.button,
-              {
-                whileHover: { scale: 1.01 },
-                whileTap: { scale: 0.99 },
-                onClick: resetSettings,
-                className: "flex w-full items-center justify-center gap-2.5 rounded-xl border border-border bg-surface px-4 py-3.5 text-sm text-fg-muted transition-colors hover:border-danger/30 hover:bg-danger/8 hover:text-danger",
+                onClick: () => setActiveTab(tab.id),
+                className: `flex cursor-pointer items-center gap-2 rounded-lg border border-transparent bg-transparent px-3.5 py-2 text-sm transition-colors ${isActive ? "border-border bg-surface text-fg" : "text-fg-muted hover:text-fg"}`,
                 children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(RotateCcw, { size: 14 }),
-                  "Reset to Defaults"
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { size: 14 }),
+                  tab.label
                 ]
-              }
-            ) })
+              },
+              tab.id
+            );
+          }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 space-y-8 overflow-y-auto px-7 py-6", children: [
+            activeTab === "general" && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: Monitor, title: "Cursor", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Style" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    SegmentedControl,
+                    {
+                      value: settings.cursorStyle,
+                      options: [
+                        { value: "bar", label: "Bar" },
+                        { value: "block", label: "Block" },
+                        { value: "underline", label: "Underline" }
+                      ],
+                      onChange: (v2) => updateSettings({ cursorStyle: v2 })
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between rounded-xl bg-surface px-4 py-3.5", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-fg-secondary", children: "Cursor Blink" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Toggle,
+                    {
+                      checked: settings.cursorBlink,
+                      onChange: (v2) => updateSettings({ cursorBlink: v2 })
+                    }
+                  )
+                ] })
+              ] }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: ScrollText, title: "Buffer", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between rounded-xl bg-surface p-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-sm font-medium text-fg", children: [
+                    settings.scrollback.toLocaleString(),
+                    " lines"
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-0.5 text-[11px] text-fg-muted", children: "Scrollback buffer" })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  NumberStepper,
+                  {
+                    value: settings.scrollback,
+                    min: 1e3,
+                    max: 1e5,
+                    step: 1e3,
+                    onChange: (v2) => updateSettings({ scrollback: v2 })
+                  }
+                )
+              ] }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: FileCodeCorner, title: "File Associations", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
+                (settings.fileAssociations ?? []).map((assoc, i8) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Input,
+                    {
+                      value: assoc.pattern,
+                      placeholder: "*.txt",
+                      onChange: (e) => {
+                        const next = [...settings.fileAssociations];
+                        next[i8] = { ...next[i8], pattern: e.target.value };
+                        updateSettings({ fileAssociations: next });
+                      },
+                      className: "flex-1"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Input,
+                    {
+                      value: assoc.command,
+                      placeholder: "code",
+                      onChange: (e) => {
+                        const next = [...settings.fileAssociations];
+                        next[i8] = { ...next[i8], command: e.target.value };
+                        updateSettings({ fileAssociations: next });
+                      },
+                      className: "flex-1"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      onClick: () => {
+                        const next = settings.fileAssociations.filter((_3, j2) => j2 !== i8);
+                        updateSettings({ fileAssociations: next });
+                      },
+                      className: "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-surface-hover hover:text-danger",
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(X$1, { size: 14 })
+                    }
+                  )
+                ] }, i8)),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    onClick: () => {
+                      const next = [...settings.fileAssociations ?? [], { pattern: "", command: "" }];
+                      updateSettings({ fileAssociations: next });
+                    },
+                    className: "flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-transparent px-4 py-2.5 text-sm text-fg-muted transition-colors hover:border-accent/40 hover:text-fg",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { size: 14 }),
+                      "Add"
+                    ]
+                  }
+                )
+              ] }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pt-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                motion.button,
+                {
+                  whileHover: { scale: 1.01 },
+                  whileTap: { scale: 0.99 },
+                  onClick: resetSettings,
+                  className: "flex w-full items-center justify-center gap-2.5 rounded-xl border border-border bg-surface px-4 py-3.5 text-sm text-fg-muted transition-colors hover:border-danger/30 hover:bg-danger/8 hover:text-danger",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(RotateCcw, { size: 14 }),
+                    "Reset to Defaults"
+                  ]
+                }
+              ) })
+            ] }),
+            activeTab === "style" && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: Palette, title: "Theme", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-3", children: PRESET_THEMES.map((theme) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ThemeCard,
+                {
+                  name: theme.name,
+                  colors: theme.colors,
+                  active: settings.activeThemeId === theme.id,
+                  onClick: () => updateSettings({ activeThemeId: theme.id })
+                },
+                theme.id
+              )) }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: Type, title: "Font", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Family" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Input,
+                    {
+                      value: settings.fontFamily,
+                      onChange: (e) => updateSettings({ fontFamily: e.target.value })
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-4", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Size" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      NumberStepper,
+                      {
+                        value: settings.fontSize,
+                        min: 8,
+                        max: 32,
+                        onChange: (v2) => updateSettings({ fontSize: v2 }),
+                        suffix: "px"
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Line Height" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      NumberStepper,
+                      {
+                        value: settings.lineHeight,
+                        min: 1,
+                        max: 2,
+                        step: 0.1,
+                        onChange: (v2) => updateSettings({ lineHeight: v2 })
+                      }
+                    )
+                  ] })
+                ] })
+              ] }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: ZoomIn, title: "Zoom", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between rounded-xl bg-surface p-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-base font-medium text-fg", children: [
+                    effectiveFontSize,
+                    "px"
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-0.5 text-[11px] text-fg-muted", children: [
+                    settings.fontSize,
+                    "px base ",
+                    settings.zoomLevel >= 0 ? "+" : "",
+                    settings.zoomLevel,
+                    " zoom"
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    motion.button,
+                    {
+                      whileHover: { scale: 1.1 },
+                      whileTap: { scale: 0.9 },
+                      onClick: zoomOut,
+                      className: "flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Minus, { size: 16 })
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    motion.button,
+                    {
+                      whileHover: { scale: 1.05 },
+                      whileTap: { scale: 0.95 },
+                      onClick: zoomReset,
+                      className: "flex h-9 w-9 items-center justify-center rounded-lg text-xs font-semibold text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
+                      children: "0"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    motion.button,
+                    {
+                      whileHover: { scale: 1.1 },
+                      whileTap: { scale: 0.9 },
+                      onClick: zoomIn,
+                      className: "flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { size: 16 })
+                    }
+                  )
+                ] })
+              ] }) })
+            ] })
           ] })
         ]
       }

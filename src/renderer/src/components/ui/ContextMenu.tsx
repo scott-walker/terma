@@ -14,12 +14,28 @@ export interface MenuSeparator {
   type: 'separator'
 }
 
-export type MenuEntry = MenuAction | MenuSeparator
+export interface MenuColorPicker {
+  type: 'colors'
+  colors: Array<{ id: string; label: string }>
+  activeColor: string | null
+  onSelect: (colorId: string | null) => void
+}
+
+export type MenuEntry = MenuAction | MenuSeparator | MenuColorPicker
 
 interface ContextMenuProps {
   position: { x: number; y: number } | null
   entries: MenuEntry[]
   onClose: () => void
+}
+
+const COLOR_BG_CLASSES: Record<string, string> = {
+  red: 'bg-tab-red',
+  orange: 'bg-tab-orange',
+  yellow: 'bg-tab-yellow',
+  green: 'bg-tab-green',
+  blue: 'bg-tab-blue',
+  purple: 'bg-tab-purple'
 }
 
 export function ContextMenu({ position, entries, onClose }: ContextMenuProps): JSX.Element {
@@ -87,6 +103,20 @@ export function ContextMenu({ position, entries, onClose }: ContextMenuProps): J
           {entries.map((entry, i) =>
             entry.type === 'separator' ? (
               <div key={i} className="my-1 border-t border-border" />
+            ) : entry.type === 'colors' ? (
+              <div key={i} className="flex justify-between px-3 py-2.5">
+                {entry.colors.map((c) => (
+                  <button
+                    key={c.id}
+                    title={c.label}
+                    onClick={() => {
+                      entry.onSelect(entry.activeColor === c.id ? null : c.id)
+                      onClose()
+                    }}
+                    className={`h-5 w-5 rounded-full ${COLOR_BG_CLASSES[c.id] ?? ''} ${entry.activeColor === c.id ? 'ring-2 ring-fg ring-offset-1 ring-offset-elevated' : ''}`}
+                  />
+                ))}
+              </div>
             ) : (
               <button
                 key={i}

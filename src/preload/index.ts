@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { homedir } from 'os'
-import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS } from '../shared/channels'
+import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS } from '../shared/channels'
 import type { TerminalSettings } from '../shared/settings'
 
 const ptyApi = {
@@ -110,10 +110,23 @@ const shellApi = {
   homePath: homedir()
 }
 
+const clipboardApi = {
+  readFilePaths: (): Promise<string[]> =>
+    ipcRenderer.invoke(CLIPBOARD_CHANNELS.READ_FILE_PATHS)
+}
+
 const windowApi = {
   minimize: (): void => ipcRenderer.send('window:minimize'),
   maximize: (): void => ipcRenderer.send('window:maximize'),
-  close: (): void => ipcRenderer.send('window:close')
+  close: (): void => ipcRenderer.send('window:close'),
+  isMaximized: (): Promise<boolean> => ipcRenderer.invoke('window:isMaximized'),
+  onMaximizedChange: (cb: (maximized: boolean) => void): (() => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, maximized: boolean): void => {
+      cb(maximized)
+    }
+    ipcRenderer.on('window:maximized-change', listener)
+    return () => ipcRenderer.removeListener('window:maximized-change', listener)
+  }
 }
 
 contextBridge.exposeInMainWorld('api', {
@@ -122,5 +135,6 @@ contextBridge.exposeInMainWorld('api', {
   settings: settingsApi,
   session: sessionApi,
   shell: shellApi,
+  clipboard: clipboardApi,
   window: windowApi
 })

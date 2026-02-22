@@ -71,10 +71,16 @@ interface ShellApi {
   homePath: string
 }
 
+interface ClipboardApi {
+  readFilePaths(): Promise<string[]>
+}
+
 interface WindowApi {
   minimize(): void
   maximize(): void
   close(): void
+  isMaximized(): Promise<boolean>
+  onMaximizedChange(cb: (maximized: boolean) => void): () => void
 }
 
 declare global {
@@ -85,6 +91,7 @@ declare global {
       settings: SettingsApi
       session: SessionApi
       shell: ShellApi
+      clipboard: ClipboardApi
       window: WindowApi
     }
   }

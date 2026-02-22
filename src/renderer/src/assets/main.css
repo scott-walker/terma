@@ -1,4 +1,5 @@
 @import "@fontsource-variable/inter";
+@import "@fontsource/rajdhani/600.css";
 
 @import "tailwindcss";
 
@@ -18,6 +19,8 @@
   --palette-cyan-500: #57caeb;
   --palette-blue-400: #60a5fa;
   --palette-amber-500: #ffab00;
+  --palette-orange-500: #ff8c00;
+  --palette-purple-400: #b48eff;
   --shadow-accent-glow: 0 0 20px color-mix(in oklch, var(--color-accent) 8%, transparent);
   --gradient-logo: linear-gradient(135deg, var(--color-accent), var(--color-info));
 }
@@ -41,6 +44,12 @@
   --color-info: var(--palette-cyan-500);
   --color-warning: var(--palette-amber-500);
   --color-directory: var(--palette-blue-400);
+  --color-tab-red: var(--palette-red-500);
+  --color-tab-orange: var(--palette-orange-500);
+  --color-tab-yellow: var(--palette-amber-500);
+  --color-tab-green: var(--palette-green-500);
+  --color-tab-blue: var(--palette-cyan-500);
+  --color-tab-purple: var(--palette-purple-400);
   --color-window-close: #e81123;
   --shadow-panel: -8px 0 40px oklch(0% 0 0 / 0.6);
   --radius-sm: 4px;

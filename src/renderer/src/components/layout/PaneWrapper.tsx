@@ -64,6 +64,7 @@ export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: 
         <div className="absolute inset-0 overflow-hidden">
           <PaneContent paneType={paneType} tabId={tabId} paneId={node.id} isActive={isActive} cwd={node.cwd} />
         </div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/5 to-transparent" />
       </div>
       {isDragOver && (
         <div className="pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-accent bg-accent/10" />

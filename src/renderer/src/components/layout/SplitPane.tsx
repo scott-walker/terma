@@ -37,7 +37,7 @@ export const SplitPane = memo(function SplitPane({ node, tabId, isTabActive }: S
   return (
     <Group
       orientation={orientation}
-      onLayout={(sizes: number[]) => updateLayoutRatios(tabId, node.id, sizes)}
+      onLayoutChanged={(sizes: number[]) => updateLayoutRatios(tabId, node.id, sizes)}
     >
       {node.children.map((child, i) => (
         <SplitPaneEntry key={child.id} index={i} total={node.children.length}>

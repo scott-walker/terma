@@ -35,6 +35,9 @@ const SHELL_CHANNELS = {
   OPEN_PATH: "shell:openPath",
   OPEN_WITH: "shell:openWith"
 };
+const CLIPBOARD_CHANNELS = {
+  READ_FILE_PATHS: "clipboard:readFilePaths"
+};
 const ptyApi = {
   create: (opts) => electron.ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
   write: (id, data) => {
@@ -110,10 +113,21 @@ const shellApi = {
   openWith: (command, filePath) => electron.ipcRenderer.invoke(SHELL_CHANNELS.OPEN_WITH, command, filePath),
   homePath: os.homedir()
 };
+const clipboardApi = {
+  readFilePaths: () => electron.ipcRenderer.invoke(CLIPBOARD_CHANNELS.READ_FILE_PATHS)
+};
 const windowApi = {
   minimize: () => electron.ipcRenderer.send("window:minimize"),
   maximize: () => electron.ipcRenderer.send("window:maximize"),
-  close: () => electron.ipcRenderer.send("window:close")
+  close: () => electron.ipcRenderer.send("window:close"),
+  isMaximized: () => electron.ipcRenderer.invoke("window:isMaximized"),
+  onMaximizedChange: (cb) => {
+    const listener = (_event, maximized) => {
+      cb(maximized);
+    };
+    electron.ipcRenderer.on("window:maximized-change", listener);
+    return () => electron.ipcRenderer.removeListener("window:maximized-change", listener);
+  }
 };
 electron.contextBridge.exposeInMainWorld("api", {
   pty: ptyApi,
@@ -121,5 +135,6 @@ electron.contextBridge.exposeInMainWorld("api", {
   settings: settingsApi,
   session: sessionApi,
   shell: shellApi,
+  clipboard: clipboardApi,
   window: windowApi
 });

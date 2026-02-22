@@ -21,6 +21,7 @@ import * as terminalManager from '@/lib/terminal-manager'
 export interface Tab {
   id: string
   title: string
+  color?: string | null
   layoutTree: LayoutNode
   activePaneId: string
 }
@@ -66,6 +67,7 @@ interface TabStore {
   closeTab: (id: string) => void
   setActiveTab: (id: string) => void
   setTitle: (tabId: string, title: string) => void
+  setTabColor: (tabId: string, color: string | null) => void
   reorderTabs: (fromIndex: number, toIndex: number) => void
 
   // Split pane operations
@@ -145,6 +147,14 @@ export const useTabStore = create<TabStore>((set, get) => ({
       tabs: {
         ...state.tabs,
         [tabId]: { ...state.tabs[tabId], title }
+      }
+    })),
+
+  setTabColor: (tabId, color) =>
+    set((state) => ({
+      tabs: {
+        ...state.tabs,
+        [tabId]: { ...state.tabs[tabId], color }
       }
     })),
 

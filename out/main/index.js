@@ -11086,6 +11086,15 @@ electron.app.whenReady().then(() => {
   registerIpcHandlers(ptyManager, fsService, fsWatcher);
   registerSettingsHandlers();
   registerSessionHandlers();
+  electron.ipcMain.handle("clipboard:readFilePaths", () => {
+    const formats2 = ["x-special/gnome-copied-files", "x-special/kde-copied-files", "text/uri-list"];
+    for (const fmt of formats2) {
+      const raw = electron.clipboard.readBuffer(fmt).toString("utf-8");
+      if (!raw.trim()) continue;
+      return raw.split(/\r?\n/).filter((line) => line.startsWith("file://")).map((uri2) => decodeURIComponent(new URL(uri2.trim()).pathname));
+    }
+    return [];
+  });
   electron.ipcMain.handle("shell:openPath", (_event, path2) => electron.shell.openPath(path2));
   electron.ipcMain.handle("shell:openWith", (_event, command, filePath) => {
     child_process.spawn(command, [filePath], { detached: true, stdio: "ignore" }).unref();
@@ -11104,7 +11113,12 @@ electron.app.whenReady().then(() => {
   electron.ipcMain.on("window:close", (event) => {
     electron.BrowserWindow.fromWebContents(event.sender)?.close();
   });
-  createWindow();
+  electron.ipcMain.handle("window:isMaximized", (event) => {
+    return electron.BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false;
+  });
+  const mainWin = createWindow();
+  mainWin.on("maximize", () => mainWin.webContents.send("window:maximized-change", true));
+  mainWin.on("unmaximize", () => mainWin.webContents.send("window:maximized-change", false));
   electron.app.on("activate", () => {
     if (electron.BrowserWindow.getAllWindows().length === 0) {
       createWindow();

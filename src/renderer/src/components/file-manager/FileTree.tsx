@@ -24,6 +24,7 @@ interface FileTreeProps {
   onToggleDir: (path: string) => void
   onNavigateUp?: () => void
   onNavigateToDir?: (path: string) => void
+  refreshToken?: number
 }
 
 function parentDir(p: string): string {
@@ -40,7 +41,8 @@ export function FileTree({
   expandedDirs,
   onToggleDir,
   onNavigateUp,
-  onNavigateToDir
+  onNavigateToDir,
+  refreshToken
 }: FileTreeProps): JSX.Element {
   const [entries, setEntries] = useState<FlatEntry[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -100,7 +102,7 @@ export function FileTree({
 
   useEffect(() => {
     loadTree()
-  }, [loadTree])
+  }, [loadTree, refreshToken])
 
   useEffect(() => {
     window.api.fs.watch(rootPath)
@@ -137,9 +139,7 @@ export function FileTree({
       } else {
         setSelected(new Set([entry.path]))
         anchorPath.current = entry.path
-        if (entry.name === '..' && onNavigateUp) {
-          onNavigateUp()
-        } else if (entry.isDirectory) {
+        if (entry.isDirectory && entry.name !== '..') {
           // Delay toggle so double-click can cancel it
           if (clickTimerRef.current) clearTimeout(clickTimerRef.current)
           clickTimerRef.current = setTimeout(() => {
@@ -158,9 +158,11 @@ export function FileTree({
         clearTimeout(clickTimerRef.current)
         clickTimerRef.current = null
       }
-      if (entry.isDirectory && entry.name !== '..') {
+      if (entry.name === '..') {
+        onNavigateUp?.()
+      } else if (entry.isDirectory) {
         onNavigateToDir?.(entry.path)
-      } else if (!entry.isDirectory) {
+      } else {
         const match = fileAssociations.find((a) => matchesGlob(entry.name, a.pattern))
         if (match) {
           window.api.shell.openWith(match.command, entry.path)
@@ -182,12 +184,15 @@ export function FileTree({
   }, [entries, selected])
 
   const handlePaste = useCallback(
-    async (targetPath: string, targetIsDirectory: boolean) => {
-      if (clipboard.length === 0) return
+    async (targetPath: string, targetIsDirectory: boolean, systemPaths?: string[]) => {
+      const sources = systemPaths && systemPaths.length > 0
+        ? systemPaths.map((p) => ({ path: p }))
+        : clipboard.map((item) => ({ path: item.path }))
+      if (sources.length === 0) return
       const destDir = targetIsDirectory ? targetPath : parentDir(targetPath)
       let ok = 0
       let fail = 0
-      for (const item of clipboard) {
+      for (const item of sources) {
         try {
           await window.api.fs.copy(item.path, destDir)
           ok++
@@ -199,7 +204,7 @@ export function FileTree({
       if (ok > 0) {
         addToast(
           'success',
-          ok === 1 ? `Copied "${baseName(clipboard[0].path)}"` : `Copied ${ok} items`
+          ok === 1 ? `Copied "${baseName(sources[0].path)}"` : `Copied ${ok} items`
         )
       }
       if (fail > 0) {
@@ -235,25 +240,53 @@ export function FileTree({
     }
   }, [selected, loadTree, addToast])
 
+  // ── Drag ──
+
+  const handleDragStart = useCallback(
+    (e: React.DragEvent, entry: FlatEntry) => {
+      if (entry.name === '..') {
+        e.preventDefault()
+        return
+      }
+      const paths =
+        selected.has(entry.path) && selected.size > 1
+          ? entries.filter((en) => selected.has(en.path)).map((en) => en.path)
+          : [entry.path]
+      e.dataTransfer.setData('application/x-terma-files', JSON.stringify(paths))
+      e.dataTransfer.effectAllowed = 'copyMove'
+    },
+    [entries, selected]
+  )
+
   // ── Keyboard shortcuts ──
 
   useEffect(() => {
     const container = parentRef.current
     if (!container) return
 
-    const handleKeyDown = (e: KeyboardEvent): void => {
+    const handleKeyDown = async (e: KeyboardEvent): Promise<void> => {
+      if ((e.ctrlKey || e.metaKey) && e.code === 'KeyV') {
+        e.preventDefault()
+        const targetPath = anchorPath.current
+          ? entries.find((en) => en.path === anchorPath.current)
+          : null
+        const destPath = targetPath?.isDirectory ? targetPath.path : rootPath
+        if (clipboard.length === 0) {
+          const systemPaths = await window.api.clipboard.readFilePaths()
+          if (systemPaths.length > 0) {
+            handlePaste(destPath, true, systemPaths)
+          }
+        } else if (targetPath) {
+          handlePaste(targetPath.path, targetPath.isDirectory)
+        }
+        return
+      }
+
       if (selected.size === 0) return
 
-      if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+      if ((e.ctrlKey || e.metaKey) && e.code === 'KeyC') {
         e.preventDefault()
         handleCopy()
-      } else if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
-        e.preventDefault()
-        // Paste into the anchor item's location
-        if (anchorPath.current) {
-          const entry = entries.find((en) => en.path === anchorPath.current)
-          if (entry) handlePaste(entry.path, entry.isDirectory)
-        }
       } else if (e.key === 'Delete') {
         e.preventDefault()
         handleDelete()
@@ -262,7 +295,7 @@ export function FileTree({
 
     container.addEventListener('keydown', handleKeyDown)
     return () => container.removeEventListener('keydown', handleKeyDown)
-  }, [selected, entries, handleCopy, handlePaste, handleDelete])
+  }, [selected, entries, clipboard, rootPath, handleCopy, handlePaste, handleDelete])
 
   // ── Virtualizer ──
 
@@ -287,8 +320,16 @@ export function FileTree({
           type: 'item',
           label: clipboard.length > 1 ? `Paste ${clipboard.length} items` : 'Paste',
           shortcut: 'Ctrl+V',
-          disabled: clipboard.length === 0,
-          onAction: () => handlePaste(contextMenu.path, contextMenu.isDirectory)
+          onAction: async () => {
+            if (clipboard.length === 0) {
+              const systemPaths = await window.api.clipboard.readFilePaths()
+              if (systemPaths.length > 0) {
+                handlePaste(contextMenu.path, contextMenu.isDirectory, systemPaths)
+              }
+            } else {
+              handlePaste(contextMenu.path, contextMenu.isDirectory)
+            }
+          }
         },
         { type: 'separator' },
         {
@@ -327,6 +368,7 @@ export function FileTree({
               }}
               onClick={(e) => handleItemClick(e, entry, virtualItem.index)}
               onDoubleClick={() => handleItemDoubleClick(entry)}
+              onDragStart={(e) => handleDragStart(e, entry)}
               onContextMenu={(e) => {
                 e.preventDefault()
                 // If right-clicking outside current selection, select only this item

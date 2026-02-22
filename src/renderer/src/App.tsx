@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, memo } from 'react'
+import { useEffect, useCallback, useRef, useState, memo } from 'react'
 import { TitleBar } from './components/layout/TitleBar'
 import { TabBar } from './components/layout/TabBar'
 import { SplitPane } from './components/layout/SplitPane'
@@ -89,7 +89,7 @@ const TabContent = memo(function TabContent({
   if (!tab) return null
 
   return (
-    <div className={`h-full w-full ${isActive ? 'block' : 'hidden'}`}>
+    <div className={`absolute inset-0 ${isActive ? '' : 'invisible pointer-events-none'}`}>
       <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
     </div>
   )
@@ -100,6 +100,13 @@ export default function App(): JSX.Element {
   const activeTabId = useTabStore((s) => s.activeTabId)
   const settingsOpen = useSettingsStore((s) => s.settingsOpen)
   const activeTheme = useSettingsStore((s) => s.getActiveTheme())
+  const [maximized, setMaximized] = useState(false)
+
+  // Track window maximized state
+  useEffect(() => {
+    window.api.window.isMaximized().then(setMaximized)
+    return window.api.window.onMaximizedChange(setMaximized)
+  }, [])
 
   // Apply theme CSS variables whenever the active theme changes
   useEffect(() => {
@@ -162,7 +169,7 @@ export default function App(): JSX.Element {
 
   // Keyboard shortcuts
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    const { ctrlKey, shiftKey, key } = e
+    const { ctrlKey, shiftKey, code, key } = e
     const state = useTabStore.getState()
     const settingsState = useSettingsStore.getState()
 
@@ -187,41 +194,37 @@ export default function App(): JSX.Element {
 
     if (ctrlKey && shiftKey) {
       // Settings: Ctrl+Shift+,
-      if (key === '<' || key === ',') {
+      if (key === '<' || key === ',' || code === 'Comma') {
         e.preventDefault()
         settingsState.toggleSettings()
         return
       }
 
-      switch (key) {
-        case 'T':
-        case 't':
+      // Use e.code for letter keys so shortcuts work regardless of keyboard layout
+      switch (code) {
+        case 'KeyT':
           e.preventDefault()
           state.createTab()
           break
-        case 'W':
-        case 'w':
+        case 'KeyW':
           e.preventDefault()
           if (state.activeTabId) state.closeTab(state.activeTabId)
           break
-        case 'D':
-        case 'd':
+        case 'KeyD':
           e.preventDefault()
           if (state.activeTabId) {
             const tab = state.tabs[state.activeTabId]
             if (tab) state.splitPane(state.activeTabId, tab.activePaneId, 'vertical')
           }
           break
-        case 'E':
-        case 'e':
+        case 'KeyE':
           e.preventDefault()
           if (state.activeTabId) {
             const tab = state.tabs[state.activeTabId]
             if (tab) state.splitPane(state.activeTabId, tab.activePaneId, 'horizontal')
           }
           break
-        case 'B':
-        case 'b':
+        case 'KeyB':
           e.preventDefault()
           if (state.activeTabId) {
             const tab = state.tabs[state.activeTabId]
@@ -253,14 +256,16 @@ export default function App(): JSX.Element {
   }, [handleKeyDown])
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-base">
+    <div className={`flex h-screen w-screen flex-col overflow-hidden bg-base ${maximized ? '' : 'border-2 border-border shadow-2xl'}`}>
       <TitleBar />
       <TabBar />
       {/* Content area with padding like nexterm (padding: 6) */}
       <div className="flex-1 overflow-hidden p-2">
-        {tabOrder.map((tabId) => (
-          <TabContent key={tabId} tabId={tabId} isActive={tabId === activeTabId} />
-        ))}
+        <div className="relative h-full">
+          {tabOrder.map((tabId) => (
+            <TabContent key={tabId} tabId={tabId} isActive={tabId === activeTabId} />
+          ))}
+        </div>
       </div>
       <StatusBar />
       <ToastContainer />

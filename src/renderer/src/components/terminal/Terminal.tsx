@@ -3,6 +3,26 @@ import { attach, detach, focus, getTerminal, getPtyId } from '@/lib/terminal-man
 import { useTabStore } from '@/stores/tab-store'
 import { ContextMenu, type MenuEntry } from '@/components/ui/ContextMenu'
 
+const MIME_FILES = 'application/x-terma-files'
+
+function relativePath(from: string, to: string): string {
+  const fromParts = from.split('/').filter(Boolean)
+  const toParts = to.split('/').filter(Boolean)
+  let i = 0
+  while (i < fromParts.length && i < toParts.length && fromParts[i] === toParts[i]) i++
+  const ups = fromParts.length - i
+  const rest = toParts.slice(i)
+  const rel = [...Array<string>(ups).fill('..'), ...rest].join('/')
+  if (!rel) return '.'
+  if (!rel.startsWith('.')) return './' + rel
+  return rel
+}
+
+function shellEscape(s: string): string {
+  if (/^[a-zA-Z0-9._\-/=@:]+$/.test(s)) return s
+  return "'" + s.replace(/'/g, "'\\''") + "'"
+}
+
 interface TerminalPaneProps {
   tabId: string
   paneId: string
@@ -88,6 +108,58 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, 
     }
   }, [paneId])
 
+  // ── Drag-and-drop file paths ──
+
+  const [dragOver, setDragOver] = useState(false)
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes(MIME_FILES) || e.dataTransfer.types.includes('Files')) {
+      e.preventDefault()
+      e.dataTransfer.dropEffect = 'copy'
+      setDragOver(true)
+    }
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    const container = e.currentTarget as HTMLElement
+    const related = e.relatedTarget as Node | null
+    if (!related || !container.contains(related)) {
+      setDragOver(false)
+    }
+  }, [])
+
+  const handleFileDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault()
+      setDragOver(false)
+
+      const ptyId = getPtyId(paneId)
+      if (!ptyId) return
+
+      let paths: string[] = []
+
+      // Internal file manager drag
+      const raw = e.dataTransfer.getData(MIME_FILES)
+      if (raw) {
+        paths = JSON.parse(raw)
+      }
+
+      // Native OS file drop
+      if (paths.length === 0 && e.dataTransfer.files.length > 0) {
+        paths = Array.from(e.dataTransfer.files).map((f) => (f as unknown as { path: string }).path)
+      }
+
+      if (paths.length === 0) return
+
+      const cwd = await window.api.pty.getCwd(ptyId)
+      if (!cwd) return
+
+      const escaped = paths.map((p) => shellEscape(relativePath(cwd, p))).join(' ')
+      window.api.pty.write(ptyId, escaped)
+    },
+    [paneId]
+  )
+
   const handleOpenExternal = useCallback(async () => {
     const ptyId = getPtyId(paneId)
     if (!ptyId) return
@@ -139,7 +211,10 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, 
       <div
         ref={containerRef}
         onContextMenu={handleContextMenu}
-        className="h-full w-full px-2 py-1"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleFileDrop}
+        className={`h-full w-full px-2 py-1 ${dragOver ? 'ring-2 ring-inset ring-accent' : ''}`}
       />
       <ContextMenu
         position={menuPosition}

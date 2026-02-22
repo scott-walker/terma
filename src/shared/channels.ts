@@ -36,3 +36,7 @@ export const SHELL_CHANNELS = {
   OPEN_PATH: 'shell:openPath',
   OPEN_WITH: 'shell:openWith'
 } as const
+
+export const CLIPBOARD_CHANNELS = {
+  READ_FILE_PATHS: 'clipboard:readFilePaths'
+} as const
