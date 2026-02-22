@@ -20,7 +20,7 @@ export function IconButton({
   variant = 'ghost',
   size = 'sm'
 }: IconButtonProps): JSX.Element {
-  const iconSize = size === 'sm' ? 16 : 18
+  const iconSize = size === 'sm' ? 18 : 20
 
   return (
     <button

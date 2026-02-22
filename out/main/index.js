@@ -177,8 +177,13 @@ class PtyManager {
   get shell() {
     return process.platform === "win32" ? process.env.COMSPEC || "powershell.exe" : process.env.SHELL || "/bin/bash";
   }
+  get defaultShellArgs() {
+    if (process.platform === "win32") return [];
+    return ["--login"];
+  }
   create(id2, win, opts = {}) {
-    const term = pty__namespace.spawn(opts.command || this.shell, opts.args || [], {
+    const isDefaultShell = !opts.command;
+    const term = pty__namespace.spawn(opts.command || this.shell, opts.args || (isDefaultShell ? this.defaultShellArgs : []), {
       name: "xterm-256color",
       cols: opts.cols || 80,
       rows: opts.rows || 24,

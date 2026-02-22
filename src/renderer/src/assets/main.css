@@ -23,7 +23,7 @@
   --palette-orange-500: #ff8c00;
   --palette-purple-400: #b48eff;
   --palette-pink-500: #FF2D8A;
-  --shadow-accent-glow: 0 0 20px color-mix(in oklch, var(--color-accent) 8%, transparent);
+  --shadow-accent-glow: 0 0 20px color-mix(in oklch, var(--color-fg) 8%, transparent);
   --gradient-logo: linear-gradient(135deg, var(--color-accent), var(--color-info));
 }
 
@@ -34,7 +34,7 @@
   --color-elevated: var(--palette-neutral-900);
   --color-surface: var(--palette-neutral-800);
   --color-surface-hover: var(--palette-neutral-700);
-  --color-overlay-subtle: oklch(100% 0 0 / 0.06);
+  --color-overlay-subtle: oklch(100% 0 0 / 0.03);
   --color-overlay: oklch(100% 0 0 / 0.08);
   --color-backdrop: oklch(0% 0 0 / 0.50);
 

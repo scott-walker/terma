@@ -244,6 +244,7 @@ const PaneTypeSelector = memo(function PaneTypeSelector({
 
   const handleAgentSelect = useCallback(
     (profileId: string) => {
+      if (profileId === useAgentStore.getState().panes[paneId]) return
       destroy(paneId + ':agent')
       selectAgent(paneId, profileId)
       if (paneType !== 'agent') {
@@ -262,11 +263,11 @@ const PaneTypeSelector = memo(function PaneTypeSelector({
             e.stopPropagation()
             setShowTypeDropdown((v) => !v)
           }}
-          className="flex cursor-pointer items-center gap-2.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-xs transition-colors hover:bg-pane-active/[0.13]"
+          className="flex cursor-pointer items-center gap-2.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-sm transition-colors hover:bg-pane-active/[0.13]"
         >
-          <DisplayIcon size={14} strokeWidth={1.8} className={PANE_ACTIVE_CLASSES.colorClass} />
+          <DisplayIcon size={16} strokeWidth={1.8} className={PANE_ACTIVE_CLASSES.colorClass} />
           <span className="font-semibold text-fg">{displayLabel}</span>
-          <ChevronDown size={12} strokeWidth={2} className="opacity-60" />
+          <ChevronDown size={13} strokeWidth={2} className="opacity-60" />
         </button>
 
         <AnimatePresence>
@@ -297,9 +298,9 @@ const PaneTypeSelector = memo(function PaneTypeSelector({
                         isActive ? 'text-pane-active' : 'text-fg hover:bg-surface-hover'
                       }`}
                     >
-                      <ItemIcon size={14} strokeWidth={1.8} />
+                      <ItemIcon size={16} strokeWidth={1.8} />
                       <span className="flex-1">{item.label}</span>
-                      {isActive && <Check size={14} strokeWidth={2} className="text-pane-active" />}
+                      {isActive && <Check size={16} strokeWidth={2} className="text-pane-active" />}
                     </button>
                   </div>
                 )
@@ -317,23 +318,24 @@ const PaneTypeSelector = memo(function PaneTypeSelector({
               e.stopPropagation()
               setShowSshDropdown((v) => !v)
             }}
-            className={`flex cursor-pointer items-center gap-1 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-xs transition-colors ${
+            className={`flex cursor-pointer items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-sm transition-colors ${
               isConnecting
-                ? 'text-accent'
+                ? 'text-pane-active'
                 : isConnected
-                  ? 'text-accent'
+                  ? 'text-pane-active'
                   : 'text-fg-muted hover:text-fg'
             }`}
           >
-            {isConnecting && <Loader2 size={12} strokeWidth={2} className="animate-spin" />}
+            {isConnecting && <Loader2 size={14} strokeWidth={2} className="animate-spin" />}
             <span>{sshProfileLabel}</span>
-            <ChevronDown size={12} strokeWidth={2} className="opacity-60" />
+            <ChevronDown size={13} strokeWidth={2} className="opacity-60" />
           </button>
 
           {showSshDropdown && (
             <SshDropdown
               profiles={sshProfiles}
               isConnected={isConnected}
+              connectedProfileId={useSshStore.getState().panes[paneId]?.profileId}
               onConnect={handleSshConnect}
               onDisconnect={handleSshDisconnect}
               onManage={() => setShowSshModal(true)}
@@ -351,12 +353,12 @@ const PaneTypeSelector = memo(function PaneTypeSelector({
               e.stopPropagation()
               setShowAgentDropdown((v) => !v)
             }}
-            className={`flex cursor-pointer items-center gap-1 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-xs transition-colors ${
-              agentProfile ? 'text-accent' : 'text-fg-muted hover:text-fg'
+            className={`flex cursor-pointer items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-sm transition-colors ${
+              agentProfile ? 'text-pane-active' : 'text-fg-muted hover:text-fg'
             }`}
           >
             <span>{agentLabel}</span>
-            <ChevronDown size={12} strokeWidth={2} className="opacity-60" />
+            <ChevronDown size={13} strokeWidth={2} className="opacity-60" />
           </button>
 
           {showAgentDropdown && (
@@ -379,11 +381,11 @@ const PaneTypeSelector = memo(function PaneTypeSelector({
               e.stopPropagation()
               setShowSubModeDropdown((v) => !v)
             }}
-            className="flex cursor-pointer items-center gap-1 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-xs text-fg-muted transition-colors hover:text-fg"
+            className="flex cursor-pointer items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-sm text-fg-muted transition-colors hover:text-fg"
           >
-            <currentSubMode.icon size={12} strokeWidth={2} />
+            <currentSubMode.icon size={14} strokeWidth={2} />
             <span>{currentSubMode.label}</span>
-            <ChevronDown size={12} strokeWidth={2} className="opacity-60" />
+            <ChevronDown size={13} strokeWidth={2} className="opacity-60" />
           </button>
 
           <AnimatePresence>
@@ -408,9 +410,9 @@ const PaneTypeSelector = memo(function PaneTypeSelector({
                         isActive ? 'text-pane-active' : 'text-fg hover:bg-surface-hover'
                       }`}
                     >
-                      <mode.icon size={14} strokeWidth={1.8} />
+                      <mode.icon size={16} strokeWidth={1.8} />
                       <span className="flex-1">{mode.label}</span>
-                      {isActive && <Check size={14} strokeWidth={2} className="text-pane-active" />}
+                      {isActive && <Check size={16} strokeWidth={2} className="text-pane-active" />}
                     </button>
                   )
                 })}
@@ -453,7 +455,7 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
 
   return (
     <div
-      className="flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-pane-header-bg px-3.5 py-2 active:cursor-grabbing"
+      className="flex shrink-0 cursor-grab items-center justify-between gap-3 border-b border-border bg-pane-header-bg px-3.5 py-2.5 active:cursor-grabbing"
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData(MIME_TYPE, JSON.stringify({ paneId, tabId }))
@@ -468,14 +470,14 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
       <div className="flex items-center gap-1.5">
         {editorMeta ? (
           <>
-            <FileCode size={16} className={`${PANE_ACTIVE_CLASSES.colorClass} opacity-90`} />
-            <span className="ml-1 truncate text-xs text-fg-muted">{editorMeta.profileName}</span>
-            <span className="truncate text-xs font-semibold text-fg">{baseName(editorMeta.filePath)}</span>
+            <FileCode size={18} className={`${PANE_ACTIVE_CLASSES.colorClass} opacity-90`} />
+            <span className="ml-1 truncate text-sm text-fg-muted">{editorMeta.profileName}</span>
+            <span className="truncate text-sm font-semibold text-fg">{baseName(editorMeta.filePath)}</span>
           </>
         ) : isPreview ? (
           <>
-            <config.icon size={16} className={`${PANE_ACTIVE_CLASSES.colorClass} opacity-90`} />
-            <span className="ml-1 truncate text-xs font-semibold text-fg">
+            <config.icon size={18} className={`${PANE_ACTIVE_CLASSES.colorClass} opacity-90`} />
+            <span className="ml-1 truncate text-sm font-semibold text-fg">
               {cwd ? baseName(cwd) : 'Markdown'}
             </span>
           </>

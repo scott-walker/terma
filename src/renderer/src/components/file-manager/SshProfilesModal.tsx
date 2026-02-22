@@ -75,7 +75,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
             <div
               key={profile.id}
               className={`mb-2 flex items-center justify-between rounded-md border px-3 py-2 ${
-                editingProfile?.id === profile.id ? 'border-accent/40 bg-surface-hover' : 'border-border'
+                editingProfile?.id === profile.id ? 'border-fg/40 bg-surface-hover' : 'border-border'
               }`}
             >
               <button
@@ -112,7 +112,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
                     value={editingProfile.name}
                     onChange={(e) => setEditingProfile({ ...editingProfile, name: e.target.value })}
                     placeholder="My Server"
-                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   />
                 </label>
 
@@ -123,7 +123,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
                     value={editingProfile.host}
                     onChange={(e) => setEditingProfile({ ...editingProfile, host: e.target.value })}
                     placeholder="192.168.1.100"
-                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   />
                 </label>
 
@@ -133,7 +133,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
                     type="number"
                     value={editingProfile.port}
                     onChange={(e) => setEditingProfile({ ...editingProfile, port: parseInt(e.target.value) || 22 })}
-                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none focus:border-accent/40"
+                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none focus:border-fg/40"
                   />
                 </label>
 
@@ -144,7 +144,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
                     value={editingProfile.username}
                     onChange={(e) => setEditingProfile({ ...editingProfile, username: e.target.value })}
                     placeholder="root"
-                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   />
                 </label>
 
@@ -155,7 +155,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
                     value={editingProfile.keyPath}
                     onChange={(e) => setEditingProfile({ ...editingProfile, keyPath: e.target.value })}
                     placeholder="~/.ssh/id_ed25519"
-                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   />
                 </label>
 
@@ -166,7 +166,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
                     value={editingProfile.defaultPath}
                     onChange={(e) => setEditingProfile({ ...editingProfile, defaultPath: e.target.value })}
                     placeholder="/home/user"
-                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   />
                 </label>
               </div>
@@ -181,7 +181,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
                 <button
                   onClick={handleSave}
                   disabled={!editingProfile.name.trim() || !editingProfile.host.trim() || !editingProfile.username.trim()}
-                  className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-sm text-base transition-colors hover:opacity-90 disabled:opacity-40"
+                  className="flex items-center gap-1.5 rounded-md bg-fg px-3 py-1.5 text-sm text-base transition-colors hover:opacity-90 disabled:opacity-40"
                 >
                   <Save size={14} strokeWidth={1.8} />
                   Save

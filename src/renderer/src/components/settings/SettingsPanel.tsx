@@ -63,7 +63,7 @@ function OpenAISection(): JSX.Element {
             value={settings.openaiApiKey}
             onChange={(e) => updateSettings({ openaiApiKey: e.target.value })}
             placeholder="sk-proj-..."
-            className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-accent/40 focus:bg-surface-hover"
+            className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-fg/40 focus:bg-surface-hover"
           />
           <button
             onClick={() => setShowKey((v) => !v)}
@@ -113,7 +113,7 @@ export function SettingsPanel(): JSX.Element {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="pointer-events-none absolute inset-0 bg-backdrop backdrop-blur-sm"
+          className="pointer-events-none absolute inset-0 bg-backdrop"
         />
 
         {/* Panel */}
@@ -123,7 +123,7 @@ export function SettingsPanel(): JSX.Element {
           exit={{ x: '100%', opacity: 0.8 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative flex h-full w-[440px] flex-col border-l border-border bg-settings-bg/98 shadow-panel backdrop-blur-xl"
+          className="relative flex h-full w-[440px] flex-col border-l border-border bg-settings-bg shadow-panel"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-7 pt-7 pb-2">
@@ -255,7 +255,7 @@ export function SettingsPanel(): JSX.Element {
                         const next = [...(settings.fileAssociations ?? []), { pattern: '', command: '' }]
                         updateSettings({ fileAssociations: next })
                       }}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-transparent px-4 py-2.5 text-sm text-fg-muted transition-colors hover:border-accent/40 hover:text-fg"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-transparent px-4 py-2.5 text-sm text-fg-muted transition-colors hover:border-fg/40 hover:text-fg"
                     >
                       <Plus size={14} />
                       Add
@@ -311,7 +311,7 @@ export function SettingsPanel(): JSX.Element {
                         <select
                           value={settings.fontFamily}
                           onChange={(e) => updateSettings({ fontFamily: e.target.value })}
-                          className="w-full appearance-none rounded-xl border border-border bg-surface px-4 py-2.5 pr-9 text-sm text-fg outline-none transition-colors focus:border-accent/40 focus:bg-surface-hover"
+                          className="w-full appearance-none rounded-xl border border-border bg-surface px-4 py-2.5 pr-9 text-sm text-fg outline-none transition-colors focus:border-fg/40 focus:bg-surface-hover"
                         >
                           {FONT_PRESETS.map((f) => (
                             <option key={f.label} value={f.value}>{f.label}</option>

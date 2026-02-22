@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Plus, Loader2 } from 'lucide-react'
 
@@ -10,11 +11,12 @@ interface BranchEntry {
 
 interface GitBranchDropdownProps {
   cwd: string
+  anchorRef: React.RefObject<HTMLElement | null>
   onCheckout: () => void
   onClose: () => void
 }
 
-export function GitBranchDropdown({ cwd, onCheckout, onClose }: GitBranchDropdownProps): JSX.Element {
+export function GitBranchDropdown({ cwd, anchorRef, onCheckout, onClose }: GitBranchDropdownProps): JSX.Element {
   const ref = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [branches, setBranches] = useState<BranchEntry[]>([])
@@ -22,6 +24,18 @@ export function GitBranchDropdown({ cwd, onCheckout, onClose }: GitBranchDropdow
   const [loading, setLoading] = useState(true)
   const [acting, setActing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
+  const [paneActiveColor, setPaneActiveColor] = useState<string | null>(null)
+
+  // Compute position and inherit pane-active color from anchor (portal breaks CSS var inheritance)
+  useEffect(() => {
+    const el = anchorRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    setPos({ top: rect.bottom + 4, left: rect.left })
+    const color = getComputedStyle(el).getPropertyValue('--color-pane-active').trim()
+    if (color) setPaneActiveColor(color)
+  }, [anchorRef])
 
   // Load branches on mount
   useEffect(() => {
@@ -105,7 +119,9 @@ export function GitBranchDropdown({ cwd, onCheckout, onClose }: GitBranchDropdow
     }
   }, [cwd, filter, onCheckout, onClose])
 
-  return (
+  if (!pos) return <></>
+
+  return createPortal(
     <AnimatePresence>
       <motion.div
         ref={ref}
@@ -113,7 +129,8 @@ export function GitBranchDropdown({ cwd, onCheckout, onClose }: GitBranchDropdow
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.1 }}
-        className="absolute left-0 top-full z-50 mt-1 min-w-[260px] rounded-md border border-border bg-popup-bg shadow-xl"
+        style={{ top: pos.top, left: pos.left, ...(paneActiveColor ? { '--color-pane-active': paneActiveColor } as React.CSSProperties : {}) }}
+        className="fixed z-50 min-w-[260px] rounded-md border border-border bg-popup-bg shadow-xl"
       >
         {/* Filter / create input */}
         <div className="border-b border-border px-2 py-1.5">
@@ -201,7 +218,7 @@ export function GitBranchDropdown({ cwd, onCheckout, onClose }: GitBranchDropdow
                     e.stopPropagation()
                     handleCreate()
                   }}
-                  className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-accent transition-colors hover:bg-surface-hover"
+                  className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-pane-active transition-colors hover:bg-surface-hover"
                 >
                   <Plus size={14} strokeWidth={2} className="shrink-0" />
                   <span className="truncate">Create &amp; checkout <span className="font-medium">{filter.trim()}</span></span>
@@ -211,6 +228,7 @@ export function GitBranchDropdown({ cwd, onCheckout, onClose }: GitBranchDropdow
           </div>
         )}
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }

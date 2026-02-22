@@ -88,7 +88,8 @@ const TAB_COLOR_VARS: Record<string, string> = {
   yellow: 'var(--color-tab-yellow)',
   green: 'var(--color-tab-green)',
   blue: 'var(--color-tab-blue)',
-  purple: 'var(--color-tab-purple)'
+  purple: 'var(--color-tab-purple)',
+  pink: 'var(--color-tab-pink)'
 }
 
 /** Renders a single tab — memoized so hidden tabs don't re-render on tab switch */

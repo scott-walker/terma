@@ -10,11 +10,11 @@ export function Toggle({ checked, onChange }: ToggleProps): JSX.Element {
     <button
       onClick={() => onChange(!checked)}
       className={`relative h-7 w-12 rounded-full transition-colors ${
-        checked ? 'bg-accent' : 'bg-border'
+        checked ? 'bg-fg' : 'bg-fg-muted/40'
       }`}
     >
       <motion.div
-        className="absolute top-1 h-5 w-5 rounded-full bg-fg shadow-md"
+        className={`absolute top-1 h-5 w-5 rounded-full shadow-md ${checked ? 'bg-elevated' : 'bg-fg'}`}
         animate={{ left: checked ? 26 : 4 }}
         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
       />

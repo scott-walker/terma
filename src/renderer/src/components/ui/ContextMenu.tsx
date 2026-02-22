@@ -105,7 +105,7 @@ export function ContextMenu({ position, entries, onClose }: ContextMenuProps): J
             entry.type === 'separator' ? (
               <div key={i} className="my-1 border-t border-border" />
             ) : entry.type === 'colors' ? (
-              <div key={i} className="flex justify-between px-3 py-2.5">
+              <div key={i} className="flex gap-2 px-3 py-2.5">
                 {entry.colors.map((c) => (
                   <button
                     key={c.id}

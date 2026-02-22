@@ -63,8 +63,9 @@ export function FileTree({
   const undoStack = useRef<string[][]>([])
   const addToast = useToastStore((s) => s.addToast)
   const fontSize = useSettingsStore((s) => s.getEffectiveFontSize())
+  const lineHeight = useSettingsStore((s) => s.settings.lineHeight)
   const fileAssociations = useSettingsStore((s) => s.settings.fileAssociations)
-  const rowHeight = Math.round(fontSize * 1.6)
+  const rowHeight = Math.round(Math.max(fontSize * lineHeight, fontSize * 1.15) + 6)
 
   const readDir = readDirFn ?? window.api.fs.readDir
 
@@ -404,6 +405,11 @@ export function FileTree({
     estimateSize: () => rowHeight,
     overscan: 20
   })
+
+  // Force virtualizer to recalculate when row size changes (zoom / lineHeight)
+  useEffect(() => {
+    virtualizer.measure()
+  }, [rowHeight, virtualizer])
 
   // ── Context menu ──
 

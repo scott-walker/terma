@@ -53,7 +53,7 @@ export function ConfirmDialog({
           <button
             onClick={onConfirm}
             autoFocus
-            className="cursor-pointer rounded-md bg-danger px-3 py-1.5 text-sm text-white transition-colors hover:opacity-90"
+            className="cursor-pointer rounded-md bg-fg px-3 py-1.5 text-sm font-semibold text-base transition-colors hover:opacity-90"
           >
             {confirmLabel}
           </button>

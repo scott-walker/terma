@@ -21,6 +21,10 @@ npmRebuild: false
 extraResources:
   - from: assets/icon-256.png
     to: icon-256.png
+  - from: build/com.terma.app.metainfo.xml
+    to: com.terma.app.metainfo.xml
+  - from: build/terma.desktop
+    to: terma.desktop
 
 # ──────────────────────────────
 #  Linux
@@ -40,16 +44,6 @@ linux:
     voice input via Whisper, 4 built-in color themes, and session persistence.
   icon: build/icons
   maintainer: "Scott <scott@swlt.ru>"
-  desktop:
-    entry:
-      Name: Terma
-      GenericName: Terminal Emulator
-      Comment: Modern terminal emulator with split panes, tabs and AI agent support
-      Terminal: "false"
-      Type: Application
-      Categories: System;TerminalEmulator;Development;
-      StartupWMClass: terma
-      Keywords: terminal;shell;console;emulator;pty;
 
 deb:
   priority: optional
@@ -58,6 +52,7 @@ deb:
     - libxtst6
     - libnss3
   afterInstall: scripts/after-install.sh
+  afterRemove: scripts/after-remove.sh
 
 # ──────────────────────────────
 #  macOS

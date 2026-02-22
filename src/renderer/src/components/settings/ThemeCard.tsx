@@ -16,7 +16,7 @@ export function ThemeCard({ name, colors, active, onClick }: ThemeCardProps): JS
       onClick={onClick}
       className={`group relative flex flex-col gap-2.5 rounded-xl border p-3.5 text-left transition-colors ${
         active
-          ? 'border-accent/40 bg-accent/8 shadow-[--shadow-accent-glow]'
+          ? 'border-fg/40 bg-fg/8 shadow-[--shadow-accent-glow]'
           : 'border-border bg-surface hover:border-border-hover hover:bg-surface-hover'
       }`}
     >
@@ -44,7 +44,7 @@ export function ThemeCard({ name, colors, active, onClick }: ThemeCardProps): JS
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="flex h-5 w-5 items-center justify-center rounded-full bg-accent"
+            className="flex h-5 w-5 items-center justify-center rounded-full bg-fg text-base"
           >
             <CheckIcon />
           </motion.div>

@@ -70,9 +70,7 @@ export const FileItem = memo(function FileItem({
 
   return (
     <div
-      className={`relative flex w-full cursor-default items-center pr-2 hover:bg-surface-hover ${
-        isSelected ? 'bg-overlay-subtle' : ''
-      }`}
+      className="relative flex w-full cursor-default items-center pr-2 hover:bg-white/[0.015]"
       style={{
         height: rowHeight,
         fontSize,
@@ -111,7 +109,7 @@ export const FileItem = memo(function FileItem({
       </span>
 
       {/* Icon */}
-      <span className="mr-1.5 flex shrink-0 items-center">
+      <span className="mr-1.5 flex shrink-0 items-center opacity-60">
         <FileTypeIcon name={name} isDirectory={isDirectory} isExpanded={isExpanded} size={iconSize} />
       </span>
 
@@ -119,7 +117,7 @@ export const FileItem = memo(function FileItem({
       {isRenaming ? (
         <input
           ref={inputRef}
-          className="min-w-0 flex-1 rounded-sm border border-accent bg-surface px-1 text-fg outline-none"
+          className="min-w-0 flex-1 rounded-sm border border-pane-active bg-surface px-1 text-fg outline-none"
           style={{ fontSize, lineHeight: `${rowHeight - 4}px`, height: rowHeight - 4 }}
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
@@ -136,7 +134,7 @@ export const FileItem = memo(function FileItem({
           onBlur={submitRename}
         />
       ) : (
-        <span className={`truncate ${isSelected ? 'text-file-selected' : 'text-fg'}`}>{name}</span>
+        <span className={`truncate ${isSelected ? 'text-pane-active' : 'text-fg'}`}>{name}</span>
       )}
     </div>
   )

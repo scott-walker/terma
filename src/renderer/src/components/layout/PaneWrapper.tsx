@@ -92,7 +92,7 @@ export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: 
         )}
       </div>
       {isDragOver && (
-        <div className="pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-accent bg-accent/10" />
+        <div className="pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-pane-active bg-pane-active/10" />
       )}
     </div>
   )

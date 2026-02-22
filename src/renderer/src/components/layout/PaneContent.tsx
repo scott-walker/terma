@@ -85,7 +85,7 @@ export const PaneContent = memo(function PaneContent({ paneType, tabId, paneId, 
       if (!agentParsed) {
         content = <AgentPlaceholder />
       } else {
-        content = <TerminalPane tabId={tabId} paneId={paneId} terminalKey={paneId + ':agent'} active={isActive} cwd={cwd} command={agentParsed.command} args={agentParsed.args} />
+        content = <TerminalPane key={agentProfileId} tabId={tabId} paneId={paneId} terminalKey={paneId + ':agent'} active={isActive} cwd={cwd} command={agentParsed.command} args={agentParsed.args} />
       }
       break
     case 'markdown':

@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Check } from 'lucide-react'
 import type { SshProfile } from '@shared/ssh-types'
 
 interface SshDropdownProps {
   profiles: SshProfile[]
   isConnected: boolean
+  connectedProfileId?: string | null
   onConnect: (profileId: string) => void
   onDisconnect: () => void
   onManage: () => void
@@ -14,6 +16,7 @@ interface SshDropdownProps {
 export function SshDropdown({
   profiles,
   isConnected,
+  connectedProfileId,
   onConnect,
   onDisconnect,
   onManage,
@@ -56,7 +59,7 @@ export function SshDropdown({
           <>
             <button
               onClick={() => { onDisconnect(); onClose() }}
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-danger hover:bg-surface-hover"
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm font-semibold text-fg hover:bg-surface-hover"
             >
               Disconnect
             </button>
@@ -67,18 +70,24 @@ export function SshDropdown({
         {profiles.length === 0 ? (
           <div className="px-3 py-2 text-sm text-fg-muted">No profiles saved</div>
         ) : (
-          profiles.map((profile) => (
-            <button
-              key={profile.id}
-              onClick={() => { onConnect(profile.id); onClose() }}
-              className="flex w-full flex-col px-3 py-1.5 text-left hover:bg-surface-hover"
-            >
-              <span className="text-sm text-fg">{profile.name}</span>
-              <span className="text-xs text-fg-muted">
-                {profile.username}@{profile.host}:{profile.port}
-              </span>
-            </button>
-          ))
+          profiles.map((profile) => {
+            const isActive = isConnected && profile.id === connectedProfileId
+            return (
+              <button
+                key={profile.id}
+                onClick={() => { onConnect(profile.id); onClose() }}
+                className={`flex w-full items-center gap-2.5 px-3 py-1.5 text-left ${isActive ? '' : 'hover:bg-surface-hover'}`}
+              >
+                <div className="flex flex-1 flex-col">
+                  <span className={`text-sm ${isActive ? 'text-pane-active' : 'text-fg'}`}>{profile.name}</span>
+                  <span className={`text-xs ${isActive ? 'text-pane-active/60' : 'text-fg-muted'}`}>
+                    {profile.username}@{profile.host}:{profile.port}
+                  </span>
+                </div>
+                {isActive && <Check size={14} strokeWidth={2} className="shrink-0 text-pane-active" />}
+              </button>
+            )
+          })
         )}
 
         <div className="my-1 border-t border-border" />

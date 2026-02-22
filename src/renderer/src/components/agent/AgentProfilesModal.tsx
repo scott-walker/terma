@@ -71,7 +71,7 @@ export function AgentProfilesModal({ onClose }: AgentProfilesModalProps): JSX.El
             <div
               key={profile.id}
               className={`mb-2 flex items-center justify-between rounded-md border px-3 py-2 ${
-                editingProfile?.id === profile.id ? 'border-accent/40 bg-surface-hover' : 'border-border'
+                editingProfile?.id === profile.id ? 'border-fg/40 bg-surface-hover' : 'border-border'
               }`}
             >
               <button
@@ -106,7 +106,7 @@ export function AgentProfilesModal({ onClose }: AgentProfilesModalProps): JSX.El
                     value={editingProfile.name}
                     onChange={(e) => setEditingProfile({ ...editingProfile, name: e.target.value })}
                     placeholder="My Agent"
-                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   />
                 </label>
 
@@ -117,7 +117,7 @@ export function AgentProfilesModal({ onClose }: AgentProfilesModalProps): JSX.El
                     value={editingProfile.command}
                     onChange={(e) => setEditingProfile({ ...editingProfile, command: e.target.value })}
                     placeholder="claude"
-                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   />
                 </label>
               </div>
@@ -132,7 +132,7 @@ export function AgentProfilesModal({ onClose }: AgentProfilesModalProps): JSX.El
                 <button
                   onClick={handleSave}
                   disabled={!editingProfile.name.trim() || !editingProfile.command.trim()}
-                  className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-sm text-base transition-colors hover:opacity-90 disabled:opacity-40"
+                  className="flex items-center gap-1.5 rounded-md bg-fg px-3 py-1.5 text-sm text-base transition-colors hover:opacity-90 disabled:opacity-40"
                 >
                   <Save size={14} strokeWidth={1.8} />
                   Save

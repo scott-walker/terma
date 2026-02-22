@@ -60,11 +60,11 @@ export function AgentDropdown({
               <button
                 key={profile.id}
                 onClick={() => { onSelect(profile.id); onClose() }}
-                className="flex w-full items-center gap-2.5 px-3 py-1.5 text-left hover:bg-surface-hover"
+                className={`flex w-full items-center gap-2.5 px-3 py-1.5 text-left ${isActive ? '' : 'hover:bg-surface-hover'}`}
               >
                 <div className="flex flex-1 flex-col">
-                  <span className="text-sm text-fg">{profile.name}</span>
-                  <span className="text-xs text-fg-muted">{profile.command}</span>
+                  <span className={`text-sm ${isActive ? 'text-pane-active' : 'text-fg'}`}>{profile.name}</span>
+                  <span className={`text-xs ${isActive ? 'text-pane-active/60' : 'text-fg-muted'}`}>{profile.command}</span>
                 </div>
                 {isActive && <Check size={14} strokeWidth={2} className="shrink-0 text-pane-active" />}
               </button>

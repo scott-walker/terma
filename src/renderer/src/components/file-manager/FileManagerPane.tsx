@@ -25,6 +25,7 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
   const updatePaneCwd = useTabStore((s) => s.updatePaneCwd)
   const addToast = useToastStore((s) => s.addToast)
   const sshProfiles = useSettingsStore((s) => s.settings.sshProfiles)
+  const fontSize = useSettingsStore((s) => s.getEffectiveFontSize())
   const sshPaneState = useSshStore((s) => s.panes[paneId])
 
   const [pathInput, setPathInput] = useState('')
@@ -229,12 +230,13 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
           }}
           onKeyDown={handleKeyDown}
           spellCheck={false}
-          className="min-w-0 flex-1 bg-transparent px-3 py-2 text-md text-fg outline-none placeholder:text-fg-muted"
+          style={{ fontSize }}
+          className="min-w-0 flex-1 bg-transparent px-3 py-2 text-fg outline-none placeholder:text-fg-muted"
           placeholder="/"
         />
         <div className="flex items-center gap-1 pr-2">
           {isLoadingDir && (
-            <Loader2 size={16} strokeWidth={1.8} className="animate-spin text-accent" />
+            <Loader2 size={Math.round(fontSize * 1.15)} strokeWidth={1.8} className="animate-spin text-pane-active" />
           )}
           <IconButton
             icon={RefreshCw}

@@ -119,7 +119,7 @@ export const WhisperButton = memo(function WhisperButton({ paneId, paneType, isS
               : 'cursor-pointer text-fg-muted hover:text-fg'
       }`}
     >
-      {recording ? <Square size={14} strokeWidth={1.8} fill="currentColor" /> : <Mic size={16} strokeWidth={1.8} />}
+      {recording ? <Square size={16} strokeWidth={1.8} fill="currentColor" /> : <Mic size={18} strokeWidth={1.8} />}
     </button>
   )
 })

@@ -7,6 +7,11 @@ import { Unicode11Addon } from '@xterm/addon-unicode11'
 import { useSettingsStore } from '@/stores/settings-store'
 import '@xterm/xterm/css/xterm.css'
 
+/** Compute effective xterm lineHeight: base lineHeight + fixed padding (same principle as file manager) */
+function effectiveLineHeight(fontSize: number, lineHeight: number): number {
+  return lineHeight + 6 / fontSize
+}
+
 interface TerminalEntry {
   terminal: Terminal
   fitAddon: FitAddon
@@ -81,7 +86,7 @@ function ensureSettingsSubscription(): void {
       themeColors: theme.colors,
       fontFamily: settings.fontFamily,
       fontSize: effectiveFontSize,
-      lineHeight: settings.lineHeight,
+      lineHeight: effectiveLineHeight(effectiveFontSize, settings.lineHeight),
       cursorBlink: settings.cursorBlink,
       cursorStyle: settings.cursorStyle,
       scrollback: settings.scrollback
@@ -130,7 +135,7 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
   const terminal = new Terminal({
     fontFamily: state.settings.fontFamily,
     fontSize: effectiveFontSize,
-    lineHeight: state.settings.lineHeight,
+    lineHeight: effectiveLineHeight(effectiveFontSize, state.settings.lineHeight),
     cursorBlink: state.settings.cursorBlink,
     cursorStyle: state.settings.cursorStyle,
     theme: theme.colors,

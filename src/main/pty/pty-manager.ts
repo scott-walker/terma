@@ -25,8 +25,14 @@ export class PtyManager {
       : process.env.SHELL || '/bin/bash'
   }
 
+  private get defaultShellArgs(): string[] {
+    if (process.platform === 'win32') return []
+    return ['--login']
+  }
+
   create(id: string, win: BrowserWindow, opts: PtyCreateOpts = {}): void {
-    const term = pty.spawn(opts.command || this.shell, opts.args || [], {
+    const isDefaultShell = !opts.command
+    const term = pty.spawn(opts.command || this.shell, opts.args || (isDefaultShell ? this.defaultShellArgs : []), {
       name: 'xterm-256color',
       cols: opts.cols || 80,
       rows: opts.rows || 24,
