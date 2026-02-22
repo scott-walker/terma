@@ -68,20 +68,6 @@ const SESSION_CHANNELS = {
 const WHISPER_CHANNELS = {
   TRANSCRIBE: "whisper:transcribe"
 };
-const INPUT_CHANNELS = {
-  SWITCH_LAYOUT: "input:switchLayout"
-};
-const LAYOUTS = ["us", "ru"];
-let switchTimer = null;
-function switchInputLayout(index) {
-  const layout = LAYOUTS[index];
-  if (!layout) return;
-  if (switchTimer) clearTimeout(switchTimer);
-  switchTimer = setTimeout(() => {
-    child_process.execFile("setxkbmap", ["-display", ":0", "-layout", layout], () => {
-    });
-  }, 50);
-}
 class PtyManager {
   sessions = /* @__PURE__ */ new Map();
   get shell() {
@@ -96,7 +82,6 @@ class PtyManager {
       env: process.env
     });
     this.sessions.set(id2, term);
-    switchInputLayout(0);
     term.onData((data) => {
       if (!win.isDestroyed()) {
         win.webContents.send(PTY_CHANNELS.DATA, id2, data);
@@ -376,9 +361,6 @@ function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2) {
   });
   electron.ipcMain.on(FS_CHANNELS.UNWATCH, (_event, dirPath) => {
     fsWatcher2.unwatch(dirPath);
-  });
-  electron.ipcMain.on(INPUT_CHANNELS.SWITCH_LAYOUT, (_event, index) => {
-    switchInputLayout(index);
   });
 }
 const isObject = (value) => {

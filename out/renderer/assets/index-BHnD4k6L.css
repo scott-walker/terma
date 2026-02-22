@@ -419,10 +419,7 @@
     --color-tab-active-bg: var(--color-elevated);
     --color-tab-drop-indicator: var(--color-accent);
     --color-pane-header-bg: var(--color-elevated);
-    --color-pane-active-terminal: var(--color-accent);
-    --color-pane-active-files: var(--color-warning);
-    --color-pane-active-agent: var(--color-info);
-    --color-split-handle: var(--color-accent);
+    --color-pane-active: var(--color-accent);
     --color-popup-bg: var(--color-elevated);
     --color-settings-bg: var(--color-base);
     --color-file-selected: var(--color-warning);
@@ -1248,83 +1245,23 @@
     border-color: var(--color-border);
   }
 
-  .border-info\/50 {
-    border-color: var(--color-info);
+  .border-pane-active\/50 {
+    border-color: var(--color-pane-active);
   }
 
   @supports (color: color-mix(in lab, red, red)) {
-    .border-info\/50 {
-      border-color: color-mix(in oklab, var(--color-info) 50%, transparent);
+    .border-pane-active\/50 {
+      border-color: color-mix(in oklab, var(--color-pane-active) 50%, transparent);
     }
   }
 
-  .border-info\/\[0\.27\] {
-    border-color: var(--color-info);
+  .border-pane-active\/\[0\.27\] {
+    border-color: var(--color-pane-active);
   }
 
   @supports (color: color-mix(in lab, red, red)) {
-    .border-info\/\[0\.27\] {
-      border-color: color-mix(in oklab, var(--color-info) 27%, transparent);
-    }
-  }
-
-  .border-pane-active-agent\/50 {
-    border-color: var(--color-pane-active-agent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-pane-active-agent\/50 {
-      border-color: color-mix(in oklab, var(--color-pane-active-agent) 50%, transparent);
-    }
-  }
-
-  .border-pane-active-agent\/\[0\.27\] {
-    border-color: var(--color-pane-active-agent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-pane-active-agent\/\[0\.27\] {
-      border-color: color-mix(in oklab, var(--color-pane-active-agent) 27%, transparent);
-    }
-  }
-
-  .border-pane-active-files\/50 {
-    border-color: var(--color-pane-active-files);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-pane-active-files\/50 {
-      border-color: color-mix(in oklab, var(--color-pane-active-files) 50%, transparent);
-    }
-  }
-
-  .border-pane-active-files\/\[0\.27\] {
-    border-color: var(--color-pane-active-files);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-pane-active-files\/\[0\.27\] {
-      border-color: color-mix(in oklab, var(--color-pane-active-files) 27%, transparent);
-    }
-  }
-
-  .border-pane-active-terminal\/50 {
-    border-color: var(--color-pane-active-terminal);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-pane-active-terminal\/50 {
-      border-color: color-mix(in oklab, var(--color-pane-active-terminal) 50%, transparent);
-    }
-  }
-
-  .border-pane-active-terminal\/\[0\.27\] {
-    border-color: var(--color-pane-active-terminal);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-pane-active-terminal\/\[0\.27\] {
-      border-color: color-mix(in oklab, var(--color-pane-active-terminal) 27%, transparent);
+    .border-pane-active\/\[0\.27\] {
+      border-color: color-mix(in oklab, var(--color-pane-active) 27%, transparent);
     }
   }
 
@@ -1396,47 +1333,21 @@
     background-color: var(--color-fg);
   }
 
-  .bg-info, .bg-info\/\[0\.13\] {
+  .bg-info {
     background-color: var(--color-info);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-info\/\[0\.13\] {
-      background-color: color-mix(in oklab, var(--color-info) 13%, transparent);
-    }
   }
 
   .bg-overlay-subtle {
     background-color: var(--color-overlay-subtle);
   }
 
-  .bg-pane-active-agent, .bg-pane-active-agent\/\[0\.13\] {
-    background-color: var(--color-pane-active-agent);
+  .bg-pane-active\/\[0\.13\] {
+    background-color: var(--color-pane-active);
   }
 
   @supports (color: color-mix(in lab, red, red)) {
-    .bg-pane-active-agent\/\[0\.13\] {
-      background-color: color-mix(in oklab, var(--color-pane-active-agent) 13%, transparent);
-    }
-  }
-
-  .bg-pane-active-files, .bg-pane-active-files\/\[0\.13\] {
-    background-color: var(--color-pane-active-files);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-pane-active-files\/\[0\.13\] {
-      background-color: color-mix(in oklab, var(--color-pane-active-files) 13%, transparent);
-    }
-  }
-
-  .bg-pane-active-terminal, .bg-pane-active-terminal\/\[0\.13\] {
-    background-color: var(--color-pane-active-terminal);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-pane-active-terminal\/\[0\.13\] {
-      background-color: color-mix(in oklab, var(--color-pane-active-terminal) 13%, transparent);
+    .bg-pane-active\/\[0\.13\] {
+      background-color: color-mix(in oklab, var(--color-pane-active) 13%, transparent);
     }
   }
 
@@ -1731,20 +1642,8 @@
     color: var(--color-file-selected);
   }
 
-  .text-info {
-    color: var(--color-info);
-  }
-
-  .text-pane-active-agent {
-    color: var(--color-pane-active-agent);
-  }
-
-  .text-pane-active-files {
-    color: var(--color-pane-active-files);
-  }
-
-  .text-pane-active-terminal {
-    color: var(--color-pane-active-terminal);
+  .text-pane-active {
+    color: var(--color-pane-active);
   }
 
   .text-titlebar-brand {
@@ -1790,6 +1689,10 @@
 
   .opacity-70 {
     opacity: .7;
+  }
+
+  .opacity-80 {
+    opacity: .8;
   }
 
   .opacity-90 {
@@ -1940,13 +1843,13 @@
   }
 
   @media (hover: hover) {
-    .group-hover\:bg-split-handle\/30:is(:where(.group):hover *) {
-      background-color: var(--color-split-handle);
+    .group-hover\:bg-pane-active\/30:is(:where(.group):hover *) {
+      background-color: var(--color-pane-active);
     }
 
     @supports (color: color-mix(in lab, red, red)) {
-      .group-hover\:bg-split-handle\/30:is(:where(.group):hover *) {
-        background-color: color-mix(in oklab, var(--color-split-handle) 30%, transparent);
+      .group-hover\:bg-pane-active\/30:is(:where(.group):hover *) {
+        background-color: color-mix(in oklab, var(--color-pane-active) 30%, transparent);
       }
     }
   }

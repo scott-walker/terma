@@ -25092,24 +25092,26 @@ var Ke$1 = class Ke {
 const terminals = /* @__PURE__ */ new Map();
 const pendingAttaches = /* @__PURE__ */ new Map();
 let settingsUnsub = null;
-let resizing = false;
+let resizingPaneIds = /* @__PURE__ */ new Set();
 const resizeListeners = /* @__PURE__ */ new Set();
-function setResizing(value) {
-  resizing = value;
+function setResizingPanes(ids) {
+  resizingPaneIds = new Set(ids);
   resizeListeners.forEach((fn2) => fn2());
-  if (!value) {
-    for (const entry of terminals.values()) {
-      requestAnimationFrame(() => {
-        try {
-          entry.fitAddon.fit();
-        } catch {
-        }
-      });
-    }
+}
+function clearResizingPanes() {
+  resizingPaneIds = /* @__PURE__ */ new Set();
+  resizeListeners.forEach((fn2) => fn2());
+  for (const entry of terminals.values()) {
+    requestAnimationFrame(() => {
+      try {
+        entry.fitAddon.fit();
+      } catch {
+      }
+    });
   }
 }
-function getResizing() {
-  return resizing;
+function isPaneResizing(paneId) {
+  return resizingPaneIds.has(paneId);
 }
 function subscribeResizing(fn2) {
   resizeListeners.add(fn2);
@@ -25261,7 +25263,7 @@ function createTerminalEntry(paneId, ptyId) {
 function setupResizeObserver(entry, containerEl) {
   entry.resizeObserver?.disconnect();
   const observer2 = new ResizeObserver(() => {
-    if (resizing) return;
+    if (resizingPaneIds.size > 0) return;
     requestAnimationFrame(() => {
       try {
         entry.fitAddon.fit();
@@ -35725,41 +35727,28 @@ function Ht2({
   );
 }
 Ht2.displayName = "Separator";
+const PANE_ACTIVE_CLASSES = {
+  colorClass: "text-pane-active",
+  bgActiveClass: "bg-pane-active/[0.13]",
+  borderActiveClass: "border-pane-active/[0.27]",
+  paneBorderClass: "border-pane-active/50"
+};
 const PANE_TYPE_CONFIGS = {
   terminal: {
     label: "Terminal",
-    icon: Terminal,
-    colorClass: "text-pane-active-terminal",
-    bgActiveClass: "bg-pane-active-terminal/[0.13]",
-    borderActiveClass: "border-pane-active-terminal/[0.27]",
-    paneBorderClass: "border-pane-active-terminal/50",
-    resizeOverlayBg: "bg-pane-active-terminal"
+    icon: Terminal
   },
   "file-manager": {
     label: "Files",
-    icon: FolderOpen,
-    colorClass: "text-pane-active-files",
-    bgActiveClass: "bg-pane-active-files/[0.13]",
-    borderActiveClass: "border-pane-active-files/[0.27]",
-    paneBorderClass: "border-pane-active-files/50",
-    resizeOverlayBg: "bg-pane-active-files"
+    icon: FolderOpen
   },
   agent: {
     label: "Agent",
-    icon: Bot,
-    colorClass: "text-pane-active-agent",
-    bgActiveClass: "bg-pane-active-agent/[0.13]",
-    borderActiveClass: "border-pane-active-agent/[0.27]",
-    paneBorderClass: "border-pane-active-agent/50",
-    resizeOverlayBg: "bg-pane-active-agent"
+    icon: Bot
   }
   // editor: {
   //   label: 'Editor',
-  //   icon: FileCode,
-  //   colorClass: 'text-info',
-  //   bgActiveClass: 'bg-info/[0.13]',
-  //   borderActiveClass: 'border-info/[0.27]',
-  //   paneBorderClass: 'border-info/50'
+  //   icon: FileCode
   // }
 };
 const paneTypes = Object.keys(PANE_TYPE_CONFIGS);
@@ -35835,7 +35824,7 @@ function PaneHeader({ tabId, paneId, paneType }) {
       },
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2.5", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { size: 16, className: `${config.colorClass} opacity-90` }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { size: 16, className: `${PANE_ACTIVE_CLASSES.colorClass} opacity-90` }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-0.5", children: paneTypes.map((pt2) => {
             const ptConfig = PANE_TYPE_CONFIGS[pt2];
             const isActive = pt2 === paneType;
@@ -35846,7 +35835,7 @@ function PaneHeader({ tabId, paneId, paneType }) {
                   e.stopPropagation();
                   if (!isActive) useTabStore.getState().setPaneType(tabId, paneId, pt2);
                 },
-                className: `cursor-pointer rounded-sm border border-transparent bg-transparent px-2.5 py-0.5 text-xs transition-all ${isActive ? `${ptConfig.bgActiveClass} ${ptConfig.borderActiveClass} ${ptConfig.colorClass}` : "text-fg-muted"}`,
+                className: `cursor-pointer rounded-sm border border-transparent bg-transparent px-2.5 py-0.5 text-xs transition-all ${isActive ? `${PANE_ACTIVE_CLASSES.bgActiveClass} ${PANE_ACTIVE_CLASSES.borderActiveClass} ${PANE_ACTIVE_CLASSES.colorClass}` : "text-fg-muted"}`,
                 children: ptConfig.label
               },
               pt2
@@ -35945,6 +35934,7 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, t
       detach(tmKey);
     };
   }, [tmKey]);
+  const isAgent = tmKey.endsWith(":agent");
   reactExports.useEffect(() => {
     if (active) {
       focus(tmKey);
@@ -35994,6 +35984,11 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, t
     }
   }, [tmKey]);
   const [dragOver, setDragOver] = reactExports.useState(false);
+  const handleDragEnter = reactExports.useCallback((e) => {
+    if (e.dataTransfer.types.includes(MIME_FILES) || e.dataTransfer.types.includes("Files")) {
+      useTabStore.getState().setActivePaneId(tabId, paneId);
+    }
+  }, [tabId, paneId]);
   const handleDragOver = reactExports.useCallback((e) => {
     if (e.dataTransfer.types.includes(MIME_FILES) || e.dataTransfer.types.includes("Files")) {
       e.preventDefault();
@@ -36025,8 +36020,8 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, t
       if (paths.length === 0) return;
       const cwd2 = await window.api.pty.getCwd(ptyId);
       if (!cwd2) return;
-      const escaped = paths.map((p) => shellEscape(relativePath(cwd2, p))).join(" ");
-      window.api.pty.write(ptyId, escaped);
+      const text = isAgent ? paths.map((p) => "@" + relativePath(cwd2, p)).join(" ") : paths.map((p) => shellEscape(relativePath(cwd2, p))).join(" ");
+      window.api.pty.write(ptyId, text);
     },
     [tmKey]
   );
@@ -36079,6 +36074,7 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, t
       {
         ref: containerRef,
         onContextMenu: handleContextMenu,
+        onDragEnter: handleDragEnter,
         onDragOver: handleDragOver,
         onDragLeave: handleDragLeave,
         onDrop: handleFileDrop,
@@ -40450,6 +40446,7 @@ function FileTree({
   const [contextMenu, setContextMenu] = reactExports.useState(null);
   const parentRef = reactExports.useRef(null);
   const anchorPath = reactExports.useRef(null);
+  const undoStack = reactExports.useRef([]);
   const addToast = useToastStore((s) => s.addToast);
   const fontSize = useSettingsStore((s) => s.getEffectiveFontSize());
   const fileAssociations = useSettingsStore((s) => s.settings.fileAssociations);
@@ -40592,28 +40589,46 @@ function FileTree({
   const handleDelete = reactExports.useCallback(async () => {
     const paths = Array.from(selected);
     if (paths.length === 0) return;
-    let ok = 0;
+    const trashed = [];
     let fail = 0;
     for (const p of paths) {
       try {
         await window.api.fs.delete(p);
-        ok++;
+        trashed.push(p);
       } catch {
         fail++;
       }
     }
+    if (trashed.length > 0) {
+      undoStack.current.push(trashed);
+    }
     setSelected(/* @__PURE__ */ new Set());
     loadTree();
-    if (ok > 0) {
+    if (trashed.length > 0) {
       addToast(
         "success",
-        ok === 1 ? `Deleted "${baseName(paths[0])}"` : `Deleted ${ok} items`
+        trashed.length === 1 ? `Deleted "${baseName(trashed[0])}" — Ctrl+Z to undo` : `Deleted ${trashed.length} items — Ctrl+Z to undo`
       );
     }
     if (fail > 0) {
       addToast("error", fail === 1 ? "Delete failed" : `Failed to delete ${fail} items`);
     }
   }, [selected, loadTree, addToast]);
+  const handleRestore = reactExports.useCallback(async () => {
+    const paths = undoStack.current.pop();
+    if (!paths || paths.length === 0) return;
+    const { ok, fail } = await window.api.fs.restore(paths);
+    loadTree();
+    if (ok > 0) {
+      addToast(
+        "success",
+        ok === 1 ? `Restored "${baseName(paths[0])}"` : `Restored ${ok} items`
+      );
+    }
+    if (fail > 0) {
+      addToast("error", fail === 1 ? "Restore failed" : `Failed to restore ${fail} items`);
+    }
+  }, [loadTree, addToast]);
   const handleDragStart = reactExports.useCallback(
     (e, entry) => {
       if (entry.name === "..") {
@@ -40630,6 +40645,11 @@ function FileTree({
     const container = parentRef.current;
     if (!container) return;
     const handleKeyDown = async (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.code === "KeyZ") {
+        e.preventDefault();
+        handleRestore();
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && e.code === "KeyV") {
         e.preventDefault();
         const targetPath = anchorPath.current ? entries.find((en2) => en2.path === anchorPath.current) : null;
@@ -40638,6 +40658,12 @@ function FileTree({
           const systemPaths = await window.api.clipboard.readFilePaths();
           if (systemPaths.length > 0) {
             handlePaste(destPath, true, systemPaths);
+          } else {
+            const saved = await window.api.clipboard.saveImage(destPath);
+            if (saved) {
+              loadTree();
+              addToast("success", `Saved "${saved.substring(saved.lastIndexOf("/") + 1)}"`);
+            }
           }
         } else if (targetPath) {
           handlePaste(targetPath.path, targetPath.isDirectory);
@@ -40655,7 +40681,7 @@ function FileTree({
     };
     container.addEventListener("keydown", handleKeyDown);
     return () => container.removeEventListener("keydown", handleKeyDown);
-  }, [selected, entries, clipboard, rootPath, handleCopy, handlePaste, handleDelete]);
+  }, [selected, entries, clipboard, rootPath, handleCopy, handlePaste, handleDelete, handleRestore]);
   const virtualizer = useVirtualizer({
     count: entries.length,
     getScrollElement: () => parentRef.current,
@@ -40678,6 +40704,13 @@ function FileTree({
           const systemPaths = await window.api.clipboard.readFilePaths();
           if (systemPaths.length > 0) {
             handlePaste(contextMenu.path, contextMenu.isDirectory, systemPaths);
+          } else {
+            const destDir = contextMenu.isDirectory ? contextMenu.path : parentDir(contextMenu.path);
+            const saved = await window.api.clipboard.saveImage(destDir);
+            if (saved) {
+              loadTree();
+              addToast("success", `Saved "${baseName(saved)}"`);
+            }
           }
         } else {
           handlePaste(contextMenu.path, contextMenu.isDirectory);
@@ -40923,17 +40956,19 @@ const PaneContent = reactExports.memo(function PaneContent2({ paneType, tabId, p
 const MIME_TYPE = "application/x-terma-pane";
 const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isActive }) {
   const paneType = node.paneType ?? "terminal";
-  const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
-  const isResizing = reactExports.useSyncExternalStore(subscribeResizing, getResizing);
+  const paneResizing = reactExports.useSyncExternalStore(
+    subscribeResizing,
+    reactExports.useCallback(() => isPaneResizing(node.id), [node.id])
+  );
   const [overlayState, setOverlayState] = reactExports.useState("hidden");
   const [isDragOver, setIsDragOver] = reactExports.useState(false);
   reactExports.useEffect(() => {
-    if (isResizing) {
+    if (paneResizing) {
       setOverlayState("active");
     } else {
       setOverlayState((prev) => prev === "active" ? "fading" : prev);
     }
-  }, [isResizing]);
+  }, [paneResizing]);
   const handleDragOver = reactExports.useCallback((e) => {
     if (e.dataTransfer.types.includes(MIME_TYPE)) {
       e.preventDefault();
@@ -40965,7 +41000,7 @@ const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isAct
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
-      className: `relative flex h-full w-full flex-col overflow-hidden rounded-lg border-2 bg-base transition-[border-color] duration-200 ${isActive ? config.paneBorderClass : "border-border"}`,
+      className: `relative flex h-full w-full flex-col overflow-hidden rounded-lg border-2 bg-base transition-[border-color] duration-200 ${isActive ? PANE_ACTIVE_CLASSES.paneBorderClass : "border-border"}`,
       onDragOver: handleDragOver,
       onDragLeave: handleDragLeave,
       onDrop: handleDrop,
@@ -40977,7 +41012,7 @@ const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isAct
           overlayState !== "hidden" && /* @__PURE__ */ jsxRuntimeExports.jsx(
             "div",
             {
-              className: `absolute inset-0 z-10 ${isActive ? config.resizeOverlayBg : "bg-border"} ${overlayState === "fading" ? "opacity-0 transition-opacity duration-1000" : "opacity-40"}`,
+              className: `absolute inset-0 z-10 bg-base ${overlayState === "fading" ? "opacity-0 transition-opacity duration-1000" : "opacity-80"}`,
               onTransitionEnd: () => setOverlayState("hidden")
             }
           )
@@ -40987,6 +41022,10 @@ const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isAct
     }
   );
 });
+function collectPaneIds(node) {
+  if (node.type === "pane") return [node.id];
+  return node.children.flatMap(collectPaneIds);
+}
 const SplitPane = reactExports.memo(function SplitPane2({ node, tabId, isTabActive }) {
   const activePaneId = useTabStore((s) => s.tabs[tabId]?.activePaneId);
   const setActivePaneId = useTabStore((s) => s.setActivePaneId);
@@ -40997,19 +41036,32 @@ const SplitPane = reactExports.memo(function SplitPane2({ node, tabId, isTabActi
   }, []);
   const handlePointerDownCapture = reactExports.useCallback((e) => {
     const target = e.target;
-    if (!target.closest("[data-separator]")) return;
-    setResizing(true);
+    const separator = target.closest("[data-separator]");
+    if (!separator) return;
+    const groupEl = e.currentTarget.firstElementChild;
+    if (!groupEl || separator.parentElement !== groupEl) return;
+    const separators = groupEl.querySelectorAll(":scope > [data-separator]");
+    let sepIndex = -1;
+    separators.forEach((el, i8) => {
+      if (el === separator) sepIndex = i8;
+    });
+    if (sepIndex < 0 || node.type === "pane") return;
+    const leftChild = node.children[sepIndex];
+    const rightChild = node.children[sepIndex + 1];
+    if (!leftChild || !rightChild) return;
+    const paneIds = [...collectPaneIds(leftChild), ...collectPaneIds(rightChild)];
+    setResizingPanes(paneIds);
     pendingSizes.current = null;
     const handleUp = () => {
       window.removeEventListener("pointerup", handleUp);
-      setResizing(false);
+      clearResizingPanes();
       if (pendingSizes.current) {
         updateLayoutRatios(tabId, node.id, pendingSizes.current);
         pendingSizes.current = null;
       }
     };
     window.addEventListener("pointerup", handleUp);
-  }, [tabId, node.id, updateLayoutRatios]);
+  }, [tabId, node, updateLayoutRatios]);
   if (node.type === "pane") {
     return /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
@@ -41039,7 +41091,7 @@ const SplitPane = reactExports.memo(function SplitPane2({ node, tabId, isTabActi
         const items = [];
         if (i8 > 0) {
           items.push(
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Ht2, { className: "group relative flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `${handleClass} pointer-events-none group-hover:bg-split-handle/30` }) }, `sep-${i8}`)
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Ht2, { className: "group relative flex items-center justify-center outline-none", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `${handleClass} pointer-events-none group-hover:bg-pane-active/30` }) }, `sep-${i8}`)
           );
         }
         items.push(
@@ -41645,13 +41697,28 @@ function applyThemeToDOM(theme) {
   set("--color-warning", yellow);
   set("--color-directory", blue);
 }
+const TAB_COLOR_VARS = {
+  red: "var(--color-tab-red)",
+  orange: "var(--color-tab-orange)",
+  yellow: "var(--color-tab-yellow)",
+  green: "var(--color-tab-green)",
+  blue: "var(--color-tab-blue)",
+  purple: "var(--color-tab-purple)"
+};
 const TabContent = reactExports.memo(function TabContent2({
   tabId,
   isActive
 }) {
   const tab = useTabStore((s) => s.tabs[tabId]);
   if (!tab) return null;
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `absolute inset-0 ${isActive ? "" : "invisible pointer-events-none"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane, { node: tab.layoutTree, tabId, isTabActive: isActive }) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: `absolute inset-0 ${isActive ? "" : "invisible pointer-events-none"}`,
+      style: { "--color-pane-active": TAB_COLOR_VARS[tab.color ?? "green"] },
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane, { node: tab.layoutTree, tabId, isTabActive: isActive })
+    }
+  );
 });
 function App() {
   const tabOrder = useTabStore((s) => s.tabOrder);

@@ -43,9 +43,6 @@ const CLIPBOARD_CHANNELS = {
 const WHISPER_CHANNELS = {
   TRANSCRIBE: "whisper:transcribe"
 };
-const INPUT_CHANNELS = {
-  SWITCH_LAYOUT: "input:switchLayout"
-};
 const ptyApi = {
   create: (opts) => electron.ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
   write: (id, data) => {
@@ -142,11 +139,6 @@ const windowApi = {
 const whisperApi = {
   transcribe: (audioBuffer) => electron.ipcRenderer.invoke(WHISPER_CHANNELS.TRANSCRIBE, audioBuffer)
 };
-const inputApi = {
-  switchLayout: (index) => {
-    electron.ipcRenderer.send(INPUT_CHANNELS.SWITCH_LAYOUT, index);
-  }
-};
 electron.contextBridge.exposeInMainWorld("api", {
   pty: ptyApi,
   fs: fsApi,
@@ -155,6 +147,5 @@ electron.contextBridge.exposeInMainWorld("api", {
   shell: shellApi,
   clipboard: clipboardApi,
   window: windowApi,
-  whisper: whisperApi,
-  input: inputApi
+  whisper: whisperApi
 });
