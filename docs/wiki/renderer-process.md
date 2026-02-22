@@ -25,29 +25,44 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 │            TitleBar                  │
 ├─────────────────────────────────────┤
 │            TabBar                    │
-├──────┬──────────────────────────────┤
-│ File │                              │
-│ Mgr  │     SplitPane (active tab)   │
-│      │                              │
-└──────┴──────────────────────────────┘
+├─────────────────────────────────────┤
+│                                     │
+│     SplitPane (active tab)          │
+│     ┌─────────┬─────────┐          │
+│     │ Terminal │  Agent  │          │
+│     │         ├─────────┤          │
+│     │         │  Files  │          │
+│     └─────────┴─────────┘          │
+│                                     │
+├─────────────────────────────────────┤
+│            StatusBar                 │
+└─────────────────────────────────────┘
+         + SettingsPanel (overlay)
+         + ToastContainer
+         + ConfirmDialog
 ```
 
 Обязанности:
-- Создание начального таба при первом рендере
+- Загрузка настроек и подписка на их изменения
+- Загрузка сохранённой сессии или создание начального таба
+- Автосохранение сессии каждые 2 секунды + на `beforeunload`
+- Применение цветовой темы к DOM (`applyThemeToDOM`)
 - Глобальные обработчики горячих клавиш (подробнее: [Горячие клавиши](keyboard-shortcuts.md))
-- Рендеринг layout-дерева активного таба
+- Отслеживание состояния maximize/unmaximize для бордюров окна
+
+### TabContent (memo)
+
+Каждый таб рендерится через мемоизированный `TabContent`. Неактивные табы получают `invisible pointer-events-none` вместо `display: none` — это сохраняет xterm-инстансы в DOM и предотвращает потерю буфера.
 
 ---
 
 ## Zustand Stores
 
-Все stores используют `zustand` без middleware (immer доступен, но пока не задействован). Доступ к состоянию вне React-компонентов — через `store.getState()`.
-
 ### tab-store
 
 **Файл:** `src/renderer/src/stores/tab-store.ts`
 
-Центральный store приложения. Управляет табами и layout-деревьями.
+Центральный store приложения. Управляет табами, layout-деревьями и сессиями.
 
 #### Состояние
 
@@ -65,8 +80,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 interface Tab {
   id: string
   title: string
-  layoutTree: LayoutNode       // Дерево панелей (см. layout-system)
-  activePaneId: string         // Активная панель в этом табе
+  color: string | null          // Цвет таба (red, orange, yellow, green, blue, purple)
+  layoutTree: LayoutNode        // Дерево панелей (см. layout-system)
+  activePaneId: string          // Активная панель в этом табе
 }
 ```
 
@@ -78,38 +94,39 @@ interface Tab {
 | `closeTab(id)` | Уничтожает все PTY в табе, удаляет из списка |
 | `setActiveTab(id)` | Переключает активный таб |
 | `setTitle(tabId, title)` | Устанавливает заголовок таба |
+| `setTabColor(tabId, color)` | Устанавливает цвет таба |
 | `reorderTabs(from, to)` | Перемещает таб в списке |
 | `splitPane(tabId, paneId, dir)` | Разделяет панель на две |
+| `splitPaneWithType(tabId, paneId, dir, type)` | Разделяет с указанием типа новой панели |
 | `closePane(tabId, paneId)` | Закрывает панель, схлопывает branch если нужно |
 | `setActivePaneId(tabId, paneId)` | Устанавливает активную панель |
+| `setPaneType(tabId, paneId, type)` | Переключает тип панели (terminal/agent/file-manager) |
 | `updateLayoutRatios(tabId, branchId, ratios)` | Обновляет пропорции после ресайза |
 | `setPaneTerminal(tabId, paneId, terminalId)` | Привязывает PTY к панели |
+| `swapPanes(tabId, paneId1, paneId2)` | Меняет местами две панели (drag-drop) |
+| `getSessionState()` | Создаёт снимок для персистентности |
+| `restoreSession(state)` | Восстанавливает сессию из снимка |
 
 #### Логика закрытия таба
 
-При закрытии таба обходит всё layout-дерево, находит все pane-узлы, вызывает `window.api.pty.destroy()` для каждого PTY. Затем:
+При закрытии таба обходит всё layout-дерево, находит все pane-узлы, вызывает `terminal-manager.destroy()` для каждого PTY. Затем:
 - Удаляет таб из `tabs` и `tabOrder`
 - Если закрыт активный таб — переключается на соседний (или `null` если табов больше нет)
 
-### terminal-store
+Если в табе больше одной панели — перед закрытием показывается `ConfirmDialog`.
 
-**Файл:** `src/renderer/src/stores/terminal-store.ts`
+### settings-store
 
-Реестр терминальных сессий. Хранит маппинг `id → { ptyId, title }`.
+**Файл:** `src/renderer/src/stores/settings-store.ts`
 
-> На текущем этапе основная логика сессий живёт в `tab-store` через layout-дерево. `terminal-store` зарезервирован для расширения.
-
-### file-manager-store
-
-**Файл:** `src/renderer/src/stores/file-manager-store.ts`
+Управляет настройками приложения и темой.
 
 #### Состояние
 
 ```typescript
 {
-  visible: boolean              // Показан ли файловый менеджер
-  rootPath: string              // Корневая директория
-  expandedDirs: Set<string>     // Раскрытые папки
+  settings: TerminalSettings    // Текущие настройки
+  settingsOpen: boolean         // Открыта ли панель настроек
 }
 ```
 
@@ -117,34 +134,73 @@ interface Tab {
 
 | Действие | Описание |
 |----------|----------|
-| `toggle()` | Показать/скрыть панель |
-| `setRootPath(path)` | Установить корневую директорию, сбросить раскрытие |
-| `toggleDir(path)` | Раскрыть/свернуть директорию |
-| `collapseDir(path)` | Свернуть директорию |
+| `loadSettings()` | Загружает настройки из main process |
+| `updateSettings(partial)` | Обновляет настройки (отправляет в main) |
+| `resetSettings()` | Сбросить к значениям по умолчанию |
+| `toggleSettings()` | Показать/скрыть панель настроек |
+| `getActiveTheme()` | Получить активный пресет темы |
+| `zoomIn()` / `zoomOut()` / `zoomReset()` | Управление масштабом |
 
-### workspace-store
+### toast-store
 
-**Файл:** `src/renderer/src/stores/workspace-store.ts`
+**Файл:** `src/renderer/src/stores/toast-store.ts`
+
+Управляет уведомлениями (toast notifications).
+
+#### Действия
+
+| Действие | Описание |
+|----------|----------|
+| `addToast(type, message)` | Показать уведомление (error, success, info) |
+| `removeToast(id)` | Убрать уведомление |
+
+### file-manager-store
+
+**Файл:** `src/renderer/src/stores/file-manager-store.ts`
+
+Per-pane состояние файлового менеджера. Хранит отдельное состояние для каждой панели типа `file-manager`.
 
 #### Состояние
 
 ```typescript
 {
-  workspaces: Record<string, Workspace>
-  workspaceOrder: string[]
-  activeWorkspaceId: string | null
+  panes: Record<string, {
+    rootPath: string            // Корневой путь
+    expandedDirs: Set<string>   // Раскрытые папки
+  }>
 }
 ```
 
-#### Интерфейс Workspace
+#### Действия
 
-```typescript
-interface Workspace {
-  id: string
-  name: string
-  cwd: string    // Рабочая директория workspace
-}
-```
+| Действие | Описание |
+|----------|----------|
+| `getOrCreatePane(paneId)` | Получить/создать состояние для панели |
+| `setRootPath(paneId, path)` | Установить корневую директорию |
+| `toggleDir(paneId, path)` | Раскрыть/свернуть директорию |
+| `removePane(paneId)` | Удалить состояние панели |
+
+---
+
+## terminal-manager.ts
+
+**Файл:** `src/renderer/src/lib/terminal-manager.ts`
+
+Центральный реестр xterm.Terminal инстансов. Не является React-компонентом — это чистый Map-based менеджер.
+
+### Ключевые операции
+
+| Метод | Описание |
+|-------|----------|
+| `attach(paneId, container, opts)` | Создаёт или переиспользует терминал для контейнера + запускает PTY |
+| `detach(paneId)` | Отключает терминал из DOM, но сохраняет инстанс |
+| `destroy(paneId)` | Убивает PTY и удаляет терминал |
+
+### Attach/Detach паттерн
+
+При переключении типа панели (terminal → agent → terminal) терминал **detach'ится** из DOM, но остаётся в реестре. При возвращении обратно — **attach'ится** в новый контейнер без пересоздания. Это сохраняет буфер терминала.
+
+Для agent-панелей используется отдельный ключ: `paneId + ':agent'`.
 
 ---
 
@@ -154,7 +210,7 @@ interface Workspace {
 
 **Файл:** `src/renderer/src/components/layout/TitleBar.tsx`
 
-Кастомный titlebar для frameless-окна. Левая часть — логотип "Terma", правая — кнопки minimize/maximize/close.
+Кастомный titlebar для frameless-окна. Левая часть — логотип "Terma", правая — кнопки minimize/maximize/close (компонент `WindowControls`).
 
 Использует `-webkit-app-region: drag` для перетаскивания окна и `no-drag` для кнопок.
 
@@ -162,57 +218,68 @@ interface Workspace {
 
 **Файл:** `src/renderer/src/components/layout/TabBar.tsx`
 
-Горизонтальная панель табов. Рендерит `TabItem` для каждого таба из `tabOrder`. Кнопка "+" справа для создания нового таба.
+Горизонтальная панель табов. Рендерит `TabItem` для каждого таба из `tabOrder`. Поддерживает drag-reorder табов. Кнопки: "+" для нового таба, шестерёнка для настроек.
 
-### Tab
+Контекстное меню таба: переименование, выбор цвета, закрытие.
 
-**Файл:** `src/renderer/src/components/layout/Tab.tsx`
+### PaneHeader
 
-Отдельный таб: текст заголовка + кнопка закрытия (появляется при hover).
+**Файл:** `src/renderer/src/components/layout/PaneHeader.tsx`
 
-Стили:
-- Активный: фон `#1a1b26`, текст `#c0caf5`
-- Неактивный: текст `#565f89`, hover — приглушённый фон
+Заголовок каждой панели. Содержит:
+- Иконка и название типа панели
+- Кнопка split (вертикальный/горизонтальный)
+- Кнопка микрофона (Whisper транскрипция, при наличии OpenAI API key)
+- Кнопка закрытия панели
+
+### PaneContent
+
+**Файл:** `src/renderer/src/components/layout/PaneContent.tsx`
+
+Условный рендер содержимого панели в зависимости от `paneType`:
+- `terminal` → `Terminal` (xterm.js)
+- `file-manager` → `FileManagerPane`
+- `agent` → `Terminal` (с отдельным PTY для agentCommand)
+
+### PaneWrapper
+
+**Файл:** `src/renderer/src/components/layout/PaneWrapper.tsx`
+
+Контейнер одной панели:
+- Цветной бордюр для активной панели
+- Drag-and-drop swap панелей в пределах таба
+- Resize overlay — полупрозрачный оверлей при перетаскивании разделителя (предотвращает захват мыши iframe/терминалом)
 
 ### SplitPane
 
 **Файл:** `src/renderer/src/components/layout/SplitPane.tsx`
 
 Рекурсивный компонент. Рендерит layout-дерево:
-- `PaneNode` → рендерит `TerminalPane`
-- `BranchNode` → рендерит `Group` + `Panel` + `Separator` из `react-resizable-panels`
+- `PaneNode` → `PaneWrapper` → `PaneHeader` + `PaneContent`
+- `BranchNode` → `Group` + `Panel` + `Separator` из `react-resizable-panels`
 
 Подробнее: [Система layout](layout-system.md)
 
-### TerminalPane
+### StatusBar
+
+**Файл:** `src/renderer/src/components/layout/StatusBar.tsx`
+
+Нижняя статусная строка: текущий рабочий каталог, количество панелей, кнопка копирования логов.
+
+### SettingsPanel
+
+**Файл:** `src/renderer/src/components/settings/SettingsPanel.tsx`
+
+Боковая панель настроек с двумя вкладками:
+- **General** — agentCommand, шрифт, размер, scrollback, курсор, файловые ассоциации, OpenAI API key, язык Whisper
+- **Style** — выбор темы (4 пресета), preview терминальных цветов
+
+### Terminal
 
 **Файл:** `src/renderer/src/components/terminal/Terminal.tsx`
 
-Обёртка для xterm.js. При монтировании:
-1. Вызывает `window.api.pty.create()` — создаёт PTY
-2. Записывает PTY ID в tab-store
-3. Передаёт `containerRef` и `ptyId` в `useTerminal` хук
-4. При размонтировании — уничтожает PTY
+React-обёртка для xterm.js. При монтировании вызывает `terminal-manager.attach()`, при размонтировании — `detach()`. Получает `paneId` и `isActive` для управления фокусом.
 
-### useTerminal
+### FileManagerPane, FileTree, FileItem, FileTypeIcon
 
-**Файл:** `src/renderer/src/components/terminal/use-terminal.ts`
-
-React-хук, инкапсулирующий всю логику xterm.js:
-- Создание `Terminal` с настройками шрифта и темы
-- Загрузка аддонов: FitAddon, WebGL/Canvas (с fallback), WebLinks, Unicode11
-- Подписка на `window.api.pty.onData` (PTY → xterm)
-- Подписка на `terminal.onData` (xterm → PTY)
-- ResizeObserver для автоматического fit
-- Focus/refit при активации таба
-- Полная очистка при unmount
-
-### FileManager, FileTree, FileItem
-
-Боковая панель файлового менеджера. Подробнее: [Файловый менеджер](file-manager.md)
-
-### WorkspaceBar
-
-**Файл:** `src/renderer/src/components/layout/WorkspaceBar.tsx`
-
-Панель переключения workspace. Отображается только при наличии более одного workspace.
+Панель файлового менеджера. Подробнее: [Файловый менеджер](file-manager.md)

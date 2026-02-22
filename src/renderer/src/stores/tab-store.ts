@@ -15,23 +15,11 @@ import {
   swapPanes as swapPanesInTree,
   findNode
 } from '@/lib/layout-tree'
+import type { SessionState } from '@shared/types'
 import { useFileManagerStore } from './file-manager-store'
 import * as terminalManager from '@/lib/terminal-manager'
 
-export interface Tab {
-  id: string
-  title: string
-  color?: string | null
-  layoutTree: LayoutNode
-  activePaneId: string
-}
-
-export interface SessionSnapshot {
-  tabs: Record<string, Tab>
-  tabOrder: string[]
-  activeTabId: string | null
-  fileManagerPanes: Record<string, { rootPath: string; expandedDirs: string[] }>
-}
+export type Tab = SessionState['tabs'][string]
 
 function collectPaneNodes(node: LayoutNode): PaneNode[] {
   if (node.type === 'pane') return [node]
@@ -88,8 +76,8 @@ interface TabStore {
   updatePaneCwd: (tabId: string, paneId: string, cwd: string) => void
   swapPanes: (tabId: string, paneId1: string, paneId2: string) => void
 
-  getSessionSnapshot: () => Promise<SessionSnapshot>
-  restoreSession: (snapshot: SessionSnapshot) => void
+  getSessionState: () => Promise<SessionState>
+  restoreSession: (snapshot: SessionState) => void
 }
 
 export const useTabStore = create<TabStore>((set, get) => ({
@@ -303,7 +291,7 @@ export const useTabStore = create<TabStore>((set, get) => ({
       }
     }),
 
-  getSessionSnapshot: async () => {
+  getSessionState: async () => {
     const state = get()
     const snapshotTabs: Record<string, Tab> = {}
 

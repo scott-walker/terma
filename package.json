@@ -2,6 +2,10 @@
   "name": "terma",
   "version": "1.0.0",
   "description": "Modern terminal emulator",
+  "author": {
+    "name": "Scott",
+    "email": "scott@swlt.ru"
+  },
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "ELECTRON_DISABLE_SANDBOX=1 electron-vite dev",
@@ -9,7 +13,8 @@
     "preview": "electron-vite preview",
     "postinstall": "electron-rebuild -f -w node-pty",
     "rebuild": "electron-rebuild -f -w node-pty",
-    "install-app": "bash scripts/install.sh"
+    "install-app": "bash scripts/install.sh",
+    "build:deb": "electron-vite build && electron-builder --linux deb"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
@@ -44,6 +49,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
     "electron": "^40.6.0",
+    "electron-builder": "^26.8.1",
     "electron-vite": "^5.0.0",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3",

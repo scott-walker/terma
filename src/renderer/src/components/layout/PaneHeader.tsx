@@ -4,6 +4,7 @@ import type { PaneType } from '@/lib/layout-tree'
 import { PANE_TYPE_CONFIGS, PANE_ACTIVE_CLASSES } from '@/lib/pane-types'
 import { useTabStore } from '@/stores/tab-store'
 import { useSettingsStore } from '@/stores/settings-store'
+import { useToastStore } from '@/stores/toast-store'
 import { getPtyId } from '@/lib/terminal-manager'
 import { IconButton } from '@/components/ui/IconButton'
 
@@ -64,7 +65,7 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
             }
           }
         } catch (err) {
-          console.error('Whisper transcription failed:', err)
+          useToastStore.getState().addToast('error', err instanceof Error ? err.message : 'Transcription failed')
         } finally {
           setTranscribing(false)
         }
@@ -73,8 +74,8 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
       recorderRef.current = recorder
       recorder.start()
       setRecording(true)
-    } catch (err) {
-      console.error('Microphone access failed:', err)
+    } catch {
+      useToastStore.getState().addToast('error', 'Microphone access denied')
     }
   }, [paneId, paneType])
 

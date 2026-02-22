@@ -4,19 +4,19 @@ const child_process = require("child_process");
 const path = require("path");
 const promises = require("fs/promises");
 const pty = require("node-pty");
-const fs = require("fs");
 const chokidar = require("chokidar");
 const nanoid = require("nanoid");
-const os = require("os");
 const process$1 = require("node:process");
 const path$1 = require("node:path");
 const node_util = require("node:util");
-const fs$1 = require("node:fs");
+const fs = require("node:fs");
 const crypto = require("node:crypto");
 const assert = require("node:assert");
-const os$1 = require("node:os");
+const os = require("node:os");
 require("node:events");
 require("node:stream");
+const fs$1 = require("fs");
+const os$1 = require("os");
 function _interopNamespaceDefault(e) {
   const n = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
   if (e) {
@@ -65,13 +65,82 @@ const SESSION_CHANNELS = {
   SAVE: "session:save",
   LOAD: "session:load"
 };
+const SHELL_CHANNELS = {
+  OPEN_PATH: "shell:openPath",
+  OPEN_WITH: "shell:openWith"
+};
+const CLIPBOARD_CHANNELS = {
+  READ_FILE_PATHS: "clipboard:readFilePaths",
+  SAVE_IMAGE: "clipboard:saveImage"
+};
 const WHISPER_CHANNELS = {
   TRANSCRIBE: "whisper:transcribe"
 };
+const WINDOW_CHANNELS = {
+  MINIMIZE: "window:minimize",
+  MAXIMIZE: "window:maximize",
+  CLOSE: "window:close",
+  IS_MAXIMIZED: "window:isMaximized",
+  MAXIMIZED_CHANGE: "window:maximized-change"
+};
+const LOG_CHANNELS = {
+  GET_LOGS: "log:getLogs",
+  ON_LOG: "log:onLog"
+};
+const MAX_ENTRIES = 500;
+class LoggerService {
+  entries = [];
+  log(level, source, message, data) {
+    const entry = {
+      timestamp: Date.now(),
+      level,
+      source,
+      message,
+      ...data !== void 0 && { data }
+    };
+    this.entries.push(entry);
+    if (this.entries.length > MAX_ENTRIES) {
+      this.entries.shift();
+    }
+    const prefix = `[${level.toUpperCase()}] [${source}]`;
+    if (level === "error") {
+      console.error(prefix, message, data ?? "");
+    } else if (level === "warn") {
+      console.warn(prefix, message, data ?? "");
+    } else {
+      console.log(prefix, message, data ?? "");
+    }
+    for (const win of electron.BrowserWindow.getAllWindows()) {
+      if (!win.isDestroyed()) {
+        win.webContents.send(LOG_CHANNELS.ON_LOG, entry);
+      }
+    }
+  }
+  debug(source, message, data) {
+    this.log("debug", source, message, data);
+  }
+  info(source, message, data) {
+    this.log("info", source, message, data);
+  }
+  warn(source, message, data) {
+    this.log("warn", source, message, data);
+  }
+  error(source, message, data) {
+    this.log("error", source, message, data);
+  }
+  getEntries() {
+    return [...this.entries];
+  }
+}
+const logger = new LoggerService();
 class PtyManager {
   sessions = /* @__PURE__ */ new Map();
+  platform;
+  constructor(platform2) {
+    this.platform = platform2;
+  }
   get shell() {
-    return process.env.SHELL || "/bin/bash";
+    return process.platform === "win32" ? process.env.COMSPEC || "powershell.exe" : process.env.SHELL || "/bin/bash";
   }
   create(id2, win, opts = {}) {
     const term = pty__namespace.spawn(opts.command || this.shell, opts.args || [], {
@@ -82,6 +151,7 @@ class PtyManager {
       env: process.env
     });
     this.sessions.set(id2, term);
+    logger.info("pty", `PTY created: ${id2} (pid=${term.pid})`);
     term.onData((data) => {
       if (!win.isDestroyed()) {
         win.webContents.send(PTY_CHANNELS.DATA, id2, data);
@@ -100,7 +170,8 @@ class PtyManager {
   resize(id2, cols, rows) {
     try {
       this.sessions.get(id2)?.resize(cols, rows);
-    } catch {
+    } catch (err) {
+      logger.warn("pty", `Resize failed for ${id2}`, err);
     }
   }
   destroy(id2) {
@@ -108,16 +179,13 @@ class PtyManager {
     if (term) {
       term.kill();
       this.sessions.delete(id2);
+      logger.info("pty", `PTY destroyed: ${id2}`);
     }
   }
   getCwd(id2) {
     const term = this.sessions.get(id2);
     if (!term) return null;
-    try {
-      return fs.readlinkSync(`/proc/${term.pid}/cwd`).toString();
-    } catch {
-      return null;
-    }
+    return this.platform.getCwd(term.pid);
   }
   destroyAll() {
     for (const [id2] of this.sessions) {
@@ -141,7 +209,8 @@ class FsService {
           size: stats.size,
           modified: stats.mtimeMs
         });
-      } catch {
+      } catch (err) {
+        logger.debug("fs", `readDir: failed to stat ${entry.name}`, err);
       }
     }
     results.sort((a, b) => {
@@ -237,6 +306,7 @@ class FsWatcher {
   watchers = /* @__PURE__ */ new Map();
   watch(dirPath, win) {
     if (this.watchers.has(dirPath)) return;
+    logger.debug("fs-watcher", `Watching: ${dirPath}`);
     const watcher = chokidar.watch(dirPath, {
       depth: 0,
       ignoreInitial: true,
@@ -252,6 +322,7 @@ class FsWatcher {
   unwatch(dirPath) {
     const watcher = this.watchers.get(dirPath);
     if (watcher) {
+      logger.debug("fs-watcher", `Unwatching: ${dirPath}`);
       watcher.close();
       this.watchers.delete(dirPath);
     }
@@ -263,62 +334,24 @@ class FsWatcher {
     this.watchers.clear();
   }
 }
-async function restoreFromTrash(originalPaths) {
-  const trashBase = path.join(os.homedir(), ".local/share/Trash");
-  const infoDir = path.join(trashBase, "info");
-  const filesDir = path.join(trashBase, "files");
-  let infoFiles;
-  try {
-    infoFiles = (await promises.readdir(infoDir)).filter((f) => f.endsWith(".trashinfo"));
-  } catch {
-    return { ok: 0, fail: originalPaths.length };
-  }
-  const trashMap = /* @__PURE__ */ new Map();
-  for (const infoFile of infoFiles) {
+function wrapHandler(channel, fn) {
+  return async (event, ...args) => {
     try {
-      const content = await promises.readFile(path.join(infoDir, infoFile), "utf-8");
-      const pathMatch = content.match(/Path=(.+)/);
-      if (!pathMatch) continue;
-      const trashedPath = decodeURIComponent(pathMatch[1].trim());
-      if (!originalPaths.includes(trashedPath)) continue;
-      const dateMatch = content.match(/DeletionDate=(.+)/);
-      const date = dateMatch ? new Date(dateMatch[1].trim()).getTime() : 0;
-      const trashName = infoFile.replace(/\.trashinfo$/, "");
-      const existing = trashMap.get(trashedPath);
-      if (!existing || date > existing.date) {
-        trashMap.set(trashedPath, { trashName, date });
-      }
-    } catch {
+      return await fn(event, ...args);
+    } catch (err) {
+      logger.error("ipc", `Handler error [${channel}]`, err instanceof Error ? err.message : err);
+      throw err;
     }
-  }
-  let ok = 0;
-  let fail = 0;
-  for (const originalPath of originalPaths) {
-    const entry = trashMap.get(originalPath);
-    if (!entry) {
-      fail++;
-      continue;
-    }
-    try {
-      const trashedFilePath = path.join(filesDir, entry.trashName);
-      await promises.mkdir(path.dirname(originalPath), { recursive: true });
-      await promises.rename(trashedFilePath, originalPath);
-      await promises.rm(path.join(infoDir, `${entry.trashName}.trashinfo`));
-      ok++;
-    } catch {
-      fail++;
-    }
-  }
-  return { ok, fail };
+  };
 }
-function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2) {
-  electron.ipcMain.handle(PTY_CHANNELS.CREATE, (event, opts) => {
+function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2, platform2) {
+  electron.ipcMain.handle(PTY_CHANNELS.CREATE, wrapHandler(PTY_CHANNELS.CREATE, (event, opts) => {
     const id2 = nanoid.nanoid();
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     if (!win) throw new Error("No window found");
     ptyManager2.create(id2, win, opts);
     return id2;
-  });
+  }));
   electron.ipcMain.on(PTY_CHANNELS.WRITE, (_event, id2, data) => {
     ptyManager2.write(id2, data);
   });
@@ -328,33 +361,30 @@ function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2) {
   electron.ipcMain.on(PTY_CHANNELS.DESTROY, (_event, id2) => {
     ptyManager2.destroy(id2);
   });
-  electron.ipcMain.handle(PTY_CHANNELS.GET_CWD, (_event, id2) => {
+  electron.ipcMain.handle(PTY_CHANNELS.GET_CWD, wrapHandler(PTY_CHANNELS.GET_CWD, (_event, id2) => {
     return ptyManager2.getCwd(id2);
-  });
-  electron.ipcMain.handle(FS_CHANNELS.READ_DIR, (_event, dirPath) => {
+  }));
+  electron.ipcMain.handle(FS_CHANNELS.READ_DIR, wrapHandler(FS_CHANNELS.READ_DIR, (_event, dirPath) => {
     return fsService2.readDir(dirPath);
-  });
-  electron.ipcMain.handle(FS_CHANNELS.STAT, (_event, filePath) => {
+  }));
+  electron.ipcMain.handle(FS_CHANNELS.STAT, wrapHandler(FS_CHANNELS.STAT, (_event, filePath) => {
     return fsService2.stat(filePath);
-  });
-  electron.ipcMain.handle(FS_CHANNELS.RENAME, (_event, oldPath, newPath) => {
+  }));
+  electron.ipcMain.handle(FS_CHANNELS.RENAME, wrapHandler(FS_CHANNELS.RENAME, (_event, oldPath, newPath) => {
     return fsService2.rename(oldPath, newPath);
-  });
-  electron.ipcMain.handle(FS_CHANNELS.DELETE, (_event, filePath) => {
+  }));
+  electron.ipcMain.handle(FS_CHANNELS.DELETE, wrapHandler(FS_CHANNELS.DELETE, (_event, filePath) => {
     return electron.shell.trashItem(filePath);
-  });
-  electron.ipcMain.handle(
-    FS_CHANNELS.RESTORE,
-    (_event, originalPaths) => {
-      return restoreFromTrash(originalPaths);
-    }
-  );
-  electron.ipcMain.handle(FS_CHANNELS.COPY, (event, srcPath, destDir) => {
+  }));
+  electron.ipcMain.handle(FS_CHANNELS.RESTORE, wrapHandler(FS_CHANNELS.RESTORE, (_event, originalPaths) => {
+    return platform2.restoreFromTrash(originalPaths);
+  }));
+  electron.ipcMain.handle(FS_CHANNELS.COPY, wrapHandler(FS_CHANNELS.COPY, (event, srcPath, destDir) => {
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     return fsService2.copy(srcPath, destDir, (done, total) => {
       if (win) win.webContents.send(FS_CHANNELS.COPY_PROGRESS, { done, total });
     });
-  });
+  }));
   electron.ipcMain.on(FS_CHANNELS.WATCH, (event, dirPath) => {
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     if (win) fsWatcher2.watch(dirPath, win);
@@ -622,8 +652,8 @@ function hasProperty(object, path2) {
   }
   return true;
 }
-const homedir = os$1.homedir();
-const tmpdir = os$1.tmpdir();
+const homedir = os.homedir();
+const tmpdir = os.tmpdir();
 const { env } = process$1;
 const macos = (name) => {
   const library = path$1.join(homedir, "Library");
@@ -777,44 +807,44 @@ const RETRYIFY_OPTIONS = {
 const FS = {
   attempt: {
     /* ASYNC */
-    chmod: attemptifyAsync(node_util.promisify(fs$1.chmod), ATTEMPTIFY_CHANGE_ERROR_OPTIONS),
-    chown: attemptifyAsync(node_util.promisify(fs$1.chown), ATTEMPTIFY_CHANGE_ERROR_OPTIONS),
-    close: attemptifyAsync(node_util.promisify(fs$1.close), ATTEMPTIFY_NOOP_OPTIONS),
-    fsync: attemptifyAsync(node_util.promisify(fs$1.fsync), ATTEMPTIFY_NOOP_OPTIONS),
-    mkdir: attemptifyAsync(node_util.promisify(fs$1.mkdir), ATTEMPTIFY_NOOP_OPTIONS),
-    realpath: attemptifyAsync(node_util.promisify(fs$1.realpath), ATTEMPTIFY_NOOP_OPTIONS),
-    stat: attemptifyAsync(node_util.promisify(fs$1.stat), ATTEMPTIFY_NOOP_OPTIONS),
-    unlink: attemptifyAsync(node_util.promisify(fs$1.unlink), ATTEMPTIFY_NOOP_OPTIONS),
+    chmod: attemptifyAsync(node_util.promisify(fs.chmod), ATTEMPTIFY_CHANGE_ERROR_OPTIONS),
+    chown: attemptifyAsync(node_util.promisify(fs.chown), ATTEMPTIFY_CHANGE_ERROR_OPTIONS),
+    close: attemptifyAsync(node_util.promisify(fs.close), ATTEMPTIFY_NOOP_OPTIONS),
+    fsync: attemptifyAsync(node_util.promisify(fs.fsync), ATTEMPTIFY_NOOP_OPTIONS),
+    mkdir: attemptifyAsync(node_util.promisify(fs.mkdir), ATTEMPTIFY_NOOP_OPTIONS),
+    realpath: attemptifyAsync(node_util.promisify(fs.realpath), ATTEMPTIFY_NOOP_OPTIONS),
+    stat: attemptifyAsync(node_util.promisify(fs.stat), ATTEMPTIFY_NOOP_OPTIONS),
+    unlink: attemptifyAsync(node_util.promisify(fs.unlink), ATTEMPTIFY_NOOP_OPTIONS),
     /* SYNC */
-    chmodSync: attemptifySync(fs$1.chmodSync, ATTEMPTIFY_CHANGE_ERROR_OPTIONS),
-    chownSync: attemptifySync(fs$1.chownSync, ATTEMPTIFY_CHANGE_ERROR_OPTIONS),
-    closeSync: attemptifySync(fs$1.closeSync, ATTEMPTIFY_NOOP_OPTIONS),
-    existsSync: attemptifySync(fs$1.existsSync, ATTEMPTIFY_NOOP_OPTIONS),
-    fsyncSync: attemptifySync(fs$1.fsync, ATTEMPTIFY_NOOP_OPTIONS),
-    mkdirSync: attemptifySync(fs$1.mkdirSync, ATTEMPTIFY_NOOP_OPTIONS),
-    realpathSync: attemptifySync(fs$1.realpathSync, ATTEMPTIFY_NOOP_OPTIONS),
-    statSync: attemptifySync(fs$1.statSync, ATTEMPTIFY_NOOP_OPTIONS),
-    unlinkSync: attemptifySync(fs$1.unlinkSync, ATTEMPTIFY_NOOP_OPTIONS)
+    chmodSync: attemptifySync(fs.chmodSync, ATTEMPTIFY_CHANGE_ERROR_OPTIONS),
+    chownSync: attemptifySync(fs.chownSync, ATTEMPTIFY_CHANGE_ERROR_OPTIONS),
+    closeSync: attemptifySync(fs.closeSync, ATTEMPTIFY_NOOP_OPTIONS),
+    existsSync: attemptifySync(fs.existsSync, ATTEMPTIFY_NOOP_OPTIONS),
+    fsyncSync: attemptifySync(fs.fsync, ATTEMPTIFY_NOOP_OPTIONS),
+    mkdirSync: attemptifySync(fs.mkdirSync, ATTEMPTIFY_NOOP_OPTIONS),
+    realpathSync: attemptifySync(fs.realpathSync, ATTEMPTIFY_NOOP_OPTIONS),
+    statSync: attemptifySync(fs.statSync, ATTEMPTIFY_NOOP_OPTIONS),
+    unlinkSync: attemptifySync(fs.unlinkSync, ATTEMPTIFY_NOOP_OPTIONS)
   },
   retry: {
     /* ASYNC */
-    close: retryifyAsync(node_util.promisify(fs$1.close), RETRYIFY_OPTIONS),
-    fsync: retryifyAsync(node_util.promisify(fs$1.fsync), RETRYIFY_OPTIONS),
-    open: retryifyAsync(node_util.promisify(fs$1.open), RETRYIFY_OPTIONS),
-    readFile: retryifyAsync(node_util.promisify(fs$1.readFile), RETRYIFY_OPTIONS),
-    rename: retryifyAsync(node_util.promisify(fs$1.rename), RETRYIFY_OPTIONS),
-    stat: retryifyAsync(node_util.promisify(fs$1.stat), RETRYIFY_OPTIONS),
-    write: retryifyAsync(node_util.promisify(fs$1.write), RETRYIFY_OPTIONS),
-    writeFile: retryifyAsync(node_util.promisify(fs$1.writeFile), RETRYIFY_OPTIONS),
+    close: retryifyAsync(node_util.promisify(fs.close), RETRYIFY_OPTIONS),
+    fsync: retryifyAsync(node_util.promisify(fs.fsync), RETRYIFY_OPTIONS),
+    open: retryifyAsync(node_util.promisify(fs.open), RETRYIFY_OPTIONS),
+    readFile: retryifyAsync(node_util.promisify(fs.readFile), RETRYIFY_OPTIONS),
+    rename: retryifyAsync(node_util.promisify(fs.rename), RETRYIFY_OPTIONS),
+    stat: retryifyAsync(node_util.promisify(fs.stat), RETRYIFY_OPTIONS),
+    write: retryifyAsync(node_util.promisify(fs.write), RETRYIFY_OPTIONS),
+    writeFile: retryifyAsync(node_util.promisify(fs.writeFile), RETRYIFY_OPTIONS),
     /* SYNC */
-    closeSync: retryifySync(fs$1.closeSync, RETRYIFY_OPTIONS),
-    fsyncSync: retryifySync(fs$1.fsyncSync, RETRYIFY_OPTIONS),
-    openSync: retryifySync(fs$1.openSync, RETRYIFY_OPTIONS),
-    readFileSync: retryifySync(fs$1.readFileSync, RETRYIFY_OPTIONS),
-    renameSync: retryifySync(fs$1.renameSync, RETRYIFY_OPTIONS),
-    statSync: retryifySync(fs$1.statSync, RETRYIFY_OPTIONS),
-    writeSync: retryifySync(fs$1.writeSync, RETRYIFY_OPTIONS),
-    writeFileSync: retryifySync(fs$1.writeFileSync, RETRYIFY_OPTIONS)
+    closeSync: retryifySync(fs.closeSync, RETRYIFY_OPTIONS),
+    fsyncSync: retryifySync(fs.fsyncSync, RETRYIFY_OPTIONS),
+    openSync: retryifySync(fs.openSync, RETRYIFY_OPTIONS),
+    readFileSync: retryifySync(fs.readFileSync, RETRYIFY_OPTIONS),
+    renameSync: retryifySync(fs.renameSync, RETRYIFY_OPTIONS),
+    statSync: retryifySync(fs.statSync, RETRYIFY_OPTIONS),
+    writeSync: retryifySync(fs.writeSync, RETRYIFY_OPTIONS),
+    writeFileSync: retryifySync(fs.writeFileSync, RETRYIFY_OPTIONS)
   }
 };
 const DEFAULT_ENCODING = "utf8";
@@ -5354,13 +5384,13 @@ function requireCore$1() {
     }, warn() {
     }, error() {
     } };
-    function getLogger(logger) {
-      if (logger === false)
+    function getLogger(logger2) {
+      if (logger2 === false)
         return noLogs;
-      if (logger === void 0)
+      if (logger2 === void 0)
         return console;
-      if (logger.log && logger.warn && logger.error)
-        return logger;
+      if (logger2.log && logger2.warn && logger2.error)
+        return logger2;
       throw new Error("logger must implement log, warn and error methods");
     }
     const KEYWORD_NAME = /^[a-z_$][a-z0-9_$:-]*$/i;
@@ -10550,7 +10580,7 @@ class Conf {
       */
   get store() {
     try {
-      const data = fs$1.readFileSync(this.path, this.#encryptionKey ? null : "utf8");
+      const data = fs.readFileSync(this.path, this.#encryptionKey ? null : "utf8");
       const dataString = this._decryptData(data);
       const parseStore = (value) => {
         const deserializedData = this._deserialize(value);
@@ -10584,7 +10614,7 @@ class Conf {
     this._ensureDirectory();
     if (!hasProperty(value, INTERNAL_KEY)) {
       try {
-        const data = fs$1.readFileSync(this.path, this.#encryptionKey ? null : "utf8");
+        const data = fs.readFileSync(this.path, this.#encryptionKey ? null : "utf8");
         const dataString = this._decryptData(data);
         const currentStore = this._deserialize(dataString);
         if (hasProperty(currentStore, INTERNAL_KEY)) {
@@ -10615,7 +10645,7 @@ class Conf {
       this.#watcher = void 0;
     }
     if (this.#watchFile) {
-      fs$1.unwatchFile(this.path);
+      fs.unwatchFile(this.path);
       this.#watchFile = false;
     }
     this.#debouncedChangeHandler = void 0;
@@ -10720,7 +10750,7 @@ class Conf {
     throw new Error("Config schema violation: " + errors2.join("; "));
   }
   _ensureDirectory() {
-    fs$1.mkdirSync(path$1.dirname(this.path), { recursive: true });
+    fs.mkdirSync(path$1.dirname(this.path), { recursive: true });
   }
   _write(value) {
     let data = this._serialize(value);
@@ -10737,13 +10767,13 @@ class Conf {
       data = concatUint8Arrays(encryptedParts);
     }
     if (process$1.env.SNAP) {
-      fs$1.writeFileSync(this.path, data, { mode: this.#options.configFileMode });
+      fs.writeFileSync(this.path, data, { mode: this.#options.configFileMode });
     } else {
       try {
         writeFileSync(this.path, data, { mode: this.#options.configFileMode });
       } catch (error) {
         if (error?.code === "EXDEV") {
-          fs$1.writeFileSync(this.path, data, { mode: this.#options.configFileMode });
+          fs.writeFileSync(this.path, data, { mode: this.#options.configFileMode });
           return;
         }
         throw error;
@@ -10752,7 +10782,7 @@ class Conf {
   }
   _watch() {
     this._ensureDirectory();
-    if (!fs$1.existsSync(this.path)) {
+    if (!fs.existsSync(this.path)) {
       this._write(createPlainObject());
     }
     if (process$1.platform === "win32" || process$1.platform === "darwin") {
@@ -10761,7 +10791,7 @@ class Conf {
       }, { wait: 100 });
       const directory = path$1.dirname(this.path);
       const basename = path$1.basename(this.path);
-      this.#watcher = fs$1.watch(directory, { persistent: false, encoding: "utf8" }, (_eventType, filename) => {
+      this.#watcher = fs.watch(directory, { persistent: false, encoding: "utf8" }, (_eventType, filename) => {
         if (filename && filename !== basename) {
           return;
         }
@@ -10773,7 +10803,7 @@ class Conf {
       this.#debouncedChangeHandler ??= debounceFunction(() => {
         this.events.dispatchEvent(new Event("change"));
       }, { wait: 1e3 });
-      fs$1.watchFile(this.path, { persistent: false }, (_current, _previous) => {
+      fs.watchFile(this.path, { persistent: false }, (_current, _previous) => {
         if (typeof this.#debouncedChangeHandler === "function") {
           this.#debouncedChangeHandler();
         }
@@ -11072,23 +11102,26 @@ const SettingsService = {
 };
 function broadcastSettings(settings) {
   for (const win of electron.BrowserWindow.getAllWindows()) {
-    win.webContents.send(SETTINGS_CHANNELS.CHANGED, settings);
+    if (!win.isDestroyed()) {
+      win.webContents.send(SETTINGS_CHANNELS.CHANGED, settings);
+    }
   }
 }
 function registerSettingsHandlers() {
-  electron.ipcMain.handle(SETTINGS_CHANNELS.GET, () => {
+  electron.ipcMain.handle(SETTINGS_CHANNELS.GET, wrapHandler(SETTINGS_CHANNELS.GET, () => {
     return SettingsService.getAll();
-  });
-  electron.ipcMain.handle(SETTINGS_CHANNELS.UPDATE, (_event, partial) => {
+  }));
+  electron.ipcMain.handle(SETTINGS_CHANNELS.UPDATE, wrapHandler(SETTINGS_CHANNELS.UPDATE, (_event, partial) => {
+    logger.info("settings", "Settings updated", Object.keys(partial));
     const settings = SettingsService.update(partial);
     broadcastSettings(settings);
     return settings;
-  });
-  electron.ipcMain.handle(SETTINGS_CHANNELS.RESET, () => {
+  }));
+  electron.ipcMain.handle(SETTINGS_CHANNELS.RESET, wrapHandler(SETTINGS_CHANNELS.RESET, () => {
     const settings = SettingsService.reset();
     broadcastSettings(settings);
     return settings;
-  });
+  }));
 }
 const store = new ElectronStore({
   name: "terma-session",
@@ -11103,21 +11136,22 @@ const SessionService = {
   }
 };
 function registerSessionHandlers() {
-  electron.ipcMain.handle(SESSION_CHANNELS.SAVE, (_event, state) => {
+  electron.ipcMain.handle(SESSION_CHANNELS.SAVE, wrapHandler(SESSION_CHANNELS.SAVE, (_event, state) => {
     SessionService.save(state);
-  });
-  electron.ipcMain.handle(SESSION_CHANNELS.LOAD, () => {
+  }));
+  electron.ipcMain.handle(SESSION_CHANNELS.LOAD, wrapHandler(SESSION_CHANNELS.LOAD, () => {
     return SessionService.load();
-  });
+  }));
 }
 function registerWhisperHandlers() {
   electron.ipcMain.handle(
     WHISPER_CHANNELS.TRANSCRIBE,
-    async (_event, audioBytes) => {
+    wrapHandler(WHISPER_CHANNELS.TRANSCRIBE, async (_event, audioBytes) => {
       const { openaiApiKey, whisperLanguage } = SettingsService.getAll();
       if (!openaiApiKey) {
         throw new Error("OpenAI API key is not configured");
       }
+      logger.info("whisper", "Transcription started");
       const boundary = "----FormBoundary" + Math.random().toString(36).slice(2);
       const filename = "audio.webm";
       const parts = [];
@@ -11175,12 +11209,133 @@ ${whisperLanguage || "ru"}\r
         throw new Error(`Whisper API error ${res.status}: ${errText}`);
       }
       const text = await res.text();
+      logger.info("whisper", "Transcription complete");
       return text.trim();
-    }
+    })
   );
 }
+function registerLogHandlers() {
+  electron.ipcMain.handle(LOG_CHANNELS.GET_LOGS, () => {
+    return logger.getEntries();
+  });
+}
+class LinuxPlatformService {
+  getCwd(pid) {
+    try {
+      return fs$1.readlinkSync(`/proc/${pid}/cwd`).toString();
+    } catch (err) {
+      logger.debug("platform", `getCwd failed for pid ${pid}`, err);
+      return null;
+    }
+  }
+  getClipboardFilePaths() {
+    const formats2 = ["x-special/gnome-copied-files", "x-special/kde-copied-files", "text/uri-list"];
+    for (const fmt of formats2) {
+      const raw = electron.clipboard.readBuffer(fmt).toString("utf-8");
+      if (!raw.trim()) continue;
+      return raw.split(/\r?\n/).filter((line) => line.startsWith("file://")).map((uri2) => decodeURIComponent(new URL(uri2.trim()).pathname));
+    }
+    return [];
+  }
+  async restoreFromTrash(originalPaths) {
+    const trashBase = path.join(os$1.homedir(), ".local/share/Trash");
+    const infoDir = path.join(trashBase, "info");
+    const filesDir = path.join(trashBase, "files");
+    let infoFiles;
+    try {
+      infoFiles = (await promises.readdir(infoDir)).filter((f) => f.endsWith(".trashinfo"));
+    } catch {
+      return { ok: 0, fail: originalPaths.length };
+    }
+    const trashMap = /* @__PURE__ */ new Map();
+    for (const infoFile of infoFiles) {
+      try {
+        const content = await promises.readFile(path.join(infoDir, infoFile), "utf-8");
+        const pathMatch = content.match(/Path=(.+)/);
+        if (!pathMatch) continue;
+        const trashedPath = decodeURIComponent(pathMatch[1].trim());
+        if (!originalPaths.includes(trashedPath)) continue;
+        const dateMatch = content.match(/DeletionDate=(.+)/);
+        const date = dateMatch ? new Date(dateMatch[1].trim()).getTime() : 0;
+        const trashName = infoFile.replace(/\.trashinfo$/, "");
+        const existing = trashMap.get(trashedPath);
+        if (!existing || date > existing.date) {
+          trashMap.set(trashedPath, { trashName, date });
+        }
+      } catch {
+      }
+    }
+    let ok = 0;
+    let fail = 0;
+    for (const originalPath of originalPaths) {
+      const entry = trashMap.get(originalPath);
+      if (!entry) {
+        fail++;
+        continue;
+      }
+      try {
+        const trashedFilePath = path.join(filesDir, entry.trashName);
+        await promises.mkdir(path.dirname(originalPath), { recursive: true });
+        await promises.rename(trashedFilePath, originalPath);
+        await promises.rm(path.join(infoDir, `${entry.trashName}.trashinfo`));
+        ok++;
+      } catch {
+        fail++;
+      }
+    }
+    logger.info("platform", `Trash restore: ${ok} ok, ${fail} fail`);
+    return { ok, fail };
+  }
+}
+class MacPlatformService {
+  getCwd(pid) {
+    try {
+      const result = child_process.execSync(`lsof -p ${pid} -Fn 2>/dev/null | grep '^ncwd' | cut -c5-`, {
+        timeout: 2e3,
+        encoding: "utf-8"
+      }).trim();
+      return result || null;
+    } catch (err) {
+      logger.debug("platform", `getCwd failed for pid ${pid}`, err);
+      return null;
+    }
+  }
+  getClipboardFilePaths() {
+    return [];
+  }
+  async restoreFromTrash(_originalPaths) {
+    return { ok: 0, fail: _originalPaths.length };
+  }
+}
+class WindowsPlatformService {
+  getCwd(_pid) {
+    return null;
+  }
+  getClipboardFilePaths() {
+    return [];
+  }
+  async restoreFromTrash(_originalPaths) {
+    return { ok: 0, fail: _originalPaths.length };
+  }
+}
+function createPlatformService() {
+  switch (process.platform) {
+    case "darwin":
+      return new MacPlatformService();
+    case "win32":
+      return new WindowsPlatformService();
+    default:
+      return new LinuxPlatformService();
+  }
+}
 electron.app.commandLine.appendSwitch("no-sandbox");
-const ptyManager = new PtyManager();
+electron.app.setName("terma");
+if (process.platform === "linux") {
+  electron.app.commandLine.appendSwitch("class", "terma");
+  electron.app.commandLine.appendSwitch("ozone-platform-hint", "auto");
+}
+const platform = createPlatformService();
+const ptyManager = new PtyManager(platform);
 const fsService = new FsService();
 const fsWatcher = new FsWatcher();
 function createWindow() {
@@ -11192,6 +11347,7 @@ function createWindow() {
     frame: false,
     titleBarStyle: "hidden",
     backgroundColor: "#191c24",
+    icon: electron.app.isPackaged ? path.join(process.resourcesPath, "icon-256.png") : path.join(__dirname, "../../assets/icon-256.png"),
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       sandbox: false
@@ -11214,20 +11370,16 @@ function createWindow() {
   return win;
 }
 electron.app.whenReady().then(() => {
-  registerIpcHandlers(ptyManager, fsService, fsWatcher);
+  registerIpcHandlers(ptyManager, fsService, fsWatcher, platform);
   registerSettingsHandlers();
   registerSessionHandlers();
   registerWhisperHandlers();
-  electron.ipcMain.handle("clipboard:readFilePaths", () => {
-    const formats2 = ["x-special/gnome-copied-files", "x-special/kde-copied-files", "text/uri-list"];
-    for (const fmt of formats2) {
-      const raw = electron.clipboard.readBuffer(fmt).toString("utf-8");
-      if (!raw.trim()) continue;
-      return raw.split(/\r?\n/).filter((line) => line.startsWith("file://")).map((uri2) => decodeURIComponent(new URL(uri2.trim()).pathname));
-    }
-    return [];
+  registerLogHandlers();
+  logger.info("app", "App ready");
+  electron.ipcMain.handle(CLIPBOARD_CHANNELS.READ_FILE_PATHS, () => {
+    return platform.getClipboardFilePaths();
   });
-  electron.ipcMain.handle("clipboard:saveImage", async (_event, destDir) => {
+  electron.ipcMain.handle(CLIPBOARD_CHANNELS.SAVE_IMAGE, async (_event, destDir) => {
     const img = electron.clipboard.readImage();
     if (img.isEmpty()) return null;
     const png = img.toPNG();
@@ -11256,14 +11408,14 @@ electron.app.whenReady().then(() => {
     await promises.writeFile(filePath, png);
     return filePath;
   });
-  electron.ipcMain.handle("shell:openPath", (_event, path2) => electron.shell.openPath(path2));
-  electron.ipcMain.handle("shell:openWith", (_event, command, filePath) => {
+  electron.ipcMain.handle(SHELL_CHANNELS.OPEN_PATH, (_event, path2) => electron.shell.openPath(path2));
+  electron.ipcMain.handle(SHELL_CHANNELS.OPEN_WITH, (_event, command, filePath) => {
     child_process.spawn(command, [filePath], { detached: true, stdio: "ignore" }).unref();
   });
-  electron.ipcMain.on("window:minimize", (event) => {
+  electron.ipcMain.on(WINDOW_CHANNELS.MINIMIZE, (event) => {
     electron.BrowserWindow.fromWebContents(event.sender)?.minimize();
   });
-  electron.ipcMain.on("window:maximize", (event) => {
+  electron.ipcMain.on(WINDOW_CHANNELS.MAXIMIZE, (event) => {
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     if (win?.isMaximized()) {
       win.unmaximize();
@@ -11271,15 +11423,16 @@ electron.app.whenReady().then(() => {
       win?.maximize();
     }
   });
-  electron.ipcMain.on("window:close", (event) => {
+  electron.ipcMain.on(WINDOW_CHANNELS.CLOSE, (event) => {
     electron.BrowserWindow.fromWebContents(event.sender)?.close();
   });
-  electron.ipcMain.handle("window:isMaximized", (event) => {
+  electron.ipcMain.handle(WINDOW_CHANNELS.IS_MAXIMIZED, (event) => {
     return electron.BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false;
   });
   const mainWin = createWindow();
-  mainWin.on("maximize", () => mainWin.webContents.send("window:maximized-change", true));
-  mainWin.on("unmaximize", () => mainWin.webContents.send("window:maximized-change", false));
+  logger.info("app", "Window created");
+  mainWin.on("maximize", () => mainWin.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, true));
+  mainWin.on("unmaximize", () => mainWin.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, false));
   electron.app.on("activate", () => {
     if (electron.BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -11287,6 +11440,7 @@ electron.app.whenReady().then(() => {
   });
 });
 electron.app.on("window-all-closed", () => {
+  logger.info("app", "All windows closed");
   ptyManager.destroyAll();
   fsWatcher.unwatchAll();
   if (process.platform !== "darwin") {
@@ -11294,6 +11448,7 @@ electron.app.on("window-all-closed", () => {
   }
 });
 electron.app.on("before-quit", () => {
+  logger.info("app", "Quitting");
   ptyManager.destroyAll();
   fsWatcher.unwatchAll();
 });

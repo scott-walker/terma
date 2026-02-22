@@ -1,6 +1,6 @@
 # Main Process
 
-Main process — это Node.js процесс Electron, отвечающий за управление окнами, PTY-сессиями и доступ к файловой системе.
+Main process — это Node.js процесс Electron, отвечающий за управление окнами, PTY-сессиями, файловой системой, настройками, сессиями и логированием.
 
 **Файл:** `src/main/index.ts`
 
@@ -9,11 +9,10 @@ Main process — это Node.js процесс Electron, отвечающий з
 При запуске main process:
 
 1. Устанавливает `--no-sandbox` флаг (решение проблемы chrome-sandbox на Linux)
-2. Инициализирует синглтоны: `PtyManager`, `FsService`, `FsWatcher`
+2. Инициализирует синглтоны: `PtyManager`, `FsService`, `FsWatcher`, `SessionService`, `SettingsService`, `LoggerService`
 3. Дожидается `app.whenReady()`
-4. Регистрирует все IPC-обработчики
-5. Регистрирует обработчики управления окном (`window:minimize/maximize/close`)
-6. Создаёт главное `BrowserWindow`
+4. Регистрирует все IPC-обработчики (разделены на модули)
+5. Создаёт главное `BrowserWindow`
 
 ### Конфигурация окна
 
@@ -56,6 +55,7 @@ new BrowserWindow({
 | `resize(id, cols, rows)` | Изменяет размер PTY |
 | `destroy(id)` | Убивает PTY-процесс и удаляет из карты |
 | `destroyAll()` | Уничтожает все сессии |
+| `getCwd(id)` | Получает текущий рабочий каталог PTY |
 
 ### Создание PTY
 
@@ -68,6 +68,8 @@ pty.spawn(shell, [], {
   env: process.env         // Наследует всё окружение
 })
 ```
+
+Поддерживается запуск произвольной команды через `opts.command` и `opts.args` (используется для agent-панелей).
 
 Shell определяется из `process.env.SHELL`, fallback на `/bin/bash`.
 
@@ -99,7 +101,9 @@ Shell определяется из `process.env.SHELL`, fallback на `/bin/bas
 | `readDir(dirPath)` | Читает содержимое директории, возвращает `FileEntry[]` |
 | `stat(filePath)` | Получает метаданные файла |
 | `rename(oldPath, newPath)` | Переименовывает/перемещает файл |
-| `delete(filePath)` | Удаляет файл или директорию (рекурсивно) |
+| `delete(filePath)` | Удаляет файл или директорию (перемещает в корзину) |
+| `restore(originalPaths)` | Восстанавливает файлы из корзины (Linux) |
+| `copy(srcPath, destDir)` | Копирует файл/директорию с прогрессом |
 
 ### FileEntry
 
@@ -123,6 +127,10 @@ interface FileEntry {
 ### Обработка ошибок
 
 Файлы, к которым нет доступа (permission denied), тихо пропускаются в `readDir`, вместо того чтобы прерывать чтение всей директории.
+
+### Копирование с прогрессом
+
+`copy()` поддерживает рекурсивное копирование директорий. Прогресс отправляется в renderer через канал `fs:copyProgress` в формате `{ done, total }`.
 
 ---
 
@@ -154,7 +162,7 @@ watch(dirPath, {
 
 ### События
 
-При любом изменении (add, change, unlink) отправляет в renderer:
+При любом изменении (add, change, unlink, addDir, unlinkDir) отправляет в renderer:
 
 ```typescript
 { event: string, path: string, dirPath: string }
@@ -162,12 +170,80 @@ watch(dirPath, {
 
 ---
 
+## SessionService
+
+**Файл:** `src/main/sessions/session-service.ts`
+
+Персистентность сессий через `electron-store`.
+
+### API
+
+| Метод | Описание |
+|-------|----------|
+| `save(state)` | Сохраняет снимок сессии |
+| `load()` | Загружает последнюю сессию (или `null`) |
+
+### Формат SessionState
+
+```typescript
+interface SessionState {
+  tabs: Record<string, TabSnapshot>
+  tabOrder: string[]
+  activeTabId: string | null
+  fileManagerPanes: Record<string, { rootPath: string; expandedDirs: string[] }>
+}
+```
+
+---
+
+## SettingsService
+
+Персистентность настроек через `electron-store`.
+
+### API
+
+| Метод | Описание |
+|-------|----------|
+| `get()` | Получить текущие настройки |
+| `update(partial)` | Обновить часть настроек, broadcast всем окнам |
+| `reset()` | Сбросить к значениям по умолчанию |
+
+При обновлении настроек автоматически отправляет `settings:changed` во все окна для синхронизации.
+
+---
+
+## LoggerService
+
+**Файл:** `src/main/services/logger-service.ts`
+
+In-memory буфер логов с broadcast в renderer.
+
+- Хранит до **500 записей** (MAX_ENTRIES)
+- Каждая запись: `{ timestamp, level, source, message, data? }`
+- Уровни: `debug`, `info`, `warn`, `error`
+- При добавлении новой записи автоматически отправляет её во все открытые окна через `log:onLog`
+- Renderer может запросить все логи через `log:getLogs`
+
+---
+
+## PlatformService
+
+**Файл:** `src/main/services/platform-service.ts`
+
+Платформо-зависимая логика для Linux, macOS и Windows: определение путей к корзине, открытие файлов в системных приложениях и др.
+
+---
+
 ## Управление окном
 
-Main process обрабатывает три IPC-сообщения для управления frameless окном:
+Main process обрабатывает IPC-сообщения для управления frameless окном:
 
 | Канал | Действие |
 |-------|----------|
 | `window:minimize` | `win.minimize()` |
 | `window:maximize` | Toggle: `maximize()` ↔ `unmaximize()` |
 | `window:close` | `win.close()` |
+| `window:isMaximized` | Возвращает текущее состояние maximize |
+| `window:maximized-change` | Событие при смене состояния maximize |
+
+При смене состояния maximize/unmaximize отправляет событие в renderer для обновления UI (бордюры окна видны только в не-maximize режиме).

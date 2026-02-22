@@ -1,20 +1,8 @@
-interface FileEntry {
-  name: string
-  path: string
-  isDirectory: boolean
-  isSymlink: boolean
-  size: number
-  modified: number
-}
-
-interface FsEvent {
-  event: string
-  path: string
-  dirPath: string
-}
+import type { FileEntry, FsEvent, SessionState } from '@shared/types'
+import type { TerminalSettings } from '@shared/settings'
 
 interface PtyApi {
-  create(opts?: { cols?: number; rows?: number; cwd?: string }): Promise<string>
+  create(opts?: { cols?: number; rows?: number; cwd?: string; command?: string; args?: string[] }): Promise<string>
   write(id: string, data: string): void
   resize(id: string, cols: number, rows: number): void
   destroy(id: string): void
@@ -36,29 +24,11 @@ interface FsApi {
   onFsEvent(cb: (event: FsEvent) => void): () => void
 }
 
-interface TerminalSettings {
-  activeThemeId: string
-  fontFamily: string
-  fontSize: number
-  lineHeight: number
-  cursorBlink: boolean
-  cursorStyle: 'bar' | 'block' | 'underline'
-  scrollback: number
-  zoomLevel: number
-}
-
 interface SettingsApi {
   get(): Promise<TerminalSettings>
   update(partial: Partial<TerminalSettings>): Promise<TerminalSettings>
   reset(): Promise<TerminalSettings>
   onChanged(cb: (settings: TerminalSettings) => void): () => void
-}
-
-interface SessionState {
-  tabs: Record<string, unknown>
-  tabOrder: string[]
-  activeTabId: string | null
-  fileManagerPanes: Record<string, { rootPath: string; expandedDirs: string[] }>
 }
 
 interface SessionApi {
@@ -89,6 +59,11 @@ interface WhisperApi {
   transcribe(audioBuffer: ArrayBuffer): Promise<string>
 }
 
+interface LogApi {
+  getLogs(): Promise<import('@shared/types').LogEntry[]>
+  onLog(cb: (entry: import('@shared/types').LogEntry) => void): () => void
+}
+
 declare global {
   interface Window {
     api: {
@@ -100,6 +75,7 @@ declare global {
       clipboard: ClipboardApi
       window: WindowApi
       whisper: WhisperApi
+      log: LogApi
     }
   }
 }

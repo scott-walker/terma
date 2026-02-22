@@ -13,9 +13,10 @@ npm run dev
 ### Добавление нового IPC-канала
 
 1. Объявите константу канала в `src/shared/channels.ts`
-2. Добавьте обработчик в `src/main/ipc/handlers.ts`
-3. Добавьте метод в preload API (`src/preload/index.ts`)
-4. Обновите типы в `src/renderer/src/types/electron.d.ts`
+2. Создайте обработчик в `src/main/ipc/` (отдельный файл или добавьте в существующий)
+3. Зарегистрируйте обработчик в `src/main/index.ts`
+4. Добавьте метод в preload API (`src/preload/index.ts`)
+5. Обновите типы в `src/renderer/src/types/electron.d.ts`
 
 ### Добавление нового Zustand store
 
@@ -27,7 +28,21 @@ npm run dev
 
 1. Создайте файл в соответствующей поддиректории `components/`
 2. Используйте именованный экспорт (`export function Component`)
-3. Стили — Tailwind utility classes
+3. Стили — Tailwind utility classes (никаких CSS-классов, никаких hardcoded цветов)
+4. Цвета — только из `@theme`-токенов (`bg-base`, `text-fg`, `border-border` и т.д.)
+
+### Добавление нового типа панели
+
+1. Добавьте значение в `PaneType` в `src/shared/types.ts`
+2. Добавьте конфигурацию в `PANE_TYPE_CONFIGS` в `src/renderer/src/lib/pane-types.ts`
+3. Добавьте ветку рендеринга в `PaneContent.tsx`
+4. При необходимости — обработчик в `terminal-manager.ts`
+
+### Добавление новой темы
+
+1. Добавьте объект `ThemePreset` в массив `PRESET_THEMES` в `src/shared/themes.ts`
+2. Тема автоматически появится в панели настроек
+3. `applyThemeToDOM()` автоматически сгенерирует UI-токены из новой палитры
 
 ## Процесс разработки
 
@@ -51,6 +66,9 @@ npm run dev
 # Запустить с inspect
 npx electron-vite dev -- --inspect
 ```
+
+#### In-app логи
+StatusBar содержит кнопку копирования логов. Логи можно получить через `window.api.log.getLogs()` в DevTools console.
 
 #### node-pty
 При проблемах с node-pty:
@@ -99,24 +117,14 @@ Addons совместимы с v5, но **не** с v6 (на момент раз
 
 На Linux без правильно настроенного SUID sandbox Electron не запустится. Решение: `app.commandLine.appendSwitch('no-sandbox')` в main process.
 
-### PTY утечки памяти
+### PTY утечки
 
-При закрытии таба все PTY в его layout-дереве должны быть уничтожены. Это обрабатывается в `tab-store.closeTab()`. Если PTY не уничтожаются — shell-процессы продолжают жить.
+При закрытии таба все PTY в его layout-дереве должны быть уничтожены. Это обрабатывается в `tab-store.closeTab()` через `terminal-manager.destroy()`. Если PTY не уничтожаются — shell-процессы продолжают жить.
 
 ### ResizeObserver
 
 При быстром ресайзе окна `fitAddon.fit()` может выбросить ошибку. Все вызовы обёрнуты в `try/catch` и выполняются через `requestAnimationFrame`.
 
-## Дорожная карта
+### Session restore
 
-### Фаза 6 — Полировка
-
-- [ ] Настройки через JSON-конфиг (шрифт, размер, тема, shell)
-- [ ] Переключение тёмная/светлая тема
-- [ ] Настраиваемые горячие клавиши
-- [ ] Профили shell
-- [ ] Drag-and-drop табов
-- [ ] Навигация между панелями по Alt+Arrow
-- [ ] Поиск в терминале (Ctrl+Shift+F)
-- [ ] Контекстное меню файлового менеджера
-- [ ] Персистентность workspace через electron-store
+При восстановлении сессии `terminalId` не переносится (PTY-процессы не выживают). Вместо этого восстанавливается `cwd` каждой панели, и новые PTY создаются с правильным рабочим каталогом.

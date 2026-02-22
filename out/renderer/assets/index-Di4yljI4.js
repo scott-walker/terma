@@ -12530,7 +12530,7 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$p = [
+const __iconNode$q = [
   ["path", { d: "M12 8V4H8", key: "hb8ula" }],
   ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
   ["path", { d: "M2 14h2", key: "vft8re" }],
@@ -12538,9 +12538,17 @@ const __iconNode$p = [
   ["path", { d: "M15 13v2", key: "1xurst" }],
   ["path", { d: "M9 13v2", key: "rq6x2g" }]
 ];
-const Bot = createLucideIcon("bot", __iconNode$p);
-const __iconNode$o = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$o);
+const Bot = createLucideIcon("bot", __iconNode$q);
+const __iconNode$p = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$p);
+const __iconNode$o = [
+  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
+  ["path", { d: "M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2", key: "4jdomd" }],
+  ["path", { d: "M16 4h2a2 2 0 0 1 2 2v4", key: "3hqy98" }],
+  ["path", { d: "M21 14H11", key: "1bme5i" }],
+  ["path", { d: "m15 10-4 4 4 4", key: "5dvupr" }]
+];
+const ClipboardCopy = createLucideIcon("clipboard-copy", __iconNode$o);
 const __iconNode$n = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M12 3v18", key: "108xh3" }]
@@ -12915,39 +12923,76 @@ function matchesGlob(filename, pattern) {
   const regex = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".");
   return new RegExp(`^${regex}$`, "i").test(filename);
 }
+const useToastStore = create((set) => ({
+  toasts: [],
+  addToast: (type, message) => {
+    const id2 = crypto.randomUUID();
+    set((s) => ({ toasts: [...s.toasts, { id: id2, type, message }] }));
+    setTimeout(() => {
+      set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id2) }));
+    }, 3e3);
+  },
+  removeToast: (id2) => {
+    set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id2) }));
+  }
+}));
 const useSettingsStore = create((set, get) => ({
   settings: DEFAULT_SETTINGS,
   loaded: false,
   settingsOpen: false,
   loadSettings: async () => {
-    const settings = await window.api.settings.get();
-    set({ settings, loaded: true });
+    try {
+      const settings = await window.api.settings.get();
+      set({ settings, loaded: true });
+    } catch {
+      useToastStore.getState().addToast("error", "Failed to load settings");
+    }
   },
   updateSettings: async (partial) => {
-    const settings = await window.api.settings.update(partial);
-    set({ settings });
+    try {
+      const settings = await window.api.settings.update(partial);
+      set({ settings });
+    } catch {
+      useToastStore.getState().addToast("error", "Failed to update settings");
+    }
   },
   resetSettings: async () => {
-    const settings = await window.api.settings.reset();
-    set({ settings });
+    try {
+      const settings = await window.api.settings.reset();
+      set({ settings });
+    } catch {
+      useToastStore.getState().addToast("error", "Failed to reset settings");
+    }
   },
   zoomIn: async () => {
     const { settings } = get();
     if (settings.zoomLevel < 10) {
-      const s = await window.api.settings.update({ zoomLevel: settings.zoomLevel + 1 });
-      set({ settings: s });
+      try {
+        const s = await window.api.settings.update({ zoomLevel: settings.zoomLevel + 1 });
+        set({ settings: s });
+      } catch {
+        useToastStore.getState().addToast("error", "Failed to zoom in");
+      }
     }
   },
   zoomOut: async () => {
     const { settings } = get();
     if (settings.zoomLevel > -5) {
-      const s = await window.api.settings.update({ zoomLevel: settings.zoomLevel - 1 });
-      set({ settings: s });
+      try {
+        const s = await window.api.settings.update({ zoomLevel: settings.zoomLevel - 1 });
+        set({ settings: s });
+      } catch {
+        useToastStore.getState().addToast("error", "Failed to zoom out");
+      }
     }
   },
   zoomReset: async () => {
-    const s = await window.api.settings.update({ zoomLevel: 0 });
-    set({ settings: s });
+    try {
+      const s = await window.api.settings.update({ zoomLevel: 0 });
+      set({ settings: s });
+    } catch {
+      useToastStore.getState().addToast("error", "Failed to reset zoom");
+    }
   },
   toggleSettings: () => set((state) => ({ settingsOpen: !state.settingsOpen })),
   getActiveTheme: () => {
@@ -25552,7 +25597,7 @@ const useTabStore = create((set, get) => ({
       }
     };
   }),
-  getSessionSnapshot: async () => {
+  getSessionState: async () => {
     const state = get();
     const snapshotTabs = {};
     for (const [tabId, tab] of Object.entries(state.tabs)) {
@@ -35746,10 +35791,6 @@ const PANE_TYPE_CONFIGS = {
     label: "Agent",
     icon: Bot
   }
-  // editor: {
-  //   label: 'Editor',
-  //   icon: FileCode
-  // }
 };
 const paneTypes = Object.keys(PANE_TYPE_CONFIGS);
 const MIME_TYPE$1 = "application/x-terma-pane";
@@ -35793,7 +35834,7 @@ function PaneHeader({ tabId, paneId, paneType }) {
             }
           }
         } catch (err) {
-          console.error("Whisper transcription failed:", err);
+          useToastStore.getState().addToast("error", err instanceof Error ? err.message : "Transcription failed");
         } finally {
           setTranscribing(false);
         }
@@ -35801,8 +35842,8 @@ function PaneHeader({ tabId, paneId, paneType }) {
       recorderRef.current = recorder;
       recorder.start();
       setRecording(true);
-    } catch (err) {
-      console.error("Microphone access failed:", err);
+    } catch {
+      useToastStore.getState().addToast("error", "Microphone access denied");
     }
   }, [paneId, paneType]);
   const stopRecording = reactExports.useCallback(() => {
@@ -40412,19 +40453,6 @@ function FileItem({
     }
   );
 }
-const useToastStore = create((set) => ({
-  toasts: [],
-  addToast: (type, message) => {
-    const id2 = crypto.randomUUID();
-    set((s) => ({ toasts: [...s.toasts, { id: id2, type, message }] }));
-    setTimeout(() => {
-      set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id2) }));
-    }, 3e3);
-  },
-  removeToast: (id2) => {
-    set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id2) }));
-  }
-}));
 function parentDir(p) {
   const i8 = p.lastIndexOf("/");
   return i8 > 0 ? p.substring(0, i8) : "/";
@@ -40470,6 +40498,7 @@ function FileTree({
         }
         return result;
       } catch {
+        addToast("error", `Failed to read directory: ${dirPath}`);
         return [];
       }
     },
@@ -40552,7 +40581,7 @@ function FileTree({
         }
       }
     },
-    [onNavigateToDir, fileAssociations]
+    [onNavigateUp, onNavigateToDir, fileAssociations]
   );
   const handleCopy = reactExports.useCallback(() => {
     const items = entries.filter((e) => selected.has(e.path)).map((e) => ({ path: e.path, isDirectory: e.isDirectory }));
@@ -40940,9 +40969,6 @@ const PaneContent = reactExports.memo(function PaneContent2({ paneType, tabId, p
     case "file-manager":
       content = /* @__PURE__ */ jsxRuntimeExports.jsx(FileManagerPane, { tabId, paneId, cwd });
       break;
-    // case 'editor':
-    //   content = <EditorPane tabId={tabId} paneId={paneId} active={isActive} cwd={cwd} />
-    //   break
     case "agent":
       content = /* @__PURE__ */ jsxRuntimeExports.jsx(TerminalPane, { tabId, paneId, terminalKey: paneId + ":agent", active: isActive, cwd, command: parsed.command, args: parsed.args });
       break;
@@ -41104,6 +41130,7 @@ const SplitPane = reactExports.memo(function SplitPane2({ node, tabId, isTabActi
 });
 function StatusBar() {
   const activeTab = useTabStore((s) => s.activeTabId ? s.tabs[s.activeTabId] : null);
+  const addToast = useToastStore((s) => s.addToast);
   const paneCount = activeTab ? getAllPaneIds(activeTab.layoutTree).length : 0;
   let activeCwd = null;
   if (activeTab) {
@@ -41112,12 +41139,37 @@ function StatusBar() {
       activeCwd = node.cwd;
     }
   }
+  const handleCopyLogs = reactExports.useCallback(async () => {
+    try {
+      const entries = await window.api.log.getLogs();
+      const text = entries.map((e) => {
+        const ts = new Date(e.timestamp).toISOString();
+        const data = e.data !== void 0 ? " " + JSON.stringify(e.data) : "";
+        return `[${ts}] [${e.level.toUpperCase()}] [${e.source}] ${e.message}${data}`;
+      }).join("\n");
+      await navigator.clipboard.writeText(text);
+      addToast("success", "Logs copied");
+    } catch {
+      addToast("error", "Failed to copy logs");
+    }
+  }, [addToast]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center justify-between border-t border-border px-4 py-2 text-sm text-fg-muted", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "min-w-0 flex-1", children: activeCwd && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate", children: activeCwd }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
-      paneCount,
-      " panes"
-    ] }) })
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+        paneCount,
+        " panes"
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          onClick: handleCopyLogs,
+          title: "Copy logs to clipboard",
+          className: "cursor-pointer text-fg-muted transition-colors hover:text-fg",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(ClipboardCopy, { size: 14 })
+        }
+      )
+    ] })
   ] });
 }
 function Section({ icon: Icon2, title, children }) {
@@ -41752,15 +41804,17 @@ function App() {
         useTabStore.getState().createTab();
       }
     }).catch(() => {
+      useToastStore.getState().addToast("error", "Failed to restore session");
       useTabStore.getState().createTab();
     });
   }, []);
   reactExports.useEffect(() => {
     const saveSession = async () => {
       try {
-        const snapshot = await useTabStore.getState().getSessionSnapshot();
+        const snapshot = await useTabStore.getState().getSessionState();
         await window.api.session.save(snapshot);
       } catch {
+        console.warn("Session save failed");
       }
     };
     const handleBeforeUnload = () => {

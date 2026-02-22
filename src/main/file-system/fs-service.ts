@@ -1,14 +1,7 @@
 import { readdir, stat, rename, rm, copyFile, mkdir, access } from 'fs/promises'
 import { join, basename, dirname, extname } from 'path'
-
-export interface FileEntry {
-  name: string
-  path: string
-  isDirectory: boolean
-  isSymlink: boolean
-  size: number
-  modified: number
-}
+import type { FileEntry } from '../../shared/types'
+import { logger } from '../services/logger-service'
 
 export class FsService {
   async readDir(dirPath: string): Promise<FileEntry[]> {
@@ -27,8 +20,8 @@ export class FsService {
           size: stats.size,
           modified: stats.mtimeMs
         })
-      } catch {
-        // Skip entries we can't stat (permission issues etc.)
+      } catch (err) {
+        logger.debug('fs', `readDir: failed to stat ${entry.name}`, err)
       }
     }
 

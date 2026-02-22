@@ -47,3 +47,16 @@ export const WHISPER_CHANNELS = {
   TRANSCRIBE: 'whisper:transcribe'
 } as const
 
+export const WINDOW_CHANNELS = {
+  MINIMIZE: 'window:minimize',
+  MAXIMIZE: 'window:maximize',
+  CLOSE: 'window:close',
+  IS_MAXIMIZED: 'window:isMaximized',
+  MAXIMIZED_CHANGE: 'window:maximized-change'
+} as const
+
+export const LOG_CHANNELS = {
+  GET_LOGS: 'log:getLogs',
+  ON_LOG: 'log:onLog'
+} as const
+

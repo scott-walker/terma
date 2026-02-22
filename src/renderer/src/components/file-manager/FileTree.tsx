@@ -81,6 +81,7 @@ export function FileTree({
         }
         return result
       } catch {
+        addToast('error', `Failed to read directory: ${dirPath}`)
         return []
       }
     },
@@ -172,7 +173,7 @@ export function FileTree({
         }
       }
     },
-    [onNavigateToDir, fileAssociations]
+    [onNavigateUp, onNavigateToDir, fileAssociations]
   )
 
   // ── File operations ──

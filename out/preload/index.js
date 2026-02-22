@@ -43,6 +43,17 @@ const CLIPBOARD_CHANNELS = {
 const WHISPER_CHANNELS = {
   TRANSCRIBE: "whisper:transcribe"
 };
+const WINDOW_CHANNELS = {
+  MINIMIZE: "window:minimize",
+  MAXIMIZE: "window:maximize",
+  CLOSE: "window:close",
+  IS_MAXIMIZED: "window:isMaximized",
+  MAXIMIZED_CHANGE: "window:maximized-change"
+};
+const LOG_CHANNELS = {
+  GET_LOGS: "log:getLogs",
+  ON_LOG: "log:onLog"
+};
 const ptyApi = {
   create: (opts) => electron.ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
   write: (id, data) => {
@@ -124,20 +135,30 @@ const clipboardApi = {
   saveImage: (destDir) => electron.ipcRenderer.invoke(CLIPBOARD_CHANNELS.SAVE_IMAGE, destDir)
 };
 const windowApi = {
-  minimize: () => electron.ipcRenderer.send("window:minimize"),
-  maximize: () => electron.ipcRenderer.send("window:maximize"),
-  close: () => electron.ipcRenderer.send("window:close"),
-  isMaximized: () => electron.ipcRenderer.invoke("window:isMaximized"),
+  minimize: () => electron.ipcRenderer.send(WINDOW_CHANNELS.MINIMIZE),
+  maximize: () => electron.ipcRenderer.send(WINDOW_CHANNELS.MAXIMIZE),
+  close: () => electron.ipcRenderer.send(WINDOW_CHANNELS.CLOSE),
+  isMaximized: () => electron.ipcRenderer.invoke(WINDOW_CHANNELS.IS_MAXIMIZED),
   onMaximizedChange: (cb) => {
     const listener = (_event, maximized) => {
       cb(maximized);
     };
-    electron.ipcRenderer.on("window:maximized-change", listener);
-    return () => electron.ipcRenderer.removeListener("window:maximized-change", listener);
+    electron.ipcRenderer.on(WINDOW_CHANNELS.MAXIMIZED_CHANGE, listener);
+    return () => electron.ipcRenderer.removeListener(WINDOW_CHANNELS.MAXIMIZED_CHANGE, listener);
   }
 };
 const whisperApi = {
   transcribe: (audioBuffer) => electron.ipcRenderer.invoke(WHISPER_CHANNELS.TRANSCRIBE, audioBuffer)
+};
+const logApi = {
+  getLogs: () => electron.ipcRenderer.invoke(LOG_CHANNELS.GET_LOGS),
+  onLog: (cb) => {
+    const listener = (_event, entry) => {
+      cb(entry);
+    };
+    electron.ipcRenderer.on(LOG_CHANNELS.ON_LOG, listener);
+    return () => electron.ipcRenderer.removeListener(LOG_CHANNELS.ON_LOG, listener);
+  }
 };
 electron.contextBridge.exposeInMainWorld("api", {
   pty: ptyApi,
@@ -147,5 +168,6 @@ electron.contextBridge.exposeInMainWorld("api", {
   shell: shellApi,
   clipboard: clipboardApi,
   window: windowApi,
-  whisper: whisperApi
+  whisper: whisperApi,
+  log: logApi
 });

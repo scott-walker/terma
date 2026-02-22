@@ -1,24 +1,7 @@
 import { nanoid } from 'nanoid'
+import type { PaneType, PaneNode, BranchNode, LayoutNode } from '@shared/types'
 
-export type PaneType = 'terminal' | 'file-manager' | 'agent'
-
-export type LayoutNode = PaneNode | BranchNode
-
-export interface PaneNode {
-  type: 'pane'
-  id: string
-  paneType: PaneType
-  terminalId: string | null
-  cwd: string | null
-}
-
-export interface BranchNode {
-  type: 'branch'
-  id: string
-  direction: 'horizontal' | 'vertical'
-  children: LayoutNode[]
-  ratios: number[]
-}
+export type { PaneType, PaneNode, BranchNode, LayoutNode }
 
 export function createPane(
   paneType: PaneType = 'terminal',

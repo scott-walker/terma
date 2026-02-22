@@ -1,11 +1,5 @@
 import Store from 'electron-store'
-
-export interface SessionState {
-  tabs: Record<string, unknown>
-  tabOrder: string[]
-  activeTabId: string | null
-  fileManagerPanes: Record<string, { rootPath: string; expandedDirs: string[] }>
-}
+import type { SessionState } from '../../shared/types'
 
 const store = new Store<{ session: SessionState | null }>({
   name: 'terma-session',

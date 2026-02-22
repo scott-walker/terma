@@ -1,21 +1,22 @@
 import * as pty from 'node-pty'
-import { readlinkSync } from 'fs'
 import { BrowserWindow } from 'electron'
 import { PTY_CHANNELS } from '../../shared/channels'
-
-export interface PtyCreateOpts {
-  cols?: number
-  rows?: number
-  cwd?: string
-  command?: string
-  args?: string[]
-}
+import type { PtyCreateOpts } from '../../shared/types'
+import type { PlatformService } from '../services/platform-service'
+import { logger } from '../services/logger-service'
 
 export class PtyManager {
   private sessions = new Map<string, pty.IPty>()
+  private platform: PlatformService
+
+  constructor(platform: PlatformService) {
+    this.platform = platform
+  }
 
   private get shell(): string {
-    return process.env.SHELL || '/bin/bash'
+    return process.platform === 'win32'
+      ? process.env.COMSPEC || 'powershell.exe'
+      : process.env.SHELL || '/bin/bash'
   }
 
   create(id: string, win: BrowserWindow, opts: PtyCreateOpts = {}): void {
@@ -28,6 +29,7 @@ export class PtyManager {
     })
 
     this.sessions.set(id, term)
+    logger.info('pty', `PTY created: ${id} (pid=${term.pid})`)
 
     term.onData((data) => {
       if (!win.isDestroyed()) {
@@ -50,8 +52,8 @@ export class PtyManager {
   resize(id: string, cols: number, rows: number): void {
     try {
       this.sessions.get(id)?.resize(cols, rows)
-    } catch {
-      // Ignore resize errors (can happen during rapid resize)
+    } catch (err) {
+      logger.warn('pty', `Resize failed for ${id}`, err)
     }
   }
 
@@ -60,17 +62,14 @@ export class PtyManager {
     if (term) {
       term.kill()
       this.sessions.delete(id)
+      logger.info('pty', `PTY destroyed: ${id}`)
     }
   }
 
   getCwd(id: string): string | null {
     const term = this.sessions.get(id)
     if (!term) return null
-    try {
-      return readlinkSync(`/proc/${term.pid}/cwd`).toString()
-    } catch {
-      return null
-    }
+    return this.platform.getCwd(term.pid)
   }
 
   destroyAll(): void {

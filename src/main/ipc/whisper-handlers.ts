@@ -1,16 +1,19 @@
 import { ipcMain } from 'electron'
 import { WHISPER_CHANNELS } from '../../shared/channels'
 import { SettingsService } from '../settings/settings-service'
+import { logger } from '../services/logger-service'
+import { wrapHandler } from './handlers'
 
 export function registerWhisperHandlers(): void {
   ipcMain.handle(
     WHISPER_CHANNELS.TRANSCRIBE,
-    async (_event, audioBytes: ArrayBuffer): Promise<string> => {
+    wrapHandler(WHISPER_CHANNELS.TRANSCRIBE, async (_event, audioBytes: ArrayBuffer): Promise<string> => {
       const { openaiApiKey, whisperLanguage } = SettingsService.getAll()
       if (!openaiApiKey) {
         throw new Error('OpenAI API key is not configured')
       }
 
+      logger.info('whisper', 'Transcription started')
       const boundary = '----FormBoundary' + Math.random().toString(36).slice(2)
       const filename = 'audio.webm'
 
@@ -66,7 +69,8 @@ export function registerWhisperHandlers(): void {
       }
 
       const text = await res.text()
+      logger.info('whisper', 'Transcription complete')
       return text.trim()
-    }
+    })
   )
 }

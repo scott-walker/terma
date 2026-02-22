@@ -2,6 +2,7 @@ import { app, BrowserWindow, clipboard, ipcMain, shell } from 'electron'
 import { spawn } from 'child_process'
 import { join } from 'path'
 import { writeFile, access } from 'fs/promises'
+import { WINDOW_CHANNELS, CLIPBOARD_CHANNELS, SHELL_CHANNELS } from '../shared/channels'
 import { PtyManager } from './pty/pty-manager'
 import { FsService } from './file-system/fs-service'
 import { FsWatcher } from './file-system/fs-watcher'
@@ -9,10 +10,19 @@ import { registerIpcHandlers } from './ipc/handlers'
 import { registerSettingsHandlers } from './ipc/settings-handlers'
 import { registerSessionHandlers } from './ipc/session-handlers'
 import { registerWhisperHandlers } from './ipc/whisper-handlers'
+import { registerLogHandlers } from './ipc/log-handlers'
+import { logger } from './services/logger-service'
+import { createPlatformService } from './services/platform-service'
 
 app.commandLine.appendSwitch('no-sandbox')
+app.setName('terma')
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('class', 'terma')
+  app.commandLine.appendSwitch('ozone-platform-hint', 'auto')
+}
 
-const ptyManager = new PtyManager()
+const platform = createPlatformService()
+const ptyManager = new PtyManager(platform)
 const fsService = new FsService()
 const fsWatcher = new FsWatcher()
 
@@ -25,6 +35,9 @@ function createWindow(): BrowserWindow {
     frame: false,
     titleBarStyle: 'hidden',
     backgroundColor: '#191c24',
+    icon: app.isPackaged
+      ? join(process.resourcesPath, 'icon-256.png')
+      : join(__dirname, '../../assets/icon-256.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -60,25 +73,19 @@ function createWindow(): BrowserWindow {
 }
 
 app.whenReady().then(() => {
-  registerIpcHandlers(ptyManager, fsService, fsWatcher)
+  registerIpcHandlers(ptyManager, fsService, fsWatcher, platform)
   registerSettingsHandlers()
   registerSessionHandlers()
   registerWhisperHandlers()
+  registerLogHandlers()
 
-  ipcMain.handle('clipboard:readFilePaths', () => {
-    const formats = ['x-special/gnome-copied-files', 'x-special/kde-copied-files', 'text/uri-list']
-    for (const fmt of formats) {
-      const raw = clipboard.readBuffer(fmt).toString('utf-8')
-      if (!raw.trim()) continue
-      return raw
-        .split(/\r?\n/)
-        .filter((line) => line.startsWith('file://'))
-        .map((uri) => decodeURIComponent(new URL(uri.trim()).pathname))
-    }
-    return []
+  logger.info('app', 'App ready')
+
+  ipcMain.handle(CLIPBOARD_CHANNELS.READ_FILE_PATHS, () => {
+    return platform.getClipboardFilePaths()
   })
 
-  ipcMain.handle('clipboard:saveImage', async (_event, destDir: string) => {
+  ipcMain.handle(CLIPBOARD_CHANNELS.SAVE_IMAGE, async (_event, destDir: string) => {
     const img = clipboard.readImage()
     if (img.isEmpty()) return null
     const png = img.toPNG()
@@ -108,15 +115,15 @@ app.whenReady().then(() => {
     return filePath
   })
 
-  ipcMain.handle('shell:openPath', (_event, path: string) => shell.openPath(path))
-  ipcMain.handle('shell:openWith', (_event, command: string, filePath: string) => {
+  ipcMain.handle(SHELL_CHANNELS.OPEN_PATH, (_event, path: string) => shell.openPath(path))
+  ipcMain.handle(SHELL_CHANNELS.OPEN_WITH, (_event, command: string, filePath: string) => {
     spawn(command, [filePath], { detached: true, stdio: 'ignore' }).unref()
   })
 
-  ipcMain.on('window:minimize', (event) => {
+  ipcMain.on(WINDOW_CHANNELS.MINIMIZE, (event) => {
     BrowserWindow.fromWebContents(event.sender)?.minimize()
   })
-  ipcMain.on('window:maximize', (event) => {
+  ipcMain.on(WINDOW_CHANNELS.MAXIMIZE, (event) => {
     const win = BrowserWindow.fromWebContents(event.sender)
     if (win?.isMaximized()) {
       win.unmaximize()
@@ -124,16 +131,17 @@ app.whenReady().then(() => {
       win?.maximize()
     }
   })
-  ipcMain.on('window:close', (event) => {
+  ipcMain.on(WINDOW_CHANNELS.CLOSE, (event) => {
     BrowserWindow.fromWebContents(event.sender)?.close()
   })
-  ipcMain.handle('window:isMaximized', (event) => {
+  ipcMain.handle(WINDOW_CHANNELS.IS_MAXIMIZED, (event) => {
     return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
   })
 
   const mainWin = createWindow()
-  mainWin.on('maximize', () => mainWin.webContents.send('window:maximized-change', true))
-  mainWin.on('unmaximize', () => mainWin.webContents.send('window:maximized-change', false))
+  logger.info('app', 'Window created')
+  mainWin.on('maximize', () => mainWin.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, true))
+  mainWin.on('unmaximize', () => mainWin.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, false))
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -143,6 +151,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
+  logger.info('app', 'All windows closed')
   ptyManager.destroyAll()
   fsWatcher.unwatchAll()
   if (process.platform !== 'darwin') {
@@ -151,6 +160,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('before-quit', () => {
+  logger.info('app', 'Quitting')
   ptyManager.destroyAll()
   fsWatcher.unwatchAll()
 })

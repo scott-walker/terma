@@ -1,12 +1,14 @@
 import { watch, FSWatcher } from 'chokidar'
 import { BrowserWindow } from 'electron'
 import { FS_CHANNELS } from '../../shared/channels'
+import { logger } from '../services/logger-service'
 
 export class FsWatcher {
   private watchers = new Map<string, FSWatcher>()
 
   watch(dirPath: string, win: BrowserWindow): void {
     if (this.watchers.has(dirPath)) return
+    logger.debug('fs-watcher', `Watching: ${dirPath}`)
 
     const watcher = watch(dirPath, {
       depth: 0,
@@ -26,6 +28,7 @@ export class FsWatcher {
   unwatch(dirPath: string): void {
     const watcher = this.watchers.get(dirPath)
     if (watcher) {
+      logger.debug('fs-watcher', `Unwatching: ${dirPath}`)
       watcher.close()
       this.watchers.delete(dirPath)
     }

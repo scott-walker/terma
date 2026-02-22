@@ -1,7 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { homedir } from 'os'
-import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS } from '../shared/channels'
+import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS, WINDOW_CHANNELS, LOG_CHANNELS } from '../shared/channels'
 import type { TerminalSettings } from '../shared/settings'
+import type { FileEntry, SessionState, LogEntry } from '../shared/types'
 
 const ptyApi = {
   create: (opts?: { cols?: number; rows?: number; cwd?: string; command?: string; args?: string[] }): Promise<string> =>
@@ -39,9 +40,9 @@ const ptyApi = {
 }
 
 const fsApi = {
-  readDir: (dirPath: string): Promise<unknown[]> =>
+  readDir: (dirPath: string): Promise<FileEntry[]> =>
     ipcRenderer.invoke(FS_CHANNELS.READ_DIR, dirPath),
-  stat: (filePath: string): Promise<unknown> =>
+  stat: (filePath: string): Promise<FileEntry> =>
     ipcRenderer.invoke(FS_CHANNELS.STAT, filePath),
   rename: (oldPath: string, newPath: string): Promise<void> =>
     ipcRenderer.invoke(FS_CHANNELS.RENAME, oldPath, newPath),
@@ -98,9 +99,9 @@ const settingsApi = {
 }
 
 const sessionApi = {
-  save: (state: unknown): Promise<void> =>
+  save: (state: SessionState): Promise<void> =>
     ipcRenderer.invoke(SESSION_CHANNELS.SAVE, state),
-  load: (): Promise<unknown> =>
+  load: (): Promise<SessionState | null> =>
     ipcRenderer.invoke(SESSION_CHANNELS.LOAD)
 }
 
@@ -120,22 +121,34 @@ const clipboardApi = {
 }
 
 const windowApi = {
-  minimize: (): void => ipcRenderer.send('window:minimize'),
-  maximize: (): void => ipcRenderer.send('window:maximize'),
-  close: (): void => ipcRenderer.send('window:close'),
-  isMaximized: (): Promise<boolean> => ipcRenderer.invoke('window:isMaximized'),
+  minimize: (): void => ipcRenderer.send(WINDOW_CHANNELS.MINIMIZE),
+  maximize: (): void => ipcRenderer.send(WINDOW_CHANNELS.MAXIMIZE),
+  close: (): void => ipcRenderer.send(WINDOW_CHANNELS.CLOSE),
+  isMaximized: (): Promise<boolean> => ipcRenderer.invoke(WINDOW_CHANNELS.IS_MAXIMIZED),
   onMaximizedChange: (cb: (maximized: boolean) => void): (() => void) => {
     const listener = (_event: Electron.IpcRendererEvent, maximized: boolean): void => {
       cb(maximized)
     }
-    ipcRenderer.on('window:maximized-change', listener)
-    return () => ipcRenderer.removeListener('window:maximized-change', listener)
+    ipcRenderer.on(WINDOW_CHANNELS.MAXIMIZED_CHANGE, listener)
+    return () => ipcRenderer.removeListener(WINDOW_CHANNELS.MAXIMIZED_CHANGE, listener)
   }
 }
 
 const whisperApi = {
   transcribe: (audioBuffer: ArrayBuffer): Promise<string> =>
     ipcRenderer.invoke(WHISPER_CHANNELS.TRANSCRIBE, audioBuffer)
+}
+
+const logApi = {
+  getLogs: (): Promise<LogEntry[]> =>
+    ipcRenderer.invoke(LOG_CHANNELS.GET_LOGS),
+  onLog: (cb: (entry: LogEntry) => void): (() => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, entry: LogEntry): void => {
+      cb(entry)
+    }
+    ipcRenderer.on(LOG_CHANNELS.ON_LOG, listener)
+    return () => ipcRenderer.removeListener(LOG_CHANNELS.ON_LOG, listener)
+  }
 }
 
 contextBridge.exposeInMainWorld('api', {
@@ -146,5 +159,6 @@ contextBridge.exposeInMainWorld('api', {
   shell: shellApi,
   clipboard: clipboardApi,
   window: windowApi,
-  whisper: whisperApi
+  whisper: whisperApi,
+  log: logApi
 })

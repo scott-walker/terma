@@ -4,8 +4,10 @@ import { TabBar } from './components/layout/TabBar'
 import { SplitPane } from './components/layout/SplitPane'
 import { StatusBar } from './components/layout/StatusBar'
 import { SettingsPanel } from './components/settings/SettingsPanel'
-import { useTabStore, type SessionSnapshot } from './stores/tab-store'
+import { useTabStore } from './stores/tab-store'
+import type { SessionState } from '@shared/types'
 import { useSettingsStore } from './stores/settings-store'
+import { useToastStore } from './stores/toast-store'
 import { ToastContainer } from './components/ui/Toast'
 import { ConfirmDialog } from './components/ui/ConfirmDialog'
 import { getAllPaneIds, findNode } from './lib/layout-tree'
@@ -146,11 +148,12 @@ export default function App(): JSX.Element {
 
     window.api.session.load().then((snapshot) => {
       if (snapshot && snapshot.tabOrder && snapshot.tabOrder.length > 0) {
-        useTabStore.getState().restoreSession(snapshot as unknown as SessionSnapshot)
+        useTabStore.getState().restoreSession(snapshot as unknown as SessionState)
       } else {
         useTabStore.getState().createTab()
       }
     }).catch(() => {
+      useToastStore.getState().addToast('error', 'Failed to restore session')
       useTabStore.getState().createTab()
     })
   }, [])
@@ -159,10 +162,10 @@ export default function App(): JSX.Element {
   useEffect(() => {
     const saveSession = async (): Promise<void> => {
       try {
-        const snapshot = await useTabStore.getState().getSessionSnapshot()
+        const snapshot = await useTabStore.getState().getSessionState()
         await window.api.session.save(snapshot)
       } catch {
-        // Ignore save errors
+        console.warn('Session save failed')
       }
     }
 
