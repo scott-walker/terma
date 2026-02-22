@@ -40,3 +40,7 @@ export const SHELL_CHANNELS = {
 export const CLIPBOARD_CHANNELS = {
   READ_FILE_PATHS: 'clipboard:readFilePaths'
 } as const
+
+export const WHISPER_CHANNELS = {
+  TRANSCRIBE: 'whisper:transcribe'
+} as const

@@ -31,7 +31,7 @@ export function WindowControls(): JSX.Element {
         <button
           onClick={() => setShowConfirm(true)}
           title="Close"
-          className="flex h-full w-[46px] cursor-pointer items-center justify-center border-none bg-transparent text-fg-muted transition-colors duration-[120ms] hover:bg-window-close hover:text-white"
+          className="flex h-full w-[46px] cursor-pointer items-center justify-center border-none bg-transparent text-fg-muted transition-colors duration-[120ms] hover:bg-window-close hover:text-window-close-fg"
         >
           <svg width="10" height="10" viewBox="0 0 10 10">
             <line x1="0" y1="0" x2="10" y2="10" stroke="currentColor" strokeWidth="1.2" />

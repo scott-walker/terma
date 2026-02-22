@@ -38,6 +38,9 @@ const SHELL_CHANNELS = {
 const CLIPBOARD_CHANNELS = {
   READ_FILE_PATHS: "clipboard:readFilePaths"
 };
+const WHISPER_CHANNELS = {
+  TRANSCRIBE: "whisper:transcribe"
+};
 const ptyApi = {
   create: (opts) => electron.ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
   write: (id, data) => {
@@ -129,6 +132,9 @@ const windowApi = {
     return () => electron.ipcRenderer.removeListener("window:maximized-change", listener);
   }
 };
+const whisperApi = {
+  transcribe: (audioBuffer) => electron.ipcRenderer.invoke(WHISPER_CHANNELS.TRANSCRIBE, audioBuffer)
+};
 electron.contextBridge.exposeInMainWorld("api", {
   pty: ptyApi,
   fs: fsApi,
@@ -136,5 +142,6 @@ electron.contextBridge.exposeInMainWorld("api", {
   session: sessionApi,
   shell: shellApi,
   clipboard: clipboardApi,
-  window: windowApi
+  window: windowApi,
+  whisper: whisperApi
 });

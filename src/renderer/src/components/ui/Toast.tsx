@@ -21,7 +21,7 @@ export function ToastContainer(): JSX.Element {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 80 }}
             transition={{ duration: 0.2 }}
-            className="flex items-stretch overflow-hidden rounded-md border border-border bg-elevated shadow-xl"
+            className="flex items-stretch overflow-hidden rounded-md border border-border bg-popup-bg shadow-xl"
           >
             <div className={`w-1 shrink-0 ${typeColors[toast.type]}`} />
             <div className="flex items-center gap-2 px-3 py-2 text-sm text-fg">

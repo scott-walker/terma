@@ -12,7 +12,7 @@ export function TitleBar(): JSX.Element {
       <div className="flex items-center gap-4">
         <TerminalSquare className="size-4 text-accent" strokeWidth={2} />
         <div
-          className="text-[24px] font-semibold uppercase tracking-widest text-white"
+          className="text-[24px] font-semibold uppercase tracking-widest text-titlebar-brand"
           style={{ fontFamily: "'Rajdhani', sans-serif" }}
         >
           terma

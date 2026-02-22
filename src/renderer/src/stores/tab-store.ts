@@ -41,8 +41,9 @@ function collectPaneNodes(node: LayoutNode): PaneNode[] {
 async function resolvePaneCwd(paneId: string, layoutTree: LayoutNode): Promise<string | null> {
   const node = findNode(layoutTree, paneId)
   if (!node || node.type !== 'pane') return null
-  if (node.paneType === 'terminal') {
-    const ptyId = terminalManager.getPtyId(paneId)
+  if (node.paneType === 'terminal' || node.paneType === 'agent') {
+    const key = node.paneType === 'agent' ? paneId + ':agent' : paneId
+    const ptyId = terminalManager.getPtyId(key)
     if (ptyId) return await window.api.pty.getCwd(ptyId)
   } else if (node.paneType === 'file-manager') {
     const fmPane = useFileManagerStore.getState().panes[paneId]
@@ -118,10 +119,11 @@ export const useTabStore = create<TabStore>((set, get) => ({
     const tab = state.tabs[id]
     if (!tab) return
 
-    // Destroy all terminals in this tab
+    // Destroy all terminals in this tab (both shell and agent PTYs)
     const paneIds = getAllPaneIds(tab.layoutTree)
     for (const paneId of paneIds) {
       terminalManager.destroy(paneId)
+      terminalManager.destroy(paneId + ':agent')
     }
 
     const newOrder = state.tabOrder.filter((tid) => tid !== id)
@@ -206,6 +208,7 @@ export const useTabStore = create<TabStore>((set, get) => ({
       if (!tab) return state
 
       terminalManager.destroy(paneId)
+      terminalManager.destroy(paneId + ':agent')
 
       const newTree = removeNode(tab.layoutTree, paneId)
       if (!newTree) {
@@ -261,8 +264,9 @@ export const useTabStore = create<TabStore>((set, get) => ({
     }),
 
   setPaneType: (tabId, paneId, paneType) => {
-    // Destroy existing terminal so the new pane type starts fresh
-    terminalManager.destroy(paneId)
+    // Detach (not destroy) both terminals so switching back preserves the session
+    terminalManager.detach(paneId)
+    terminalManager.detach(paneId + ':agent')
     set((state) => {
       const tab = state.tabs[tabId]
       if (!tab) return state
@@ -307,15 +311,14 @@ export const useTabStore = create<TabStore>((set, get) => ({
       const panes = collectPaneNodes(tab.layoutTree)
       let tree = tab.layoutTree
 
-      // Resolve cwd for each terminal pane
+      // Resolve cwd for each pane that has a live PTY (including hidden terminals)
       for (const pane of panes) {
-        if (pane.paneType === 'terminal') {
-          const ptyId = terminalManager.getPtyId(pane.id)
-          if (ptyId) {
-            const cwd = await window.api.pty.getCwd(ptyId)
-            if (cwd) {
-              tree = setPaneCwd(tree, pane.id, cwd)
-            }
+        const key = pane.paneType === 'agent' ? pane.id + ':agent' : pane.id
+        const ptyId = terminalManager.getPtyId(key)
+        if (ptyId) {
+          const cwd = await window.api.pty.getCwd(ptyId)
+          if (cwd) {
+            tree = setPaneCwd(tree, pane.id, cwd)
           }
         }
       }

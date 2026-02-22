@@ -1,7 +1,10 @@
-import { Columns2, Rows2, X } from 'lucide-react'
+import { useState, useRef, useCallback } from 'react'
+import { Columns2, Rows2, X, Mic, Square } from 'lucide-react'
 import type { PaneType } from '@/lib/layout-tree'
 import { PANE_TYPE_CONFIGS } from '@/lib/pane-types'
 import { useTabStore } from '@/stores/tab-store'
+import { useSettingsStore } from '@/stores/settings-store'
+import { getPtyId } from '@/lib/terminal-manager'
 import { IconButton } from '@/components/ui/IconButton'
 
 interface PaneHeaderProps {
@@ -14,13 +17,79 @@ const paneTypes = Object.keys(PANE_TYPE_CONFIGS) as PaneType[]
 
 const MIME_TYPE = 'application/x-terma-pane'
 
+function getTerminalKey(paneId: string, paneType: PaneType): string {
+  return paneType === 'agent' ? paneId + ':agent' : paneId
+}
+
 export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.Element {
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal
   const Icon = config.icon
+  const hasApiKey = useSettingsStore((s) => !!s.settings.openaiApiKey)
+  const showMic = paneType === 'terminal' || paneType === 'agent'
+  const micDisabled = !hasApiKey
+
+  const [recording, setRecording] = useState(false)
+  const [transcribing, setTranscribing] = useState(false)
+  const recorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
+  const streamRef = useRef<MediaStream | null>(null)
+
+  const startRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      streamRef.current = stream
+      const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' })
+      chunksRef.current = []
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data)
+      }
+
+      recorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop())
+        streamRef.current = null
+
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
+        if (blob.size === 0) return
+
+        setTranscribing(true)
+        try {
+          const buffer = await blob.arrayBuffer()
+          const text = await window.api.whisper.transcribe(buffer)
+          if (text) {
+            const tmKey = getTerminalKey(paneId, paneType)
+            const ptyId = getPtyId(tmKey)
+            if (ptyId) {
+              window.api.pty.write(ptyId, text)
+            }
+          }
+        } catch (err) {
+          console.error('Whisper transcription failed:', err)
+        } finally {
+          setTranscribing(false)
+        }
+      }
+
+      recorderRef.current = recorder
+      recorder.start()
+      setRecording(true)
+    } catch (err) {
+      console.error('Microphone access failed:', err)
+    }
+  }, [paneId, paneType])
+
+  const stopRecording = useCallback(() => {
+    const recorder = recorderRef.current
+    if (recorder && recorder.state === 'recording') {
+      recorder.stop()
+    }
+    recorderRef.current = null
+    setRecording(false)
+  }, [])
 
   return (
     <div
-      className="flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2 active:cursor-grabbing"
+      className="flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-pane-header-bg px-3.5 py-2 active:cursor-grabbing"
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData(MIME_TYPE, JSON.stringify({ paneId, tabId }))
@@ -56,8 +125,34 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
         </div>
       </div>
 
-      {/* Right: split + close */}
+      {/* Right: mic + split + close */}
       <div className="flex gap-1.5">
+        {showMic && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              if (micDisabled || transcribing) return
+              if (recording) {
+                stopRecording()
+              } else {
+                startRecording()
+              }
+            }}
+            title={micDisabled ? 'Set OpenAI API key in Settings' : recording ? 'Stop recording' : transcribing ? 'Transcribing...' : 'Start recording'}
+            disabled={micDisabled || transcribing}
+            className={`rounded-sm border-none bg-transparent px-1.5 py-1 leading-none transition-colors ${
+              micDisabled
+                ? 'cursor-not-allowed text-fg-muted opacity-30'
+                : recording
+                  ? 'animate-pulse cursor-pointer text-danger'
+                  : transcribing
+                    ? 'text-warning'
+                    : 'cursor-pointer text-fg-muted hover:text-fg'
+            }`}
+          >
+            {recording ? <Square size={14} strokeWidth={1.8} fill="currentColor" /> : <Mic size={16} strokeWidth={1.8} />}
+          </button>
+        )}
         <IconButton
           icon={Columns2}
           onClick={(e) => {

@@ -83,6 +83,10 @@ interface WindowApi {
   onMaximizedChange(cb: (maximized: boolean) => void): () => void
 }
 
+interface WhisperApi {
+  transcribe(audioBuffer: ArrayBuffer): Promise<string>
+}
+
 declare global {
   interface Window {
     api: {
@@ -93,6 +97,7 @@ declare global {
       shell: ShellApi
       clipboard: ClipboardApi
       window: WindowApi
+      whisper: WhisperApi
     }
   }
 }

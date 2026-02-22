@@ -12530,14 +12530,53 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$k = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$k);
-const __iconNode$j = [
+const __iconNode$p = [
+  ["path", { d: "M12 8V4H8", key: "hb8ula" }],
+  ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
+  ["path", { d: "M2 14h2", key: "vft8re" }],
+  ["path", { d: "M20 14h2", key: "4cs60a" }],
+  ["path", { d: "M15 13v2", key: "1xurst" }],
+  ["path", { d: "M9 13v2", key: "rq6x2g" }]
+];
+const Bot = createLucideIcon("bot", __iconNode$p);
+const __iconNode$o = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$o);
+const __iconNode$n = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M12 3v18", key: "108xh3" }]
 ];
-const Columns2 = createLucideIcon("columns-2", __iconNode$j);
-const __iconNode$i = [
+const Columns2 = createLucideIcon("columns-2", __iconNode$n);
+const __iconNode$m = [
+  [
+    "path",
+    {
+      d: "M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49",
+      key: "ct8e1f"
+    }
+  ],
+  ["path", { d: "M14.084 14.158a3 3 0 0 1-4.242-4.242", key: "151rxh" }],
+  [
+    "path",
+    {
+      d: "M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143",
+      key: "13bj9a"
+    }
+  ],
+  ["path", { d: "m2 2 20 20", key: "1ooewy" }]
+];
+const EyeOff = createLucideIcon("eye-off", __iconNode$m);
+const __iconNode$l = [
+  [
+    "path",
+    {
+      d: "M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0",
+      key: "1nclc0"
+    }
+  ],
+  ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
+];
+const Eye = createLucideIcon("eye", __iconNode$l);
+const __iconNode$k = [
   [
     "path",
     {
@@ -12549,8 +12588,8 @@ const __iconNode$i = [
   ["path", { d: "m5 16-3 3 3 3", key: "331omg" }],
   ["path", { d: "m9 22 3-3-3-3", key: "lsp7cz" }]
 ];
-const FileCodeCorner = createLucideIcon("file-code-corner", __iconNode$i);
-const __iconNode$h = [
+const FileCodeCorner = createLucideIcon("file-code-corner", __iconNode$k);
+const __iconNode$j = [
   [
     "path",
     {
@@ -12559,8 +12598,8 @@ const __iconNode$h = [
     }
   ]
 ];
-const FolderOpen = createLucideIcon("folder-open", __iconNode$h);
-const __iconNode$g = [
+const FolderOpen = createLucideIcon("folder-open", __iconNode$j);
+const __iconNode$i = [
   [
     "path",
     {
@@ -12569,16 +12608,22 @@ const __iconNode$g = [
     }
   ]
 ];
-const Folder = createLucideIcon("folder", __iconNode$g);
-const __iconNode$f = [["path", { d: "M5 12h14", key: "1ays0h" }]];
-const Minus = createLucideIcon("minus", __iconNode$f);
-const __iconNode$e = [
+const Folder = createLucideIcon("folder", __iconNode$i);
+const __iconNode$h = [
+  ["path", { d: "M12 19v3", key: "npa21l" }],
+  ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
+  ["rect", { x: "9", y: "2", width: "6", height: "13", rx: "3", key: "s6n7sd" }]
+];
+const Mic = createLucideIcon("mic", __iconNode$h);
+const __iconNode$g = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+const Minus = createLucideIcon("minus", __iconNode$g);
+const __iconNode$f = [
   ["rect", { width: "20", height: "14", x: "2", y: "3", rx: "2", key: "48i651" }],
   ["line", { x1: "8", x2: "16", y1: "21", y2: "21", key: "1svkeh" }],
   ["line", { x1: "12", x2: "12", y1: "17", y2: "21", key: "vw1qmm" }]
 ];
-const Monitor = createLucideIcon("monitor", __iconNode$e);
-const __iconNode$d = [
+const Monitor = createLucideIcon("monitor", __iconNode$f);
+const __iconNode$e = [
   ["path", { d: "m14.622 17.897-10.68-2.913", key: "vj2p1u" }],
   [
     "path",
@@ -12595,8 +12640,8 @@ const __iconNode$d = [
     }
   ]
 ];
-const Paintbrush = createLucideIcon("paintbrush", __iconNode$d);
-const __iconNode$c = [
+const Paintbrush = createLucideIcon("paintbrush", __iconNode$e);
+const __iconNode$d = [
   [
     "path",
     {
@@ -12609,30 +12654,30 @@ const __iconNode$c = [
   ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
   ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
 ];
-const Palette = createLucideIcon("palette", __iconNode$c);
-const __iconNode$b = [
+const Palette = createLucideIcon("palette", __iconNode$d);
+const __iconNode$c = [
   ["path", { d: "M5 12h14", key: "1ays0h" }],
   ["path", { d: "M12 5v14", key: "s699le" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$b);
-const __iconNode$a = [
+const Plus = createLucideIcon("plus", __iconNode$c);
+const __iconNode$b = [
   ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
   ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
   ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
   ["path", { d: "M8 16H3v5", key: "1cv678" }]
 ];
-const RefreshCw = createLucideIcon("refresh-cw", __iconNode$a);
-const __iconNode$9 = [
+const RefreshCw = createLucideIcon("refresh-cw", __iconNode$b);
+const __iconNode$a = [
   ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
   ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
 ];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$9);
-const __iconNode$8 = [
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$a);
+const __iconNode$9 = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M3 12h18", key: "1i2n21" }]
 ];
-const Rows2 = createLucideIcon("rows-2", __iconNode$8);
-const __iconNode$7 = [
+const Rows2 = createLucideIcon("rows-2", __iconNode$9);
+const __iconNode$8 = [
   ["path", { d: "M15 12h-5", key: "r7krc0" }],
   ["path", { d: "M15 8h-5", key: "1khuty" }],
   ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -12644,15 +12689,15 @@ const __iconNode$7 = [
     }
   ]
 ];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$7);
-const __iconNode$6 = [
+const ScrollText = createLucideIcon("scroll-text", __iconNode$8);
+const __iconNode$7 = [
   ["path", { d: "M14 17H5", key: "gfn3mx" }],
   ["path", { d: "M19 7h-9", key: "6i9tg" }],
   ["circle", { cx: "17", cy: "17", r: "3", key: "18b49y" }],
   ["circle", { cx: "7", cy: "7", r: "3", key: "dfmy0x" }]
 ];
-const Settings2 = createLucideIcon("settings-2", __iconNode$6);
-const __iconNode$5 = [
+const Settings2 = createLucideIcon("settings-2", __iconNode$7);
+const __iconNode$6 = [
   [
     "path",
     {
@@ -12662,13 +12707,17 @@ const __iconNode$5 = [
   ],
   ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
 ];
-const Settings = createLucideIcon("settings", __iconNode$5);
-const __iconNode$4 = [
+const Settings = createLucideIcon("settings", __iconNode$6);
+const __iconNode$5 = [
   ["path", { d: "m7 11 2-2-2-2", key: "1lz0vl" }],
   ["path", { d: "M11 13h4", key: "1p7l4v" }],
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }]
 ];
-const SquareTerminal = createLucideIcon("square-terminal", __iconNode$4);
+const SquareTerminal = createLucideIcon("square-terminal", __iconNode$5);
+const __iconNode$4 = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
+];
+const Square = createLucideIcon("square", __iconNode$4);
 const __iconNode$3 = [
   ["path", { d: "M12 19h8", key: "baeox8" }],
   ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
@@ -12789,34 +12838,6 @@ const PRESET_THEMES = [
     }
   },
   {
-    id: "solarized-dark",
-    name: "Solarized Dark",
-    colors: {
-      background: "#002b36",
-      foreground: "#839496",
-      cursor: "#839496",
-      cursorAccent: "#002b36",
-      selectionBackground: "#073642",
-      selectionForeground: "#93a1a1",
-      black: "#073642",
-      red: "#dc322f",
-      green: "#859900",
-      yellow: "#b58900",
-      blue: "#268bd2",
-      magenta: "#d33682",
-      cyan: "#2aa198",
-      white: "#eee8d5",
-      brightBlack: "#586e75",
-      brightRed: "#cb4b16",
-      brightGreen: "#586e75",
-      brightYellow: "#657b83",
-      brightBlue: "#839496",
-      brightMagenta: "#6c71c4",
-      brightCyan: "#93a1a1",
-      brightWhite: "#fdf6e3"
-    }
-  },
-  {
     id: "catppuccin-mocha",
     name: "Catppuccin Mocha",
     colors: {
@@ -12882,7 +12903,10 @@ const DEFAULT_SETTINGS = {
   cursorStyle: "bar",
   scrollback: 1e4,
   zoomLevel: 0,
-  fileAssociations: []
+  fileAssociations: [],
+  agentCommand: "claude",
+  openaiApiKey: "",
+  whisperLanguage: "ru"
 };
 function getEffectiveFontSize(settings) {
   return settings.fontSize + settings.zoomLevel * 2;
@@ -12985,7 +13009,7 @@ function ConfirmDialog({
       children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "div",
         {
-          className: "flex w-80 flex-col gap-4 rounded-lg bg-elevated p-5 shadow-2xl",
+          className: "flex w-80 flex-col gap-4 rounded-lg bg-popup-bg p-5 shadow-2xl",
           onMouseDown: (e) => e.stopPropagation(),
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-sm font-semibold text-fg", children: title }),
@@ -13043,7 +13067,7 @@ function WindowControls() {
         {
           onClick: () => setShowConfirm(true),
           title: "Close",
-          className: "flex h-full w-[46px] cursor-pointer items-center justify-center border-none bg-transparent text-fg-muted transition-colors duration-[120ms] hover:bg-window-close hover:text-white",
+          className: "flex h-full w-[46px] cursor-pointer items-center justify-center border-none bg-transparent text-fg-muted transition-colors duration-[120ms] hover:bg-window-close hover:text-window-close-fg",
           children: /* @__PURE__ */ jsxRuntimeExports.jsxs("svg", { width: "10", height: "10", viewBox: "0 0 10 10", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("line", { x1: "0", y1: "0", x2: "10", y2: "10", stroke: "currentColor", strokeWidth: "1.2" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("line", { x1: "10", y1: "0", x2: "0", y2: "10", stroke: "currentColor", strokeWidth: "1.2" })
@@ -13071,7 +13095,7 @@ function TitleBar() {
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "div",
         {
-          className: "text-[24px] font-semibold uppercase tracking-widest text-white",
+          className: "text-[24px] font-semibold uppercase tracking-widest text-titlebar-brand",
           style: { fontFamily: "'Rajdhani', sans-serif" },
           children: "terma"
         }
@@ -13220,7 +13244,7 @@ function swapPanes(root, paneId1, paneId2) {
 }
 function setPaneType(root, paneId, paneType) {
   if (root.type === "pane" && root.id === paneId) {
-    return { ...root, paneType, terminalId: paneType !== "terminal" ? null : root.terminalId };
+    return { ...root, paneType };
   }
   if (root.type === "branch") {
     return {
@@ -25068,6 +25092,31 @@ var Ke$1 = class Ke {
 const terminals = /* @__PURE__ */ new Map();
 const pendingAttaches = /* @__PURE__ */ new Map();
 let settingsUnsub = null;
+let resizing = false;
+const resizeListeners = /* @__PURE__ */ new Set();
+function setResizing(value) {
+  resizing = value;
+  resizeListeners.forEach((fn2) => fn2());
+  if (!value) {
+    for (const entry of terminals.values()) {
+      requestAnimationFrame(() => {
+        try {
+          entry.fitAddon.fit();
+        } catch {
+        }
+      });
+    }
+  }
+}
+function getResizing() {
+  return resizing;
+}
+function subscribeResizing(fn2) {
+  resizeListeners.add(fn2);
+  return () => {
+    resizeListeners.delete(fn2);
+  };
+}
 function ensureSettingsSubscription() {
   if (settingsUnsub) return;
   settingsUnsub = useSettingsStore.subscribe(() => {
@@ -25201,6 +25250,7 @@ function createTerminalEntry(paneId, ptyId) {
 function setupResizeObserver(entry, containerEl) {
   entry.resizeObserver?.disconnect();
   const observer2 = new ResizeObserver(() => {
+    if (resizing) return;
     requestAnimationFrame(() => {
       try {
         entry.fitAddon.fit();
@@ -25300,8 +25350,9 @@ function collectPaneNodes(node) {
 async function resolvePaneCwd(paneId, layoutTree) {
   const node = findNode(layoutTree, paneId);
   if (!node || node.type !== "pane") return null;
-  if (node.paneType === "terminal") {
-    const ptyId = getPtyId(paneId);
+  if (node.paneType === "terminal" || node.paneType === "agent") {
+    const key = node.paneType === "agent" ? paneId + ":agent" : paneId;
+    const ptyId = getPtyId(key);
     if (ptyId) return await window.api.pty.getCwd(ptyId);
   } else if (node.paneType === "file-manager") {
     const fmPane = useFileManagerStore.getState().panes[paneId];
@@ -25342,6 +25393,7 @@ const useTabStore = create((set, get) => ({
     const paneIds = getAllPaneIds(tab.layoutTree);
     for (const paneId of paneIds) {
       destroy(paneId);
+      destroy(paneId + ":agent");
     }
     const newOrder = state.tabOrder.filter((tid) => tid !== id2);
     const { [id2]: _3, ...restTabs } = state.tabs;
@@ -25411,6 +25463,7 @@ const useTabStore = create((set, get) => ({
     const tab = state.tabs[tabId];
     if (!tab) return state;
     destroy(paneId);
+    destroy(paneId + ":agent");
     const newTree = removeNode(tab.layoutTree, paneId);
     if (!newTree) {
       const store = get();
@@ -25453,7 +25506,8 @@ const useTabStore = create((set, get) => ({
     };
   }),
   setPaneType: (tabId, paneId, paneType) => {
-    destroy(paneId);
+    detach(paneId);
+    detach(paneId + ":agent");
     set((state) => {
       const tab = state.tabs[tabId];
       if (!tab) return state;
@@ -25492,13 +25546,12 @@ const useTabStore = create((set, get) => ({
       const panes = collectPaneNodes(tab.layoutTree);
       let tree = tab.layoutTree;
       for (const pane of panes) {
-        if (pane.paneType === "terminal") {
-          const ptyId = getPtyId(pane.id);
-          if (ptyId) {
-            const cwd = await window.api.pty.getCwd(ptyId);
-            if (cwd) {
-              tree = setPaneCwd(tree, pane.id, cwd);
-            }
+        const key = pane.paneType === "agent" ? pane.id + ":agent" : pane.id;
+        const ptyId = getPtyId(key);
+        if (ptyId) {
+          const cwd = await window.api.pty.getCwd(ptyId);
+          if (cwd) {
+            tree = setPaneCwd(tree, pane.id, cwd);
           }
         }
       }
@@ -25607,7 +25660,7 @@ function TabItem({ title, isActive, canClose, color: color2, forceEdit, onClick,
       onDragOver,
       onDrop,
       onDragEnd,
-      className: `relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-all ${borderClass} ${isActive ? "bg-elevated" : ""} ${textClass} ${dropSide === "left" ? "before:absolute before:inset-y-1 before:left-0 before:w-0.5 before:rounded-full before:bg-accent" : ""} ${dropSide === "right" ? "after:absolute after:inset-y-1 after:right-0 after:w-0.5 after:rounded-full after:bg-accent" : ""}`,
+      className: `group relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-all ${borderClass} ${isActive ? "bg-tab-active-bg" : ""} ${textClass} ${dropSide ? "bg-tab-drop-indicator/10" : ""} ${dropSide === "left" ? "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-tab-drop-indicator" : ""} ${dropSide === "right" ? "after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-tab-drop-indicator" : ""}`,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `inline-block h-2.5 w-2.5 shrink-0 rounded-full ${dotClass}` }),
         editing ? /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -25622,18 +25675,7 @@ function TabItem({ title, isActive, canClose, color: color2, forceEdit, onClick,
             className: "min-w-0 border-none bg-transparent text-fg outline-none focus-visible:outline-none",
             onClick: (e) => e.stopPropagation()
           }
-        ) : title,
-        canClose && /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "span",
-          {
-            onClick: (e) => {
-              e.stopPropagation();
-              onClose();
-            },
-            className: `ml-1 cursor-pointer text-base leading-none opacity-40 hover:opacity-70 ${editing ? "invisible" : ""}`,
-            children: "×"
-          }
-        )
+        ) : title
       ]
     }
   );
@@ -33531,7 +33573,7 @@ function ContextMenu({ position, entries, onClose }) {
       animate: { opacity: 1, scale: 1 },
       exit: { opacity: 0, scale: 0.95 },
       transition: { duration: 0.1 },
-      className: "fixed z-50 min-w-[180px] rounded-md border border-border bg-elevated py-1 shadow-xl",
+      className: "fixed z-50 min-w-[180px] rounded-md border border-border bg-popup-bg py-1 shadow-xl",
       style: { left: position.x, top: position.y },
       children: entries.map(
         (entry, i8) => entry.type === "separator" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }, i8) : entry.type === "colors" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-between px-3 py-2.5", children: entry.colors.map((c) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -33542,7 +33584,7 @@ function ContextMenu({ position, entries, onClose }) {
               entry.onSelect(entry.activeColor === c.id ? null : c.id);
               onClose();
             },
-            className: `h-5 w-5 rounded-full ${COLOR_BG_CLASSES[c.id] ?? ""} ${entry.activeColor === c.id ? "ring-2 ring-fg ring-offset-1 ring-offset-elevated" : ""}`
+            className: `h-5 w-5 rounded-full ${COLOR_BG_CLASSES[c.id] ?? ""} ${entry.activeColor === c.id ? "ring-2 ring-fg ring-offset-1 ring-offset-popup-bg" : ""}`
           },
           c.id
         )) }, i8) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -35676,18 +35718,26 @@ const PANE_TYPE_CONFIGS = {
   terminal: {
     label: "Terminal",
     icon: Terminal,
-    colorClass: "text-accent",
-    bgActiveClass: "bg-accent/[0.13]",
-    borderActiveClass: "border-accent/[0.27]",
-    paneBorderClass: "border-accent/50"
+    colorClass: "text-pane-active-terminal",
+    bgActiveClass: "bg-pane-active-terminal/[0.13]",
+    borderActiveClass: "border-pane-active-terminal/[0.27]",
+    paneBorderClass: "border-pane-active-terminal/50"
   },
   "file-manager": {
     label: "Files",
     icon: FolderOpen,
-    colorClass: "text-warning",
-    bgActiveClass: "bg-warning/[0.13]",
-    borderActiveClass: "border-warning/[0.27]",
-    paneBorderClass: "border-warning/50"
+    colorClass: "text-pane-active-files",
+    bgActiveClass: "bg-pane-active-files/[0.13]",
+    borderActiveClass: "border-pane-active-files/[0.27]",
+    paneBorderClass: "border-pane-active-files/50"
+  },
+  agent: {
+    label: "Agent",
+    icon: Bot,
+    colorClass: "text-pane-active-agent",
+    bgActiveClass: "bg-pane-active-agent/[0.13]",
+    borderActiveClass: "border-pane-active-agent/[0.27]",
+    paneBorderClass: "border-pane-active-agent/50"
   }
   // editor: {
   //   label: 'Editor',
@@ -35700,13 +35750,70 @@ const PANE_TYPE_CONFIGS = {
 };
 const paneTypes = Object.keys(PANE_TYPE_CONFIGS);
 const MIME_TYPE$1 = "application/x-terma-pane";
+function getTerminalKey(paneId, paneType) {
+  return paneType === "agent" ? paneId + ":agent" : paneId;
+}
 function PaneHeader({ tabId, paneId, paneType }) {
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
   const Icon2 = config.icon;
+  const hasApiKey = useSettingsStore((s) => !!s.settings.openaiApiKey);
+  const showMic = paneType === "terminal" || paneType === "agent";
+  const micDisabled = !hasApiKey;
+  const [recording, setRecording] = reactExports.useState(false);
+  const [transcribing, setTranscribing] = reactExports.useState(false);
+  const recorderRef = reactExports.useRef(null);
+  const chunksRef = reactExports.useRef([]);
+  const streamRef = reactExports.useRef(null);
+  const startRecording = reactExports.useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      const recorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      recorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        if (blob.size === 0) return;
+        setTranscribing(true);
+        try {
+          const buffer = await blob.arrayBuffer();
+          const text = await window.api.whisper.transcribe(buffer);
+          if (text) {
+            const tmKey = getTerminalKey(paneId, paneType);
+            const ptyId = getPtyId(tmKey);
+            if (ptyId) {
+              window.api.pty.write(ptyId, text);
+            }
+          }
+        } catch (err) {
+          console.error("Whisper transcription failed:", err);
+        } finally {
+          setTranscribing(false);
+        }
+      };
+      recorderRef.current = recorder;
+      recorder.start();
+      setRecording(true);
+    } catch (err) {
+      console.error("Microphone access failed:", err);
+    }
+  }, [paneId, paneType]);
+  const stopRecording = reactExports.useCallback(() => {
+    const recorder = recorderRef.current;
+    if (recorder && recorder.state === "recording") {
+      recorder.stop();
+    }
+    recorderRef.current = null;
+    setRecording(false);
+  }, []);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
-      className: "flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2 active:cursor-grabbing",
+      className: "flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-pane-header-bg px-3.5 py-2 active:cursor-grabbing",
       draggable: true,
       onDragStart: (e) => {
         e.dataTransfer.setData(MIME_TYPE$1, JSON.stringify({ paneId, tabId }));
@@ -35733,6 +35840,24 @@ function PaneHeader({ tabId, paneId, paneType }) {
           }) })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-1.5", children: [
+          showMic && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              onClick: (e) => {
+                e.stopPropagation();
+                if (micDisabled || transcribing) return;
+                if (recording) {
+                  stopRecording();
+                } else {
+                  startRecording();
+                }
+              },
+              title: micDisabled ? "Set OpenAI API key in Settings" : recording ? "Stop recording" : transcribing ? "Transcribing..." : "Start recording",
+              disabled: micDisabled || transcribing,
+              className: `rounded-sm border-none bg-transparent px-1.5 py-1 leading-none transition-colors ${micDisabled ? "cursor-not-allowed text-fg-muted opacity-30" : recording ? "animate-pulse cursor-pointer text-danger" : transcribing ? "text-warning" : "cursor-pointer text-fg-muted hover:text-fg"}`,
+              children: recording ? /* @__PURE__ */ jsxRuntimeExports.jsx(Square, { size: 14, strokeWidth: 1.8, fill: "currentColor" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Mic, { size: 16, strokeWidth: 1.8 })
+            }
+          ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             IconButton,
             {
@@ -35788,7 +35913,8 @@ function shellEscape(s) {
   if (/^[a-zA-Z0-9._\-/=@:]+$/.test(s)) return s;
   return "'" + s.replace(/'/g, "'\\''") + "'";
 }
-const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, active, cwd }) {
+const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, terminalKey, active, cwd, command, args }) {
+  const tmKey = terminalKey ?? paneId;
   const containerRef = reactExports.useRef(null);
   const setPaneTerminal = useTabStore((s) => s.setPaneTerminal);
   const [menuPosition, setMenuPosition] = reactExports.useState(null);
@@ -35796,25 +35922,25 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, a
   reactExports.useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    attach(paneId, container, { cwd }).then((ptyId) => {
+    attach(tmKey, container, { cwd, command, args }).then((ptyId) => {
       if (ptyId) {
         setPaneTerminal(tabId, paneId, ptyId);
       }
     });
     return () => {
-      detach(paneId);
+      detach(tmKey);
     };
-  }, [paneId]);
+  }, [tmKey]);
   reactExports.useEffect(() => {
     if (active) {
-      focus(paneId);
+      focus(tmKey);
     }
-  }, [active, paneId]);
+  }, [active, tmKey]);
   const updatePaneCwd = useTabStore((s) => s.updatePaneCwd);
   const lastCwdRef = reactExports.useRef(null);
   reactExports.useEffect(() => {
     const poll = async () => {
-      const ptyId = getPtyId(paneId);
+      const ptyId = getPtyId(tmKey);
       if (!ptyId) return;
       try {
         const current = await window.api.pty.getCwd(ptyId);
@@ -35828,31 +35954,31 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, a
     poll();
     const interval = setInterval(poll, 2e3);
     return () => clearInterval(interval);
-  }, [paneId, tabId, updatePaneCwd]);
+  }, [tmKey, tabId, updatePaneCwd]);
   const handleContextMenu = reactExports.useCallback(
     (e) => {
       e.preventDefault();
-      const terminal = getTerminal(paneId);
+      const terminal = getTerminal(tmKey);
       setHasSelection(!!terminal?.hasSelection());
       setMenuPosition({ x: e.clientX, y: e.clientY });
     },
-    [paneId]
+    [tmKey]
   );
   const handleCopy = reactExports.useCallback(async () => {
-    const terminal = getTerminal(paneId);
+    const terminal = getTerminal(tmKey);
     const selection = terminal?.getSelection();
     if (selection) {
       await navigator.clipboard.writeText(selection);
     }
-  }, [paneId]);
+  }, [tmKey]);
   const handlePaste = reactExports.useCallback(async () => {
-    const ptyId = getPtyId(paneId);
+    const ptyId = getPtyId(tmKey);
     if (!ptyId) return;
     const text = await navigator.clipboard.readText();
     if (text) {
       window.api.pty.write(ptyId, text);
     }
-  }, [paneId]);
+  }, [tmKey]);
   const [dragOver, setDragOver] = reactExports.useState(false);
   const handleDragOver = reactExports.useCallback((e) => {
     if (e.dataTransfer.types.includes(MIME_FILES) || e.dataTransfer.types.includes("Files")) {
@@ -35872,7 +35998,7 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, a
     async (e) => {
       e.preventDefault();
       setDragOver(false);
-      const ptyId = getPtyId(paneId);
+      const ptyId = getPtyId(tmKey);
       if (!ptyId) return;
       let paths = [];
       const raw = e.dataTransfer.getData(MIME_FILES);
@@ -35888,24 +36014,24 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, a
       const escaped = paths.map((p) => shellEscape(relativePath(cwd2, p))).join(" ");
       window.api.pty.write(ptyId, escaped);
     },
-    [paneId]
+    [tmKey]
   );
   const handleOpenExternal = reactExports.useCallback(async () => {
-    const ptyId = getPtyId(paneId);
+    const ptyId = getPtyId(tmKey);
     if (!ptyId) return;
     const cwdPath = await window.api.pty.getCwd(ptyId);
     if (cwdPath) {
       window.api.shell.openPath(cwdPath);
     }
-  }, [paneId]);
+  }, [tmKey]);
   const handleOpenFiles = reactExports.useCallback(async () => {
-    const ptyId = getPtyId(paneId);
+    const ptyId = getPtyId(tmKey);
     if (!ptyId) return;
     const cwdPath = await window.api.pty.getCwd(ptyId);
     if (cwdPath) {
       useTabStore.getState().splitPaneWithType(tabId, paneId, "vertical", "file-manager", cwdPath);
     }
-  }, [tabId, paneId]);
+  }, [tabId, paneId, tmKey]);
   const menuEntries = [
     {
       type: "item",
@@ -40271,7 +40397,7 @@ function FileItem({
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mr-1.5 flex shrink-0 items-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileTypeIcon, { name, isDirectory, isExpanded, size: iconSize }) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `truncate ${isSelected ? "text-warning" : "text-fg"}`, children: name })
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `truncate ${isSelected ? "text-file-selected" : "text-fg"}`, children: name })
       ]
     }
   );
@@ -40755,7 +40881,13 @@ class ErrorBoundary extends reactExports.Component {
     return this.props.children;
   }
 }
+function parseCommand(raw) {
+  const parts = raw.trim().split(/\s+/);
+  return { command: parts[0] || "claude", args: parts.slice(1) };
+}
 const PaneContent = reactExports.memo(function PaneContent2({ paneType, tabId, paneId, isActive, cwd }) {
+  const agentCommand = useSettingsStore((s) => s.settings.agentCommand);
+  const parsed = reactExports.useMemo(() => parseCommand(agentCommand), [agentCommand]);
   let content;
   switch (paneType) {
     case "file-manager":
@@ -40764,6 +40896,9 @@ const PaneContent = reactExports.memo(function PaneContent2({ paneType, tabId, p
     // case 'editor':
     //   content = <EditorPane tabId={tabId} paneId={paneId} active={isActive} cwd={cwd} />
     //   break
+    case "agent":
+      content = /* @__PURE__ */ jsxRuntimeExports.jsx(TerminalPane, { tabId, paneId, terminalKey: paneId + ":agent", active: isActive, cwd, command: parsed.command, args: parsed.args });
+      break;
     case "terminal":
     default:
       content = /* @__PURE__ */ jsxRuntimeExports.jsx(TerminalPane, { tabId, paneId, active: isActive, cwd });
@@ -40775,6 +40910,7 @@ const MIME_TYPE = "application/x-terma-pane";
 const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isActive }) {
   const paneType = node.paneType ?? "terminal";
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
+  const isResizing = reactExports.useSyncExternalStore(subscribeResizing, getResizing);
   const [isDragOver, setIsDragOver] = reactExports.useState(false);
   const handleDragOver = reactExports.useCallback((e) => {
     if (e.dataTransfer.types.includes(MIME_TYPE)) {
@@ -40815,7 +40951,8 @@ const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isAct
         /* @__PURE__ */ jsxRuntimeExports.jsx(PaneHeader, { tabId, paneId: node.id, paneType }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex-1", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PaneContent, { paneType, tabId, paneId: node.id, isActive, cwd: node.cwd }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/5 to-transparent" })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/5 to-transparent" }),
+          isResizing && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 z-10 bg-base/15" })
         ] }),
         isDragOver && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-accent bg-accent/10" })
       ]
@@ -40826,6 +40963,25 @@ const SplitPane = reactExports.memo(function SplitPane2({ node, tabId, isTabActi
   const activePaneId = useTabStore((s) => s.tabs[tabId]?.activePaneId);
   const setActivePaneId = useTabStore((s) => s.setActivePaneId);
   const updateLayoutRatios = useTabStore((s) => s.updateLayoutRatios);
+  const pendingSizes = reactExports.useRef(null);
+  const handleLayoutChanged = reactExports.useCallback((sizes) => {
+    pendingSizes.current = sizes;
+  }, []);
+  const handlePointerDownCapture = reactExports.useCallback((e) => {
+    const target = e.target;
+    if (!target.closest("[data-separator]")) return;
+    setResizing(true);
+    pendingSizes.current = null;
+    const handleUp = () => {
+      window.removeEventListener("pointerup", handleUp);
+      setResizing(false);
+      if (pendingSizes.current) {
+        updateLayoutRatios(tabId, node.id, pendingSizes.current);
+        pendingSizes.current = null;
+      }
+    };
+    window.addEventListener("pointerup", handleUp);
+  }, [tabId, node.id, updateLayoutRatios]);
   if (node.type === "pane") {
     return /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
@@ -40844,22 +41000,25 @@ const SplitPane = reactExports.memo(function SplitPane2({ node, tabId, isTabActi
     );
   }
   const orientation = node.direction === "vertical" ? "horizontal" : "vertical";
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full w-full", onPointerDownCapture: handlePointerDownCapture, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
     Tt,
     {
       orientation,
-      onLayoutChanged: (sizes) => updateLayoutRatios(tabId, node.id, sizes),
-      children: node.children.map((child, i8) => /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPaneEntry, { index: i8, total: node.children.length, children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane2, { node: child, tabId, isTabActive }) }, child.id))
+      onLayoutChanged: handleLayoutChanged,
+      resizeTargetMinimumSize: { fine: 0, coarse: 0 },
+      children: node.children.map((child, i8) => /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPaneEntry, { index: i8, total: node.children.length, orientation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane2, { node: child, tabId, isTabActive }) }, child.id))
     }
-  );
+  ) });
 });
 function SplitPaneEntry({
   children,
   index,
-  total
+  total,
+  orientation
 }) {
+  const handleClass = orientation === "horizontal" ? "h-full w-1.5" : "w-full h-1.5";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    index > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(Ht2, { className: "group relative flex items-center justify-center data-[state=drag]:bg-accent/30", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full w-1 group-hover:bg-accent/30" }) }),
+    index > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(Ht2, { className: "group relative flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `${handleClass} pointer-events-none group-hover:bg-split-handle/30` }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(_t, { min: "10%", default: `${100 / total}%`, children })
   ] });
 }
@@ -41030,6 +41189,50 @@ const TABS = [
   { id: "general", label: "General", icon: Settings2 },
   { id: "style", label: "Style", icon: Paintbrush }
 ];
+function VoiceInputSection() {
+  const { settings, updateSettings } = useSettingsStore();
+  const [showKey, setShowKey] = reactExports.useState(false);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Section, { icon: Mic, title: "Voice Input", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "OpenAI API Key" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "input",
+          {
+            type: showKey ? "text" : "password",
+            value: settings.openaiApiKey,
+            onChange: (e) => updateSettings({ openaiApiKey: e.target.value }),
+            placeholder: "sk-proj-...",
+            className: "w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-accent/40 focus:bg-surface-hover"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            onClick: () => setShowKey((v2) => !v2),
+            className: "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-fg-muted transition-colors hover:text-fg",
+            children: showKey ? /* @__PURE__ */ jsxRuntimeExports.jsx(EyeOff, { size: 16 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Eye, { size: 16 })
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-[11px] text-fg-muted", children: "Required for voice input. Click the mic button in terminal header to record." })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Language" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        SegmentedControl,
+        {
+          value: settings.whisperLanguage,
+          options: [
+            { value: "ru", label: "Русский" },
+            { value: "en", label: "English" }
+          ],
+          onChange: (v2) => updateSettings({ whisperLanguage: v2 })
+        }
+      )
+    ] })
+  ] });
+}
 function SettingsPanel() {
   const [activeTab, setActiveTab] = reactExports.useState("general");
   const { settings, updateSettings, resetSettings, zoomIn, zoomOut, zoomReset, toggleSettings } = useSettingsStore();
@@ -41059,7 +41262,7 @@ function SettingsPanel() {
         exit: { x: "100%", opacity: 0.8 },
         transition: { type: "spring", damping: 30, stiffness: 300 },
         onClick: (e) => e.stopPropagation(),
-        className: "relative flex h-full w-[440px] flex-col border-l border-border bg-base/98 shadow-panel backdrop-blur-xl",
+        className: "relative flex h-full w-[440px] flex-col border-l border-border bg-settings-bg/98 shadow-panel backdrop-blur-xl",
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between px-7 pt-7 pb-2", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
@@ -41199,6 +41402,21 @@ function SettingsPanel() {
                   }
                 )
               ] }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: Bot, title: "Agent", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "Command" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Input,
+                  {
+                    value: settings.agentCommand,
+                    placeholder: "claude",
+                    onChange: (e) => updateSettings({ agentCommand: e.target.value })
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-[11px] text-fg-muted", children: "Command to run when opening an Agent tab (e.g. claude, aider, copilot)" })
+              ] }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(VoiceInputSection, {}),
               /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pt-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
                 motion.button,
                 {
@@ -41335,7 +41553,7 @@ function ToastContainer() {
       animate: { opacity: 1, x: 0 },
       exit: { opacity: 0, x: 80 },
       transition: { duration: 0.2 },
-      className: "flex items-stretch overflow-hidden rounded-md border border-border bg-elevated shadow-xl",
+      className: "flex items-stretch overflow-hidden rounded-md border border-border bg-popup-bg shadow-xl",
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `w-1 shrink-0 ${typeColors[toast.type]}` }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 px-3 py-2 text-sm text-fg", children: [
@@ -41528,6 +41746,19 @@ function App() {
                 "horizontal",
                 "file-manager"
               );
+          }
+          break;
+        case "KeyA":
+          e.preventDefault();
+          if (state.activeTabId) {
+            const tab = state.tabs[state.activeTabId];
+            if (tab) {
+              const node = findNode(tab.layoutTree, tab.activePaneId);
+              if (node?.type === "pane") {
+                const newType = node.paneType === "agent" ? "terminal" : "agent";
+                state.setPaneType(state.activeTabId, tab.activePaneId, newType);
+              }
+            }
           }
           break;
       }

@@ -38,7 +38,7 @@ export function ConfirmDialog({
       onMouseDown={onCancel}
     >
       <div
-        className="flex w-80 flex-col gap-4 rounded-lg bg-elevated p-5 shadow-2xl"
+        className="flex w-80 flex-col gap-4 rounded-lg bg-popup-bg p-5 shadow-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <h2 className="text-sm font-semibold text-fg">{title}</h2>

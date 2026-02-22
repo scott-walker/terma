@@ -63,6 +63,9 @@ const SESSION_CHANNELS = {
   SAVE: "session:save",
   LOAD: "session:load"
 };
+const WHISPER_CHANNELS = {
+  TRANSCRIBE: "whisper:transcribe"
+};
 function switchToEnglishLayout() {
   child_process.exec("gsettings set org.gnome.desktop.input-sources current 0", () => {
   });
@@ -10992,7 +10995,10 @@ const DEFAULT_SETTINGS = {
   cursorStyle: "bar",
   scrollback: 1e4,
   zoomLevel: 0,
-  fileAssociations: []
+  fileAssociations: [],
+  agentCommand: "claude",
+  openaiApiKey: "",
+  whisperLanguage: "ru"
 };
 const store$1 = new ElectronStore({
   name: "terma-settings",
@@ -11053,6 +11059,75 @@ function registerSessionHandlers() {
     return SessionService.load();
   });
 }
+function registerWhisperHandlers() {
+  electron.ipcMain.handle(
+    WHISPER_CHANNELS.TRANSCRIBE,
+    async (_event, audioBytes) => {
+      const { openaiApiKey, whisperLanguage } = SettingsService.getAll();
+      if (!openaiApiKey) {
+        throw new Error("OpenAI API key is not configured");
+      }
+      const boundary = "----FormBoundary" + Math.random().toString(36).slice(2);
+      const filename = "audio.webm";
+      const parts = [];
+      parts.push(
+        Buffer.from(
+          `--${boundary}\r
+Content-Disposition: form-data; name="file"; filename="${filename}"\r
+Content-Type: audio/webm\r
+\r
+`
+        )
+      );
+      parts.push(Buffer.from(audioBytes));
+      parts.push(Buffer.from("\r\n"));
+      parts.push(
+        Buffer.from(
+          `--${boundary}\r
+Content-Disposition: form-data; name="model"\r
+\r
+whisper-1\r
+`
+        )
+      );
+      parts.push(
+        Buffer.from(
+          `--${boundary}\r
+Content-Disposition: form-data; name="response_format"\r
+\r
+text\r
+`
+        )
+      );
+      parts.push(
+        Buffer.from(
+          `--${boundary}\r
+Content-Disposition: form-data; name="language"\r
+\r
+${whisperLanguage || "ru"}\r
+`
+        )
+      );
+      parts.push(Buffer.from(`--${boundary}--\r
+`));
+      const body = Buffer.concat(parts);
+      const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${openaiApiKey}`,
+          "Content-Type": `multipart/form-data; boundary=${boundary}`
+        },
+        body
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Whisper API error ${res.status}: ${errText}`);
+      }
+      const text = await res.text();
+      return text.trim();
+    }
+  );
+}
 electron.app.commandLine.appendSwitch("no-sandbox");
 const ptyManager = new PtyManager();
 const fsService = new FsService();
@@ -11091,6 +11166,7 @@ electron.app.whenReady().then(() => {
   registerIpcHandlers(ptyManager, fsService, fsWatcher);
   registerSettingsHandlers();
   registerSessionHandlers();
+  registerWhisperHandlers();
   electron.ipcMain.handle("clipboard:readFilePaths", () => {
     const formats2 = ["x-special/gnome-copied-files", "x-special/kde-copied-files", "text/uri-list"];
     for (const fmt of formats2) {

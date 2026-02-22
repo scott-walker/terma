@@ -12,7 +12,11 @@ import {
   ScrollText,
   Settings2,
   Paintbrush,
-  FileCode2
+  FileCode2,
+  Bot,
+  Mic,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 import type { FileAssociation } from '@shared/settings'
 import { useSettingsStore } from '@/stores/settings-store'
@@ -31,6 +35,48 @@ const TABS: { id: SettingsTab; label: string; icon: typeof Settings2 }[] = [
   { id: 'general', label: 'General', icon: Settings2 },
   { id: 'style', label: 'Style', icon: Paintbrush }
 ]
+
+function VoiceInputSection(): JSX.Element {
+  const { settings, updateSettings } = useSettingsStore()
+  const [showKey, setShowKey] = useState(false)
+
+  return (
+    <Section icon={Mic} title="Voice Input">
+      <div>
+        <label className="mb-2 block text-xs text-fg-muted">OpenAI API Key</label>
+        <div className="flex items-center gap-2">
+          <input
+            type={showKey ? 'text' : 'password'}
+            value={settings.openaiApiKey}
+            onChange={(e) => updateSettings({ openaiApiKey: e.target.value })}
+            placeholder="sk-proj-..."
+            className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-accent/40 focus:bg-surface-hover"
+          />
+          <button
+            onClick={() => setShowKey((v) => !v)}
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-fg-muted transition-colors hover:text-fg"
+          >
+            {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
+        <p className="mt-2 text-[11px] text-fg-muted">
+          Required for voice input. Click the mic button in terminal header to record.
+        </p>
+      </div>
+      <div>
+        <label className="mb-2 block text-xs text-fg-muted">Language</label>
+        <SegmentedControl
+          value={settings.whisperLanguage}
+          options={[
+            { value: 'ru', label: 'Русский' },
+            { value: 'en', label: 'English' }
+          ]}
+          onChange={(v) => updateSettings({ whisperLanguage: v as 'ru' | 'en' })}
+        />
+      </div>
+    </Section>
+  )
+}
 
 export function SettingsPanel(): JSX.Element {
   const [activeTab, setActiveTab] = useState<SettingsTab>('general')
@@ -64,7 +110,7 @@ export function SettingsPanel(): JSX.Element {
           exit={{ x: '100%', opacity: 0.8 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative flex h-full w-[440px] flex-col border-l border-border bg-base/98 shadow-panel backdrop-blur-xl"
+          className="relative flex h-full w-[440px] flex-col border-l border-border bg-settings-bg/98 shadow-panel backdrop-blur-xl"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-7 pt-7 pb-2">
@@ -203,6 +249,28 @@ export function SettingsPanel(): JSX.Element {
                     </button>
                   </div>
                 </Section>
+
+                <Divider />
+
+                {/* Agent */}
+                <Section icon={Bot} title="Agent">
+                  <div>
+                    <label className="mb-2 block text-xs text-fg-muted">Command</label>
+                    <Input
+                      value={settings.agentCommand}
+                      placeholder="claude"
+                      onChange={(e) => updateSettings({ agentCommand: e.target.value })}
+                    />
+                    <p className="mt-2 text-[11px] text-fg-muted">
+                      Command to run when opening an Agent tab (e.g. claude, aider, copilot)
+                    </p>
+                  </div>
+                </Section>
+
+                <Divider />
+
+                {/* Voice Input */}
+                <VoiceInputSection />
 
                 {/* Reset */}
                 <div className="pt-2">

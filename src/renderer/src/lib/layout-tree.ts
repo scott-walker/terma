@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 
-export type PaneType = 'terminal' | 'file-manager' // | 'editor'
+export type PaneType = 'terminal' | 'file-manager' | 'agent'
 
 export type LayoutNode = PaneNode | BranchNode
 
@@ -205,7 +205,7 @@ export function setPaneType(
   paneType: PaneType
 ): LayoutNode {
   if (root.type === 'pane' && root.id === paneId) {
-    return { ...root, paneType, terminalId: paneType !== 'terminal' ? null : root.terminalId }
+    return { ...root, paneType }
   }
   if (root.type === 'branch') {
     return {

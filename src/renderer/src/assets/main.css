@@ -27,6 +27,7 @@
 
 /* ─── Semantic tokens → Tailwind utilities ─── */
 @theme default {
+  /* — Foundation: backgrounds — */
   --color-base: var(--palette-neutral-950);
   --color-elevated: var(--palette-neutral-900);
   --color-surface: var(--palette-neutral-800);
@@ -34,22 +35,46 @@
   --color-overlay-subtle: oklch(100% 0 0 / 0.06);
   --color-overlay: oklch(100% 0 0 / 0.08);
   --color-backdrop: oklch(0% 0 0 / 0.50);
+
+  /* — Foundation: foreground — */
   --color-fg: var(--palette-neutral-300);
   --color-fg-secondary: var(--palette-neutral-400);
   --color-fg-muted: var(--palette-neutral-500);
+
+  /* — Foundation: borders — */
   --color-border: var(--palette-neutral-750);
   --color-border-hover: var(--palette-neutral-600);
+
+  /* — Foundation: semantic accents — */
   --color-accent: var(--palette-green-500);
   --color-danger: var(--palette-red-500);
   --color-info: var(--palette-cyan-500);
   --color-warning: var(--palette-amber-500);
   --color-directory: var(--palette-blue-400);
+
+  /* — Tab color dots — */
   --color-tab-red: var(--palette-red-500);
   --color-tab-orange: var(--palette-orange-500);
   --color-tab-yellow: var(--palette-amber-500);
   --color-tab-green: var(--palette-green-500);
   --color-tab-blue: var(--palette-cyan-500);
   --color-tab-purple: var(--palette-purple-400);
+
+  /* — Element-specific tokens — */
+  --color-titlebar-brand: var(--color-fg);
+  --color-tab-active-bg: var(--color-elevated);
+  --color-tab-drop-indicator: var(--color-accent);
+  --color-pane-header-bg: var(--color-elevated);
+  --color-pane-active-terminal: var(--color-accent);
+  --color-pane-active-files: var(--color-warning);
+  --color-pane-active-agent: var(--color-info);
+  --color-split-handle: var(--color-accent);
+  --color-popup-bg: var(--color-elevated);
+  --color-settings-bg: var(--color-base);
+  --color-file-selected: var(--color-warning);
+  --color-window-close-fg: #ffffff;
+
+  /* — Misc — */
   --color-window-close: #e81123;
   --shadow-panel: -8px 0 40px oklch(0% 0 0 / 0.6);
   --radius-sm: 4px;

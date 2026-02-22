@@ -8,7 +8,7 @@ import { useTabStore, type SessionSnapshot } from './stores/tab-store'
 import { useSettingsStore } from './stores/settings-store'
 import { ToastContainer } from './components/ui/Toast'
 import { ConfirmDialog } from './components/ui/ConfirmDialog'
-import { getAllPaneIds } from './lib/layout-tree'
+import { getAllPaneIds, findNode } from './lib/layout-tree'
 import type { ThemePreset } from '@shared/themes'
 
 /* ── Derive UI color tokens from a terminal theme ── */
@@ -245,6 +245,19 @@ export default function App(): JSX.Element {
                 'horizontal',
                 'file-manager'
               )
+          }
+          break
+        case 'KeyA':
+          e.preventDefault()
+          if (state.activeTabId) {
+            const tab = state.tabs[state.activeTabId]
+            if (tab) {
+              const node = findNode(tab.layoutTree, tab.activePaneId)
+              if (node?.type === 'pane') {
+                const newType = node.paneType === 'agent' ? 'terminal' : 'agent'
+                state.setPaneType(state.activeTabId, tab.activePaneId, newType)
+              }
+            }
           }
           break
       }

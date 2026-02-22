@@ -97,7 +97,7 @@ export function ContextMenu({ position, entries, onClose }: ContextMenuProps): J
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.1 }}
-          className="fixed z-50 min-w-[180px] rounded-md border border-border bg-elevated py-1 shadow-xl"
+          className="fixed z-50 min-w-[180px] rounded-md border border-border bg-popup-bg py-1 shadow-xl"
           style={{ left: position.x, top: position.y }}
         >
           {entries.map((entry, i) =>
@@ -113,7 +113,7 @@ export function ContextMenu({ position, entries, onClose }: ContextMenuProps): J
                       entry.onSelect(entry.activeColor === c.id ? null : c.id)
                       onClose()
                     }}
-                    className={`h-5 w-5 rounded-full ${COLOR_BG_CLASSES[c.id] ?? ''} ${entry.activeColor === c.id ? 'ring-2 ring-fg ring-offset-1 ring-offset-elevated' : ''}`}
+                    className={`h-5 w-5 rounded-full ${COLOR_BG_CLASSES[c.id] ?? ''} ${entry.activeColor === c.id ? 'ring-2 ring-fg ring-offset-1 ring-offset-popup-bg' : ''}`}
                   />
                 ))}
               </div>

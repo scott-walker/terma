@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { homedir } from 'os'
-import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS } from '../shared/channels'
+import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS } from '../shared/channels'
 import type { TerminalSettings } from '../shared/settings'
 
 const ptyApi = {
@@ -129,6 +129,11 @@ const windowApi = {
   }
 }
 
+const whisperApi = {
+  transcribe: (audioBuffer: ArrayBuffer): Promise<string> =>
+    ipcRenderer.invoke(WHISPER_CHANNELS.TRANSCRIBE, audioBuffer)
+}
+
 contextBridge.exposeInMainWorld('api', {
   pty: ptyApi,
   fs: fsApi,
@@ -136,5 +141,6 @@ contextBridge.exposeInMainWorld('api', {
   session: sessionApi,
   shell: shellApi,
   clipboard: clipboardApi,
-  window: windowApi
+  window: windowApi,
+  whisper: whisperApi
 })

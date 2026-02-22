@@ -13,6 +13,9 @@ export interface TerminalSettings {
   scrollback: number
   zoomLevel: number
   fileAssociations: FileAssociation[]
+  agentCommand: string
+  openaiApiKey: string
+  whisperLanguage: 'ru' | 'en'
 }
 
 export const DEFAULT_SETTINGS: TerminalSettings = {
@@ -24,7 +27,10 @@ export const DEFAULT_SETTINGS: TerminalSettings = {
   cursorStyle: 'bar',
   scrollback: 10000,
   zoomLevel: 0,
-  fileAssociations: []
+  fileAssociations: [],
+  agentCommand: 'claude',
+  openaiApiKey: '',
+  whisperLanguage: 'ru'
 }
 
 export function getEffectiveFontSize(settings: TerminalSettings): number {

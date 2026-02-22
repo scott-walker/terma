@@ -7,6 +7,7 @@ import { FsWatcher } from './file-system/fs-watcher'
 import { registerIpcHandlers } from './ipc/handlers'
 import { registerSettingsHandlers } from './ipc/settings-handlers'
 import { registerSessionHandlers } from './ipc/session-handlers'
+import { registerWhisperHandlers } from './ipc/whisper-handlers'
 
 app.commandLine.appendSwitch('no-sandbox')
 
@@ -61,6 +62,7 @@ app.whenReady().then(() => {
   registerIpcHandlers(ptyManager, fsService, fsWatcher)
   registerSettingsHandlers()
   registerSessionHandlers()
+  registerWhisperHandlers()
 
   ipcMain.handle('clipboard:readFilePaths', () => {
     const formats = ['x-special/gnome-copied-files', 'x-special/kde-copied-files', 'text/uri-list']

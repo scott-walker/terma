@@ -21,6 +21,38 @@ interface TerminalEntry {
 const terminals = new Map<string, TerminalEntry>()
 const pendingAttaches = new Map<string, { cancelled: boolean }>()
 let settingsUnsub: (() => void) | null = null
+let resizing = false
+const resizeListeners = new Set<() => void>()
+
+/**
+ * Suppress terminal refitting during split-pane resize drags.
+ * Call setResizing(true) on drag start, setResizing(false) on drag end.
+ */
+export function setResizing(value: boolean): void {
+  resizing = value
+  resizeListeners.forEach((fn) => fn())
+  if (!value) {
+    // Drag ended — refit all terminals
+    for (const entry of terminals.values()) {
+      requestAnimationFrame(() => {
+        try {
+          entry.fitAddon.fit()
+        } catch {
+          // ignore
+        }
+      })
+    }
+  }
+}
+
+export function getResizing(): boolean {
+  return resizing
+}
+
+export function subscribeResizing(fn: () => void): () => void {
+  resizeListeners.add(fn)
+  return () => { resizeListeners.delete(fn) }
+}
 
 function ensureSettingsSubscription(): void {
   if (settingsUnsub) return
@@ -205,6 +237,7 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
 function setupResizeObserver(entry: TerminalEntry, containerEl: HTMLElement): void {
   entry.resizeObserver?.disconnect()
   const observer = new ResizeObserver(() => {
+    if (resizing) return
     requestAnimationFrame(() => {
       try {
         entry.fitAddon.fit()

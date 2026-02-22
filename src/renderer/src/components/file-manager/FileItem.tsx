@@ -83,7 +83,7 @@ export function FileItem({
       </span>
 
       {/* Filename */}
-      <span className={`truncate ${isSelected ? 'text-warning' : 'text-fg'}`}>{name}</span>
+      <span className={`truncate ${isSelected ? 'text-file-selected' : 'text-fg'}`}>{name}</span>
     </div>
   )
 }

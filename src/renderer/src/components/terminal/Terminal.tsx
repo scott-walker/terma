@@ -26,11 +26,15 @@ function shellEscape(s: string): string {
 interface TerminalPaneProps {
   tabId: string
   paneId: string
+  terminalKey?: string
   active: boolean
   cwd?: string | null
+  command?: string
+  args?: string[]
 }
 
-export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, cwd }: TerminalPaneProps): JSX.Element {
+export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminalKey, active, cwd, command, args }: TerminalPaneProps): JSX.Element {
+  const tmKey = terminalKey ?? paneId
   const containerRef = useRef<HTMLDivElement>(null)
   const setPaneTerminal = useTabStore((s) => s.setPaneTerminal)
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
@@ -40,23 +44,23 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, 
     const container = containerRef.current
     if (!container) return
 
-    attach(paneId, container, { cwd }).then((ptyId) => {
+    attach(tmKey, container, { cwd, command, args }).then((ptyId) => {
       if (ptyId) {
         setPaneTerminal(tabId, paneId, ptyId)
       }
     })
 
     return () => {
-      detach(paneId)
+      detach(tmKey)
     }
-  }, [paneId])
+  }, [tmKey])
 
   // Focus/refit when pane becomes active
   useEffect(() => {
     if (active) {
-      focus(paneId)
+      focus(tmKey)
     }
-  }, [active, paneId])
+  }, [active, tmKey])
 
   // Poll terminal CWD and sync to layout tree
   const updatePaneCwd = useTabStore((s) => s.updatePaneCwd)
@@ -64,7 +68,7 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, 
 
   useEffect(() => {
     const poll = async (): Promise<void> => {
-      const ptyId = getPtyId(paneId)
+      const ptyId = getPtyId(tmKey)
       if (!ptyId) return
       try {
         const current = await window.api.pty.getCwd(ptyId)
@@ -79,34 +83,34 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, 
     poll()
     const interval = setInterval(poll, 2000)
     return () => clearInterval(interval)
-  }, [paneId, tabId, updatePaneCwd])
+  }, [tmKey, tabId, updatePaneCwd])
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()
-      const terminal = getTerminal(paneId)
+      const terminal = getTerminal(tmKey)
       setHasSelection(!!terminal?.hasSelection())
       setMenuPosition({ x: e.clientX, y: e.clientY })
     },
-    [paneId]
+    [tmKey]
   )
 
   const handleCopy = useCallback(async () => {
-    const terminal = getTerminal(paneId)
+    const terminal = getTerminal(tmKey)
     const selection = terminal?.getSelection()
     if (selection) {
       await navigator.clipboard.writeText(selection)
     }
-  }, [paneId])
+  }, [tmKey])
 
   const handlePaste = useCallback(async () => {
-    const ptyId = getPtyId(paneId)
+    const ptyId = getPtyId(tmKey)
     if (!ptyId) return
     const text = await navigator.clipboard.readText()
     if (text) {
       window.api.pty.write(ptyId, text)
     }
-  }, [paneId])
+  }, [tmKey])
 
   // ── Drag-and-drop file paths ──
 
@@ -133,7 +137,7 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, 
       e.preventDefault()
       setDragOver(false)
 
-      const ptyId = getPtyId(paneId)
+      const ptyId = getPtyId(tmKey)
       if (!ptyId) return
 
       let paths: string[] = []
@@ -157,26 +161,26 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, active, 
       const escaped = paths.map((p) => shellEscape(relativePath(cwd, p))).join(' ')
       window.api.pty.write(ptyId, escaped)
     },
-    [paneId]
+    [tmKey]
   )
 
   const handleOpenExternal = useCallback(async () => {
-    const ptyId = getPtyId(paneId)
+    const ptyId = getPtyId(tmKey)
     if (!ptyId) return
     const cwdPath = await window.api.pty.getCwd(ptyId)
     if (cwdPath) {
       window.api.shell.openPath(cwdPath)
     }
-  }, [paneId])
+  }, [tmKey])
 
   const handleOpenFiles = useCallback(async () => {
-    const ptyId = getPtyId(paneId)
+    const ptyId = getPtyId(tmKey)
     if (!ptyId) return
     const cwdPath = await window.api.pty.getCwd(ptyId)
     if (cwdPath) {
       useTabStore.getState().splitPaneWithType(tabId, paneId, 'vertical', 'file-manager', cwdPath)
     }
-  }, [tabId, paneId])
+  }, [tabId, paneId, tmKey])
 
   const menuEntries: MenuEntry[] = [
     {

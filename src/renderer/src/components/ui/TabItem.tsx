@@ -95,7 +95,7 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      className={`relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-all ${borderClass} ${isActive ? 'bg-elevated' : ''} ${textClass} ${dropSide === 'left' ? 'before:absolute before:inset-y-1 before:left-0 before:w-0.5 before:rounded-full before:bg-accent' : ''} ${dropSide === 'right' ? 'after:absolute after:inset-y-1 after:right-0 after:w-0.5 after:rounded-full after:bg-accent' : ''}`}
+      className={`group relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-all ${borderClass} ${isActive ? 'bg-tab-active-bg' : ''} ${textClass} ${dropSide ? 'bg-tab-drop-indicator/10' : ''} ${dropSide === 'left' ? 'before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-tab-drop-indicator' : ''} ${dropSide === 'right' ? 'after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-tab-drop-indicator' : ''}`}
     >
       <span className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${dotClass}`} />
       {editing ? (
@@ -111,17 +111,6 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
         />
       ) : (
         title
-      )}
-      {canClose && (
-        <span
-          onClick={(e) => {
-            e.stopPropagation()
-            onClose()
-          }}
-          className={`ml-1 cursor-pointer text-base leading-none opacity-40 hover:opacity-70 ${editing ? 'invisible' : ''}`}
-        >
-          ×
-        </span>
       )}
     </div>
   )

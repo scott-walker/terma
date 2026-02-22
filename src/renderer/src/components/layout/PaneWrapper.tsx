@@ -1,7 +1,8 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useState, useCallback, useSyncExternalStore } from 'react'
 import type { PaneNode } from '@/lib/layout-tree'
 import { PANE_TYPE_CONFIGS } from '@/lib/pane-types'
 import { useTabStore } from '@/stores/tab-store'
+import { getResizing, subscribeResizing } from '@/lib/terminal-manager'
 import { PaneHeader } from './PaneHeader'
 import { PaneContent } from './PaneContent'
 
@@ -16,6 +17,7 @@ interface PaneWrapperProps {
 export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: PaneWrapperProps): JSX.Element {
   const paneType = node.paneType ?? 'terminal'
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal
+  const isResizing = useSyncExternalStore(subscribeResizing, getResizing)
   const [isDragOver, setIsDragOver] = useState(false)
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -65,6 +67,9 @@ export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: 
           <PaneContent paneType={paneType} tabId={tabId} paneId={node.id} isActive={isActive} cwd={node.cwd} />
         </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/5 to-transparent" />
+        {isResizing && (
+          <div className="absolute inset-0 z-10 bg-base/15" />
+        )}
       </div>
       {isDragOver && (
         <div className="pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-accent bg-accent/10" />
