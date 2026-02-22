@@ -4,23 +4,25 @@
 @import "tailwindcss";
 
 /* ─── Primitive palette (not in @theme — no extra utilities) ─── */
+/* Terma brand: Deep Navy backgrounds, Spinal Green accent, TERMA White text */
 :root {
-  --palette-neutral-950: #191c24;
-  --palette-neutral-900: #1e2130;
-  --palette-neutral-800: #242730;
-  --palette-neutral-750: #2a2d35;
-  --palette-neutral-700: #2a2e3a;
-  --palette-neutral-600: #3a3d45;
-  --palette-neutral-400: #9899ac;
-  --palette-neutral-300: #e4e6ef;
-  --palette-neutral-500: #6c7293;
-  --palette-green-500: #00d25b;
+  --palette-neutral-950: #0F1726;
+  --palette-neutral-900: #142233;
+  --palette-neutral-800: #1A2532;
+  --palette-neutral-750: #1F2C3D;
+  --palette-neutral-700: #253648;
+  --palette-neutral-600: #374A5E;
+  --palette-neutral-400: #A0ABB8;
+  --palette-neutral-300: #FFFFFF;
+  --palette-neutral-500: #6B7F96;
+  --palette-green-500: #5CBF5C;
   --palette-red-500: #fc424a;
   --palette-cyan-500: #57caeb;
   --palette-blue-400: #60a5fa;
   --palette-amber-500: #ffab00;
   --palette-orange-500: #ff8c00;
   --palette-purple-400: #b48eff;
+  --palette-pink-500: #FF2D8A;
   --shadow-accent-glow: 0 0 20px color-mix(in oklch, var(--color-accent) 8%, transparent);
   --gradient-logo: linear-gradient(135deg, var(--color-accent), var(--color-info));
 }
@@ -59,6 +61,7 @@
   --color-tab-green: var(--palette-green-500);
   --color-tab-blue: var(--palette-cyan-500);
   --color-tab-purple: var(--palette-purple-400);
+  --color-tab-pink: var(--palette-pink-500);
 
   /* — Element-specific tokens — */
   --color-titlebar-brand: var(--color-fg);

@@ -6,7 +6,7 @@
     "target": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "outDir": "./out",
-    "rootDir": "./src/renderer/src",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -18,7 +18,7 @@
       "@/*": ["./src/renderer/src/*"],
       "@shared/*": ["./src/shared/*"]
     },
-    "types": ["electron-vite/client"]
+    "types": ["vite/client", "node"]
   },
   "include": ["src/renderer/src/**/*", "src/shared/**/*"]
 }

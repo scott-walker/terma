@@ -1,12 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Outer shape -->
-  <rect width="512" height="512" rx="96" fill="#191c24"/>
-  <!-- Inner panel -->
-  <rect x="32" y="32" width="448" height="448" rx="64" fill="#1e2130"/>
-  <!-- Top bar accent line -->
-  <rect x="32" y="32" width="448" height="6" rx="3" fill="#00d25b" opacity="0.6"/>
-  <!-- Prompt chevron >  -->
-  <path d="M148 196 L236 256 L148 316" stroke="#00d25b" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <!-- Cursor underscore _ -->
-  <line x1="260" y1="316" x2="372" y2="316" stroke="#57caeb" stroke-width="32" stroke-linecap="round" opacity="0.8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect width="1024" height="1024" fill="#0f1726"/>
+  <polygon points="440,204 563,204 378,819 256,819" fill="#e6eaf0"/>
+  <polygon points="645,204 768,204 583,819 460,819" fill="#e6eaf0"/>
 </svg>

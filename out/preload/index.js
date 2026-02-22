@@ -12,6 +12,8 @@ const PTY_CHANNELS = {
 };
 const FS_CHANNELS = {
   READ_DIR: "fs:readDir",
+  READ_FILE: "fs:readFile",
+  READ_FILE_DATA_URL: "fs:readFileDataUrl",
   STAT: "fs:stat",
   RENAME: "fs:rename",
   DELETE: "fs:delete",
@@ -38,6 +40,7 @@ const SHELL_CHANNELS = {
 };
 const CLIPBOARD_CHANNELS = {
   READ_FILE_PATHS: "clipboard:readFilePaths",
+  WRITE_FILE_PATHS: "clipboard:writeFilePaths",
   SAVE_IMAGE: "clipboard:saveImage"
 };
 const WHISPER_CHANNELS = {
@@ -47,6 +50,8 @@ const WINDOW_CHANNELS = {
   MINIMIZE: "window:minimize",
   MAXIMIZE: "window:maximize",
   CLOSE: "window:close",
+  FORCE_CLOSE: "window:force-close",
+  CONFIRM_CLOSE: "window:confirm-close",
   IS_MAXIMIZED: "window:isMaximized",
   MAXIMIZED_CHANGE: "window:maximized-change"
 };
@@ -54,6 +59,35 @@ const LOG_CHANNELS = {
   GET_LOGS: "log:getLogs",
   ON_LOG: "log:onLog"
 };
+const TRANSLATE_CHANNELS = {
+  TRANSLATE: "translate:translate"
+};
+const SYSMON_CHANNELS = {
+  METRICS: "sysmon:metrics"
+};
+const SELFMON_CHANNELS = {
+  METRICS: "selfmon:metrics"
+};
+const GIT_CHANNELS = {
+  GET_INFO: "git:getInfo",
+  LIST_BRANCHES: "git:listBranches",
+  CHECKOUT: "git:checkout",
+  CREATE_BRANCH: "git:createBranch"
+};
+const SSH_CHANNELS = {
+  CONNECT: "ssh:connect",
+  DISCONNECT: "ssh:disconnect",
+  READ_DIR: "ssh:readDir",
+  GET_HOME_DIR: "ssh:getHomeDir"
+};
+const dataListeners = /* @__PURE__ */ new Map();
+const exitListeners = /* @__PURE__ */ new Map();
+electron.ipcRenderer.on(PTY_CHANNELS.DATA, (_event, id, data) => {
+  dataListeners.get(id)?.(data);
+});
+electron.ipcRenderer.on(PTY_CHANNELS.EXIT, (_event, id, exitCode, signal) => {
+  exitListeners.get(id)?.(exitCode, signal);
+});
 const ptyApi = {
   create: (opts) => electron.ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
   write: (id, data) => {
@@ -66,23 +100,23 @@ const ptyApi = {
     electron.ipcRenderer.send(PTY_CHANNELS.DESTROY, id);
   },
   getCwd: (id) => electron.ipcRenderer.invoke(PTY_CHANNELS.GET_CWD, id),
-  onData: (cb) => {
-    const listener = (_event, id, data) => {
-      cb(id, data);
+  onData: (id, cb) => {
+    dataListeners.set(id, cb);
+    return () => {
+      dataListeners.delete(id);
     };
-    electron.ipcRenderer.on(PTY_CHANNELS.DATA, listener);
-    return () => electron.ipcRenderer.removeListener(PTY_CHANNELS.DATA, listener);
   },
-  onExit: (cb) => {
-    const listener = (_event, id, exitCode, signal) => {
-      cb(id, exitCode, signal);
+  onExit: (id, cb) => {
+    exitListeners.set(id, cb);
+    return () => {
+      exitListeners.delete(id);
     };
-    electron.ipcRenderer.on(PTY_CHANNELS.EXIT, listener);
-    return () => electron.ipcRenderer.removeListener(PTY_CHANNELS.EXIT, listener);
   }
 };
 const fsApi = {
   readDir: (dirPath) => electron.ipcRenderer.invoke(FS_CHANNELS.READ_DIR, dirPath),
+  readFile: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.READ_FILE, filePath),
+  readFileAsDataUrl: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.READ_FILE_DATA_URL, filePath),
   stat: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.STAT, filePath),
   rename: (oldPath, newPath) => electron.ipcRenderer.invoke(FS_CHANNELS.RENAME, oldPath, newPath),
   delete: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.DELETE, filePath),
@@ -128,16 +162,19 @@ const sessionApi = {
 const shellApi = {
   openPath: (path) => electron.ipcRenderer.invoke(SHELL_CHANNELS.OPEN_PATH, path),
   openWith: (command, filePath) => electron.ipcRenderer.invoke(SHELL_CHANNELS.OPEN_WITH, command, filePath),
-  homePath: os.homedir()
+  homePath: os.homedir(),
+  platform: process.platform
 };
 const clipboardApi = {
   readFilePaths: () => electron.ipcRenderer.invoke(CLIPBOARD_CHANNELS.READ_FILE_PATHS),
+  writeFilePaths: (paths) => electron.ipcRenderer.invoke(CLIPBOARD_CHANNELS.WRITE_FILE_PATHS, paths),
   saveImage: (destDir) => electron.ipcRenderer.invoke(CLIPBOARD_CHANNELS.SAVE_IMAGE, destDir)
 };
 const windowApi = {
   minimize: () => electron.ipcRenderer.send(WINDOW_CHANNELS.MINIMIZE),
   maximize: () => electron.ipcRenderer.send(WINDOW_CHANNELS.MAXIMIZE),
   close: () => electron.ipcRenderer.send(WINDOW_CHANNELS.CLOSE),
+  forceClose: () => electron.ipcRenderer.send(WINDOW_CHANNELS.FORCE_CLOSE),
   isMaximized: () => electron.ipcRenderer.invoke(WINDOW_CHANNELS.IS_MAXIMIZED),
   onMaximizedChange: (cb) => {
     const listener = (_event, maximized) => {
@@ -145,6 +182,13 @@ const windowApi = {
     };
     electron.ipcRenderer.on(WINDOW_CHANNELS.MAXIMIZED_CHANGE, listener);
     return () => electron.ipcRenderer.removeListener(WINDOW_CHANNELS.MAXIMIZED_CHANGE, listener);
+  },
+  onConfirmClose: (cb) => {
+    const listener = () => {
+      cb();
+    };
+    electron.ipcRenderer.on(WINDOW_CHANNELS.CONFIRM_CLOSE, listener);
+    return () => electron.ipcRenderer.removeListener(WINDOW_CHANNELS.CONFIRM_CLOSE, listener);
   }
 };
 const whisperApi = {
@@ -160,6 +204,27 @@ const logApi = {
     return () => electron.ipcRenderer.removeListener(LOG_CHANNELS.ON_LOG, listener);
   }
 };
+const translateApi = {
+  translate: (text) => electron.ipcRenderer.invoke(TRANSLATE_CHANNELS.TRANSLATE, text)
+};
+const sysmonApi = {
+  getMetrics: () => electron.ipcRenderer.invoke(SYSMON_CHANNELS.METRICS)
+};
+const gitApi = {
+  getInfo: (cwd) => electron.ipcRenderer.invoke(GIT_CHANNELS.GET_INFO, cwd),
+  listBranches: (cwd) => electron.ipcRenderer.invoke(GIT_CHANNELS.LIST_BRANCHES, cwd),
+  checkout: (cwd, branch) => electron.ipcRenderer.invoke(GIT_CHANNELS.CHECKOUT, cwd, branch),
+  createBranch: (cwd, name) => electron.ipcRenderer.invoke(GIT_CHANNELS.CREATE_BRANCH, cwd, name)
+};
+const sshApi = {
+  connect: (profileId) => electron.ipcRenderer.invoke(SSH_CHANNELS.CONNECT, profileId),
+  disconnect: (profileId) => electron.ipcRenderer.invoke(SSH_CHANNELS.DISCONNECT, profileId),
+  readDir: (profileId, remotePath) => electron.ipcRenderer.invoke(SSH_CHANNELS.READ_DIR, profileId, remotePath),
+  getHomeDir: (profileId) => electron.ipcRenderer.invoke(SSH_CHANNELS.GET_HOME_DIR, profileId)
+};
+const selfmonApi = {
+  getMetrics: () => electron.ipcRenderer.invoke(SELFMON_CHANNELS.METRICS)
+};
 electron.contextBridge.exposeInMainWorld("api", {
   pty: ptyApi,
   fs: fsApi,
@@ -169,5 +234,10 @@ electron.contextBridge.exposeInMainWorld("api", {
   clipboard: clipboardApi,
   window: windowApi,
   whisper: whisperApi,
-  log: logApi
+  log: logApi,
+  ssh: sshApi,
+  translate: translateApi,
+  sysmon: sysmonApi,
+  selfmon: selfmonApi,
+  git: gitApi
 });

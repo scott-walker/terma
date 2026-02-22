@@ -9,7 +9,7 @@
 Layout-дерево состоит из двух типов узлов:
 
 ```typescript
-type PaneType = 'terminal' | 'file-manager' | 'agent'
+type PaneType = 'terminal' | 'file-manager' | 'agent' | 'markdown' | 'image' | 'system-monitor'
 
 type LayoutNode = PaneNode | BranchNode
 
@@ -39,6 +39,9 @@ interface BranchNode {
 | `terminal` | Terminal | Обычный shell-терминал |
 | `file-manager` | FolderOpen | Встроенный файловый менеджер |
 | `agent` | Bot | Терминал для запуска AI-агента (agentCommand из настроек) |
+| `markdown` | FileText | Просмотр Markdown-файлов (react-markdown) |
+| `image` | Image | Просмотр изображений |
+| `system-monitor` | Monitor | Метрики системы (CPU, RAM, диски) |
 
 ### Примеры деревьев
 
@@ -186,6 +189,9 @@ SplitPane(node)
 - `terminal` → `Terminal` (xterm.js)
 - `file-manager` → `FileManagerPane`
 - `agent` → `Terminal` (с agentCommand)
+- `markdown` → `MarkdownPane`
+- `image` → `ImagePane`
+- `system-monitor` → `SystemMonitorPane`
 
 Используется `react-resizable-panels` (v4):
 - `<Group direction={...}>` — контейнер (горизонтальный или вертикальный)

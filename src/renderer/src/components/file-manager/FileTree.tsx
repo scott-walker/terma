@@ -5,6 +5,8 @@ import { ContextMenu, type MenuEntry } from '../ui/ContextMenu'
 import { useSettingsStore } from '@/stores/settings-store'
 import { useToastStore } from '@/stores/toast-store'
 import { matchesGlob } from '@shared/settings'
+import { parentDir, baseName } from '@shared/path-utils'
+import type { FileEntry } from '@shared/types'
 
 interface FlatEntry {
   name: string
@@ -24,16 +26,13 @@ interface FileTreeProps {
   onToggleDir: (path: string) => void
   onNavigateUp?: () => void
   onNavigateToDir?: (path: string) => void
+  onOpenInSplit?: (path: string) => void
+  onPreviewFile?: (path: string) => void
+  onOpenSshTerminal?: (path: string) => void
+  onEditRemoteFile?: (filePath: string) => void
   refreshToken?: number
-}
-
-function parentDir(p: string): string {
-  const i = p.lastIndexOf('/')
-  return i > 0 ? p.substring(0, i) : '/'
-}
-
-function baseName(p: string): string {
-  return p.substring(p.lastIndexOf('/') + 1)
+  readDirFn?: (path: string) => Promise<FileEntry[]>
+  isRemote?: boolean
 }
 
 export function FileTree({
@@ -42,7 +41,13 @@ export function FileTree({
   onToggleDir,
   onNavigateUp,
   onNavigateToDir,
-  refreshToken
+  onOpenInSplit,
+  onPreviewFile,
+  onOpenSshTerminal,
+  onEditRemoteFile,
+  refreshToken,
+  readDirFn,
+  isRemote = false
 }: FileTreeProps): JSX.Element {
   const [entries, setEntries] = useState<FlatEntry[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -52,6 +57,7 @@ export function FileTree({
     path: string
     isDirectory: boolean
   } | null>(null)
+  const [renamingPath, setRenamingPath] = useState<string | null>(null)
   const parentRef = useRef<HTMLDivElement>(null)
   const anchorPath = useRef<string | null>(null)
   const undoStack = useRef<string[][]>([])
@@ -60,10 +66,12 @@ export function FileTree({
   const fileAssociations = useSettingsStore((s) => s.settings.fileAssociations)
   const rowHeight = Math.round(fontSize * 1.6)
 
+  const readDir = readDirFn ?? window.api.fs.readDir
+
   const loadDir = useCallback(
     async (dirPath: string, depth: number): Promise<FlatEntry[]> => {
       try {
-        const items = await window.api.fs.readDir(dirPath)
+        const items = await readDir(dirPath)
         const result: FlatEntry[] = []
 
         for (const item of items) {
@@ -85,13 +93,13 @@ export function FileTree({
         return []
       }
     },
-    [expandedDirs]
+    [expandedDirs, readDir]
   )
 
   const loadTree = useCallback(async () => {
     const items = await loadDir(rootPath, 0)
     if (rootPath !== '/') {
-      const parentPath = rootPath.substring(0, rootPath.lastIndexOf('/')) || '/'
+      const parentPath = parentDir(rootPath)
       items.unshift({
         name: '..',
         path: parentPath,
@@ -102,18 +110,28 @@ export function FileTree({
     setEntries(items)
   }, [loadDir, rootPath])
 
+  // Stable ref so the watcher effect doesn't re-subscribe on every expand/collapse
+  const loadTreeRef = useRef(loadTree)
+  loadTreeRef.current = loadTree
+
   useEffect(() => {
     loadTree()
   }, [loadTree, refreshToken])
 
   useEffect(() => {
+    if (isRemote) return
     window.api.fs.watch(rootPath)
-    const unsub = window.api.fs.onFsEvent(() => loadTree())
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null
+    const unsub = window.api.fs.onFsEvent(() => {
+      if (debounceTimer) clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => loadTreeRef.current(), 150)
+    })
     return () => {
+      if (debounceTimer) clearTimeout(debounceTimer)
       window.api.fs.unwatch(rootPath)
       unsub()
     }
-  }, [rootPath, loadTree])
+  }, [rootPath, isRemote])
 
   // ── Selection logic ──
 
@@ -164,7 +182,14 @@ export function FileTree({
         onNavigateUp?.()
       } else if (entry.isDirectory) {
         onNavigateToDir?.(entry.path)
-      } else {
+      } else if (isRemote && !entry.isDirectory && onEditRemoteFile) {
+        onEditRemoteFile(entry.path)
+      } else if (!isRemote) {
+        // Open preview-able files in a preview pane
+        if (/\.(md|markdown|png|jpe?g|gif|webp|svg|bmp|ico|avif)$/i.test(entry.name) && onPreviewFile) {
+          onPreviewFile(entry.path)
+          return
+        }
         const match = fileAssociations.find((a) => matchesGlob(entry.name, a.pattern))
         if (match) {
           window.api.shell.openWith(match.command, entry.path)
@@ -173,7 +198,7 @@ export function FileTree({
         }
       }
     },
-    [onNavigateUp, onNavigateToDir, fileAssociations]
+    [onNavigateUp, onNavigateToDir, onEditRemoteFile, onPreviewFile, fileAssociations, isRemote]
   )
 
   // ── File operations ──
@@ -182,7 +207,10 @@ export function FileTree({
     const items = entries
       .filter((e) => selected.has(e.path))
       .map((e) => ({ path: e.path, isDirectory: e.isDirectory }))
-    if (items.length > 0) setClipboard(items)
+    if (items.length > 0) {
+      setClipboard(items)
+      window.api.clipboard.writeFilePaths(items.map((i) => i.path))
+    }
   }, [entries, selected])
 
   const handlePaste = useCallback(
@@ -263,11 +291,40 @@ export function FileTree({
     }
   }, [loadTree, addToast])
 
+  const handleRenameStart = useCallback(
+    (path?: string) => {
+      const target = path ?? (selected.size === 1 ? Array.from(selected)[0] : null)
+      if (!target) return
+      const entry = entries.find((e) => e.path === target)
+      if (!entry || entry.name === '..') return
+      setRenamingPath(target)
+    },
+    [selected, entries]
+  )
+
+  const handleRenameSubmit = useCallback(
+    async (oldPath: string, newName: string) => {
+      const dir = parentDir(oldPath)
+      const sep = dir.includes('\\') ? '\\' : '/'
+      const newPath = dir + sep + newName
+      try {
+        await window.api.fs.rename(oldPath, newPath)
+        setRenamingPath(null)
+        loadTree()
+        addToast('success', `Renamed to "${newName}"`)
+      } catch {
+        addToast('error', `Failed to rename "${baseName(oldPath)}"`)
+        setRenamingPath(null)
+      }
+    },
+    [loadTree, addToast]
+  )
+
   // ── Drag ──
 
   const handleDragStart = useCallback(
     (e: React.DragEvent, entry: FlatEntry) => {
-      if (entry.name === '..') {
+      if (isRemote || entry.name === '..') {
         e.preventDefault()
         return
       }
@@ -278,12 +335,13 @@ export function FileTree({
       e.dataTransfer.setData('application/x-terma-files', JSON.stringify(paths))
       e.dataTransfer.effectAllowed = 'copyMove'
     },
-    [entries, selected]
+    [entries, selected, isRemote]
   )
 
   // ── Keyboard shortcuts ──
 
   useEffect(() => {
+    if (isRemote) return
     const container = parentRef.current
     if (!container) return
 
@@ -308,12 +366,18 @@ export function FileTree({
             const saved = await window.api.clipboard.saveImage(destPath)
             if (saved) {
               loadTree()
-              addToast('success', `Saved "${saved.substring(saved.lastIndexOf('/') + 1)}"`)
+              addToast('success', `Saved "${baseName(saved)}"`)
             }
           }
         } else if (targetPath) {
           handlePaste(targetPath.path, targetPath.isDirectory)
         }
+        return
+      }
+
+      if (e.key === 'F2' && selected.size === 1 && !renamingPath) {
+        e.preventDefault()
+        handleRenameStart()
         return
       }
 
@@ -330,7 +394,7 @@ export function FileTree({
 
     container.addEventListener('keydown', handleKeyDown)
     return () => container.removeEventListener('keydown', handleKeyDown)
-  }, [selected, entries, clipboard, rootPath, handleCopy, handlePaste, handleDelete, handleRestore])
+  }, [selected, entries, clipboard, rootPath, handleCopy, handlePaste, handleDelete, handleRestore, handleRenameStart, renamingPath, isRemote])
 
   // ── Virtualizer ──
 
@@ -344,43 +408,95 @@ export function FileTree({
   // ── Context menu ──
 
   const contextMenuEntries: MenuEntry[] = contextMenu
-    ? [
-        {
-          type: 'item',
-          label: selected.size > 1 ? `Copy ${selected.size} items` : 'Copy',
-          shortcut: 'Ctrl+C',
-          onAction: () => handleCopy()
-        },
-        {
-          type: 'item',
-          label: clipboard.length > 1 ? `Paste ${clipboard.length} items` : 'Paste',
-          shortcut: 'Ctrl+V',
-          onAction: async () => {
-            if (clipboard.length === 0) {
-              const systemPaths = await window.api.clipboard.readFilePaths()
-              if (systemPaths.length > 0) {
-                handlePaste(contextMenu.path, contextMenu.isDirectory, systemPaths)
-              } else {
-                const destDir = contextMenu.isDirectory ? contextMenu.path : parentDir(contextMenu.path)
-                const saved = await window.api.clipboard.saveImage(destDir)
-                if (saved) {
-                  loadTree()
-                  addToast('success', `Saved "${baseName(saved)}"`)
-                }
-              }
-            } else {
-              handlePaste(contextMenu.path, contextMenu.isDirectory)
+    ? isRemote
+      ? [
+          {
+            type: 'item',
+            label: 'Open SSH terminal here',
+            onAction: () => {
+              const dir = contextMenu.isDirectory
+                ? contextMenu.path
+                : parentDir(contextMenu.path)
+              onOpenSshTerminal?.(dir)
+            }
+          },
+          { type: 'separator' },
+          {
+            type: 'item',
+            label: 'Open in split pane',
+            onAction: () => {
+              const dir = contextMenu.isDirectory
+                ? contextMenu.path
+                : parentDir(contextMenu.path)
+              onOpenInSplit?.(dir)
             }
           }
-        },
-        { type: 'separator' },
-        {
-          type: 'item',
-          label: selected.size > 1 ? `Delete ${selected.size} items` : 'Delete',
-          shortcut: 'Del',
-          onAction: () => handleDelete()
-        }
-      ]
+        ]
+      : [
+          {
+            type: 'item',
+            label: selected.size > 1 ? `Copy ${selected.size} items` : 'Copy',
+            shortcut: 'Ctrl+C',
+            onAction: () => handleCopy()
+          },
+          {
+            type: 'item',
+            label: clipboard.length > 1 ? `Paste ${clipboard.length} items` : 'Paste',
+            shortcut: 'Ctrl+V',
+            onAction: async () => {
+              if (clipboard.length === 0) {
+                const systemPaths = await window.api.clipboard.readFilePaths()
+                if (systemPaths.length > 0) {
+                  handlePaste(contextMenu.path, contextMenu.isDirectory, systemPaths)
+                } else {
+                  const destDir = contextMenu.isDirectory ? contextMenu.path : parentDir(contextMenu.path)
+                  const saved = await window.api.clipboard.saveImage(destDir)
+                  if (saved) {
+                    loadTree()
+                    addToast('success', `Saved "${baseName(saved)}"`)
+                  }
+                }
+              } else {
+                handlePaste(contextMenu.path, contextMenu.isDirectory)
+              }
+            }
+          },
+          {
+            type: 'item',
+            label: 'Rename',
+            shortcut: 'F2',
+            disabled: selected.size > 1,
+            onAction: () => handleRenameStart(contextMenu.path)
+          },
+          { type: 'separator' },
+          {
+            type: 'item',
+            label: 'Open in file manager',
+            onAction: () => {
+              const dir = contextMenu.isDirectory
+                ? contextMenu.path
+                : parentDir(contextMenu.path)
+              window.api.shell.openPath(dir)
+            }
+          },
+          {
+            type: 'item',
+            label: 'Open in split pane',
+            onAction: () => {
+              const dir = contextMenu.isDirectory
+                ? contextMenu.path
+                : parentDir(contextMenu.path)
+              onOpenInSplit?.(dir)
+            }
+          },
+          { type: 'separator' },
+          {
+            type: 'item',
+            label: selected.size > 1 ? `Delete ${selected.size} items` : 'Delete',
+            shortcut: 'Del',
+            onAction: () => handleDelete()
+          }
+        ]
     : []
 
   return (
@@ -399,6 +515,7 @@ export function FileTree({
               isDirectory={entry.isDirectory}
               isExpanded={expandedDirs.has(entry.path)}
               isSelected={selected.has(entry.path)}
+              isRenaming={renamingPath === entry.path}
               depth={entry.depth}
               fontSize={fontSize}
               rowHeight={rowHeight}
@@ -411,6 +528,8 @@ export function FileTree({
               onClick={(e) => handleItemClick(e, entry, virtualItem.index)}
               onDoubleClick={() => handleItemDoubleClick(entry)}
               onDragStart={(e) => handleDragStart(e, entry)}
+              onRenameSubmit={(newName) => handleRenameSubmit(entry.path, newName)}
+              onRenameCancel={() => setRenamingPath(null)}
               onContextMenu={(e) => {
                 e.preventDefault()
                 // If right-clicking outside current selection, select only this item

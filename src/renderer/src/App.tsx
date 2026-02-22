@@ -11,7 +11,8 @@ import { useToastStore } from './stores/toast-store'
 import { ToastContainer } from './components/ui/Toast'
 import { ConfirmDialog } from './components/ui/ConfirmDialog'
 import { getAllPaneIds, findNode } from './lib/layout-tree'
-import type { ThemePreset } from '@shared/themes'
+import { isModKey } from '@shared/path-utils'
+import { PRESET_THEMES, type ThemePreset } from '@shared/themes'
 
 /* ── Derive UI color tokens from a terminal theme ── */
 
@@ -103,7 +104,7 @@ const TabContent = memo(function TabContent({
 
   return (
     <div
-      className={`absolute inset-0 ${isActive ? '' : 'invisible pointer-events-none'}`}
+      className={`absolute inset-0 ${isActive ? 'z-10' : 'z-0 invisible pointer-events-none'}`}
       style={{ '--color-pane-active': TAB_COLOR_VARS[tab.color ?? 'green'] } as React.CSSProperties}
     >
       <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
@@ -115,14 +116,23 @@ export default function App(): JSX.Element {
   const tabOrder = useTabStore((s) => s.tabOrder)
   const activeTabId = useTabStore((s) => s.activeTabId)
   const settingsOpen = useSettingsStore((s) => s.settingsOpen)
-  const activeTheme = useSettingsStore((s) => s.getActiveTheme())
+  const activeThemeId = useSettingsStore((s) => s.settings.activeThemeId)
+  const activeTheme = PRESET_THEMES.find((t) => t.id === activeThemeId) ?? PRESET_THEMES[0]
   const [maximized, setMaximized] = useState(false)
   const [confirmCloseTabId, setConfirmCloseTabId] = useState<string | null>(null)
+  const [confirmCloseWindow, setConfirmCloseWindow] = useState(false)
 
   // Track window maximized state
   useEffect(() => {
     window.api.window.isMaximized().then(setMaximized)
     return window.api.window.onMaximizedChange(setMaximized)
+  }, [])
+
+  // Listen for close confirmation request from main process (Alt+F4, X button, Ctrl+W, Ctrl+Q)
+  useEffect(() => {
+    return window.api.window.onConfirmClose(() => {
+      setConfirmCloseWindow(true)
+    })
   }, [])
 
   // Apply theme CSS variables whenever the active theme changes
@@ -176,8 +186,8 @@ export default function App(): JSX.Element {
 
     window.addEventListener('beforeunload', handleBeforeUnload)
 
-    // Periodic autosave every 2 seconds
-    const interval = setInterval(saveSession, 2000)
+    // Periodic autosave every 10 seconds
+    const interval = setInterval(saveSession, 10_000)
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
@@ -187,12 +197,27 @@ export default function App(): JSX.Element {
 
   // Keyboard shortcuts
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    const { ctrlKey, shiftKey, code, key } = e
+    const { shiftKey, code, key } = e
+    const mod = isModKey(e)
     const state = useTabStore.getState()
     const settingsState = useSettingsStore.getState()
 
-    // Zoom: Ctrl+= / Ctrl+- / Ctrl+0 (no shift)
-    if (ctrlKey && !shiftKey) {
+    // Close window: Ctrl+W / Ctrl+Q
+    if (mod && !shiftKey && (code === 'KeyW' || code === 'KeyQ')) {
+      e.preventDefault()
+      window.api.window.close()
+      return
+    }
+
+    // Toggle voice recording: Ctrl+/
+    if (mod && !shiftKey && code === 'Slash') {
+      e.preventDefault()
+      window.dispatchEvent(new CustomEvent('terma:toggle-recording'))
+      return
+    }
+
+    // Zoom: Mod+= / Mod+- / Mod+0 (no shift)
+    if (mod && !shiftKey) {
       if (key === '=' || key === '+') {
         e.preventDefault()
         settingsState.zoomIn()
@@ -210,7 +235,7 @@ export default function App(): JSX.Element {
       }
     }
 
-    if (ctrlKey && shiftKey) {
+    if (mod && shiftKey) {
       // Settings: Ctrl+Shift+,
       if (key === '<' || key === ',' || code === 'Comma') {
         e.preventDefault()
@@ -294,7 +319,7 @@ export default function App(): JSX.Element {
   }, [handleKeyDown])
 
   return (
-    <div className={`flex h-screen w-screen flex-col overflow-hidden bg-base ${maximized ? '' : 'border-2 border-border shadow-2xl'}`}>
+    <div className={`flex h-screen w-screen flex-col overflow-hidden bg-base will-change-transform ${maximized ? '' : 'border-2 border-border shadow-2xl'}`}>
       <TitleBar />
       <TabBar />
       {/* Content area with padding like nexterm (padding: 6) */}
@@ -318,6 +343,18 @@ export default function App(): JSX.Element {
             setConfirmCloseTabId(null)
           }}
           onCancel={() => setConfirmCloseTabId(null)}
+        />
+      )}
+      {confirmCloseWindow && (
+        <ConfirmDialog
+          title="Close Window"
+          message="All terminal sessions will be terminated. Are you sure?"
+          confirmLabel="Close"
+          onConfirm={() => {
+            setConfirmCloseWindow(false)
+            window.api.window.forceClose()
+          }}
+          onCancel={() => setConfirmCloseWindow(false)}
         />
       )}
     </div>

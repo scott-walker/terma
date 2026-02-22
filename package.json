@@ -1,10 +1,16 @@
 {
   "name": "terma",
   "version": "1.0.0",
-  "description": "Modern terminal emulator",
+  "description": "Modern terminal emulator built with Electron, React and xterm.js",
   "author": {
     "name": "Scott",
     "email": "scott@swlt.ru"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/scott/terma",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scott/terma.git"
   },
   "main": "./out/main/index.js",
   "scripts": {
@@ -14,12 +20,14 @@
     "postinstall": "electron-rebuild -f -w node-pty",
     "rebuild": "electron-rebuild -f -w node-pty",
     "install-app": "bash scripts/install.sh",
-    "build:deb": "electron-vite build && electron-builder --linux deb"
+    "build:deb": "electron-vite build && electron-builder --linux deb",
+    "release": "bash scripts/release.sh"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/rajdhani": "^5.2.7",
     "@tanstack/react-virtual": "^3.13.18",
+    "@types/ssh2": "^1.15.5",
     "@xterm/addon-canvas": "^0.7.0",
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/addon-ligatures": "^0.10.0",
@@ -39,7 +47,12 @@
     "node-pty": "^1.1.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-markdown": "^10.1.0",
     "react-resizable-panels": "^4.6.5",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
+    "ssh2": "^1.17.0",
+    "systeminformation": "^5.31.1",
     "zustand": "^5.0.11"
   },
   "devDependencies": {

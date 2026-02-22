@@ -1,16 +1,20 @@
-import { app, BrowserWindow, clipboard, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, clipboard, shell } from 'electron'
 import { spawn } from 'child_process'
 import { join } from 'path'
 import { writeFile, access } from 'fs/promises'
-import { WINDOW_CHANNELS, CLIPBOARD_CHANNELS, SHELL_CHANNELS } from '../shared/channels'
+import { WINDOW_CHANNELS, CLIPBOARD_CHANNELS, SHELL_CHANNELS, SELFMON_CHANNELS } from '../shared/channels'
 import { PtyManager } from './pty/pty-manager'
 import { FsService } from './file-system/fs-service'
 import { FsWatcher } from './file-system/fs-watcher'
-import { registerIpcHandlers } from './ipc/handlers'
+import { registerIpcHandlers, typedHandle, typedOn } from './ipc/handlers'
 import { registerSettingsHandlers } from './ipc/settings-handlers'
 import { registerSessionHandlers } from './ipc/session-handlers'
 import { registerWhisperHandlers } from './ipc/whisper-handlers'
 import { registerLogHandlers } from './ipc/log-handlers'
+import { registerSshHandlers } from './ipc/ssh-handlers'
+import { registerTranslateHandlers } from './ipc/translate-handlers'
+import { registerSysmonHandlers } from './ipc/sysmon-handlers'
+import { SshService } from './ssh/ssh-service'
 import { logger } from './services/logger-service'
 import { createPlatformService } from './services/platform-service'
 
@@ -25,6 +29,11 @@ const platform = createPlatformService()
 const ptyManager = new PtyManager(platform)
 const fsService = new FsService()
 const fsWatcher = new FsWatcher()
+const sshService = new SshService()
+
+// CPU tracking for self-monitoring
+let lastCpuUsage = process.cpuUsage()
+let lastCpuTime = Date.now()
 
 function createWindow(): BrowserWindow {
   const win = new BrowserWindow({
@@ -45,16 +54,6 @@ function createWindow(): BrowserWindow {
   })
 
   // Block native Electron zoom — zoom is handled in renderer via settings
-  win.webContents.on('before-input-event', (_event, input) => {
-    if (
-      input.control &&
-      !input.shift &&
-      !input.alt &&
-      (input.key === '=' || input.key === '+' || input.key === '-' || input.key === '0')
-    ) {
-      // Let the renderer handle these keys for custom zoom
-    }
-  })
   win.webContents.setZoomFactor(1)
   win.webContents.setVisualZoomLevelLimits(1, 1)
 
@@ -78,14 +77,21 @@ app.whenReady().then(() => {
   registerSessionHandlers()
   registerWhisperHandlers()
   registerLogHandlers()
+  registerSshHandlers(sshService)
+  registerTranslateHandlers()
+  registerSysmonHandlers()
 
   logger.info('app', 'App ready')
 
-  ipcMain.handle(CLIPBOARD_CHANNELS.READ_FILE_PATHS, () => {
+  typedHandle(CLIPBOARD_CHANNELS.READ_FILE_PATHS, () => {
     return platform.getClipboardFilePaths()
   })
 
-  ipcMain.handle(CLIPBOARD_CHANNELS.SAVE_IMAGE, async (_event, destDir: string) => {
+  typedHandle(CLIPBOARD_CHANNELS.WRITE_FILE_PATHS, (_event, paths: string[]) => {
+    platform.setClipboardFilePaths(paths)
+  })
+
+  typedHandle(CLIPBOARD_CHANNELS.SAVE_IMAGE, async (_event, destDir: string) => {
     const img = clipboard.readImage()
     if (img.isEmpty()) return null
     const png = img.toPNG()
@@ -115,15 +121,15 @@ app.whenReady().then(() => {
     return filePath
   })
 
-  ipcMain.handle(SHELL_CHANNELS.OPEN_PATH, (_event, path: string) => shell.openPath(path))
-  ipcMain.handle(SHELL_CHANNELS.OPEN_WITH, (_event, command: string, filePath: string) => {
+  typedHandle(SHELL_CHANNELS.OPEN_PATH, (_event, path: string) => shell.openPath(path))
+  typedHandle(SHELL_CHANNELS.OPEN_WITH, (_event, command: string, filePath: string) => {
     spawn(command, [filePath], { detached: true, stdio: 'ignore' }).unref()
   })
 
-  ipcMain.on(WINDOW_CHANNELS.MINIMIZE, (event) => {
+  typedOn(WINDOW_CHANNELS.MINIMIZE, (event) => {
     BrowserWindow.fromWebContents(event.sender)?.minimize()
   })
-  ipcMain.on(WINDOW_CHANNELS.MAXIMIZE, (event) => {
+  typedOn(WINDOW_CHANNELS.MAXIMIZE, (event) => {
     const win = BrowserWindow.fromWebContents(event.sender)
     if (win?.isMaximized()) {
       win.unmaximize()
@@ -131,21 +137,64 @@ app.whenReady().then(() => {
       win?.maximize()
     }
   })
-  ipcMain.on(WINDOW_CHANNELS.CLOSE, (event) => {
+  typedOn(WINDOW_CHANNELS.CLOSE, (event) => {
     BrowserWindow.fromWebContents(event.sender)?.close()
   })
-  ipcMain.handle(WINDOW_CHANNELS.IS_MAXIMIZED, (event) => {
+  typedOn(WINDOW_CHANNELS.FORCE_CLOSE, (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    if (win) {
+      (win as BrowserWindow & { _forceClose?: boolean })._forceClose = true
+      win.close()
+    }
+  })
+  typedHandle(WINDOW_CHANNELS.IS_MAXIMIZED, (event) => {
     return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
   })
 
+  typedHandle(SELFMON_CHANNELS.METRICS, () => {
+    const mem = process.memoryUsage()
+    const now = Date.now()
+    const elapsed = (now - lastCpuTime) / 1000
+    const cpu = process.cpuUsage(lastCpuUsage)
+    // user + system microseconds → percent of wall time
+    const cpuPercent = elapsed > 0
+      ? ((cpu.user + cpu.system) / 1_000_000) / elapsed * 100
+      : 0
+    lastCpuUsage = process.cpuUsage()
+    lastCpuTime = now
+
+    return {
+      rss: mem.rss,
+      heapUsed: mem.heapUsed,
+      heapTotal: mem.heapTotal,
+      cpuPercent: Math.round(cpuPercent * 10) / 10,
+      ptyCount: ptyManager.sessionCount,
+      uptime: Math.floor(process.uptime())
+    }
+  })
+
+  function setupWindowEvents(win: BrowserWindow): void {
+    win.on('close', (e) => {
+      if ((win as BrowserWindow & { _forceClose?: boolean })._forceClose) return
+      e.preventDefault()
+      if (!win.isDestroyed()) win.webContents.send(WINDOW_CHANNELS.CONFIRM_CLOSE)
+    })
+    win.on('maximize', () => {
+      if (!win.isDestroyed()) win.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, true)
+    })
+    win.on('unmaximize', () => {
+      if (!win.isDestroyed()) win.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, false)
+    })
+  }
+
   const mainWin = createWindow()
+  setupWindowEvents(mainWin)
   logger.info('app', 'Window created')
-  mainWin.on('maximize', () => mainWin.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, true))
-  mainWin.on('unmaximize', () => mainWin.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, false))
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
+      const win = createWindow()
+      setupWindowEvents(win)
     }
   })
 })
@@ -154,6 +203,7 @@ app.on('window-all-closed', () => {
   logger.info('app', 'All windows closed')
   ptyManager.destroyAll()
   fsWatcher.unwatchAll()
+  sshService.disconnectAll()
   if (process.platform !== 'darwin') {
     app.quit()
   }
@@ -163,4 +213,5 @@ app.on('before-quit', () => {
   logger.info('app', 'Quitting')
   ptyManager.destroyAll()
   fsWatcher.unwatchAll()
+  sshService.disconnectAll()
 })

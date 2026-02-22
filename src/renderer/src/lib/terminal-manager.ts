@@ -1,4 +1,4 @@
-import { Terminal } from '@xterm/xterm'
+import { Terminal, type ITheme } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import { WebglAddon } from '@xterm/addon-webgl'
 import { CanvasAddon } from '@xterm/addon-canvas'
@@ -58,6 +58,17 @@ export function subscribeResizing(fn: () => void): () => void {
   return () => { resizeListeners.delete(fn) }
 }
 
+// Snapshot of settings relevant to terminal rendering
+let prevTerminalSettings: {
+  themeColors: ITheme
+  fontFamily: string
+  fontSize: number
+  lineHeight: number
+  cursorBlink: boolean
+  cursorStyle: string
+  scrollback: number
+} | null = null
+
 function ensureSettingsSubscription(): void {
   if (settingsUnsub) return
   settingsUnsub = useSettingsStore.subscribe(() => {
@@ -66,14 +77,39 @@ function ensureSettingsSubscription(): void {
     const effectiveFontSize = state.getEffectiveFontSize()
     const { settings } = state
 
+    const next = {
+      themeColors: theme.colors,
+      fontFamily: settings.fontFamily,
+      fontSize: effectiveFontSize,
+      lineHeight: settings.lineHeight,
+      cursorBlink: settings.cursorBlink,
+      cursorStyle: settings.cursorStyle,
+      scrollback: settings.scrollback
+    }
+
+    // Skip if nothing relevant changed
+    if (
+      prevTerminalSettings &&
+      prevTerminalSettings.themeColors === next.themeColors &&
+      prevTerminalSettings.fontFamily === next.fontFamily &&
+      prevTerminalSettings.fontSize === next.fontSize &&
+      prevTerminalSettings.lineHeight === next.lineHeight &&
+      prevTerminalSettings.cursorBlink === next.cursorBlink &&
+      prevTerminalSettings.cursorStyle === next.cursorStyle &&
+      prevTerminalSettings.scrollback === next.scrollback
+    ) {
+      return
+    }
+    prevTerminalSettings = next
+
     for (const entry of terminals.values()) {
-      entry.terminal.options.theme = theme.colors
-      entry.terminal.options.fontFamily = settings.fontFamily
-      entry.terminal.options.fontSize = effectiveFontSize
-      entry.terminal.options.lineHeight = settings.lineHeight
-      entry.terminal.options.cursorBlink = settings.cursorBlink
-      entry.terminal.options.cursorStyle = settings.cursorStyle
-      entry.terminal.options.scrollback = settings.scrollback
+      entry.terminal.options.theme = next.themeColors
+      entry.terminal.options.fontFamily = next.fontFamily
+      entry.terminal.options.fontSize = next.fontSize
+      entry.terminal.options.lineHeight = next.lineHeight
+      entry.terminal.options.cursorBlink = next.cursorBlink
+      entry.terminal.options.cursorStyle = next.cursorStyle
+      entry.terminal.options.scrollback = next.scrollback
 
       requestAnimationFrame(() => {
         try {
@@ -139,6 +175,11 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
 
   // Selection-aware editing: typing/backspace/delete replaces selected text
   terminal.attachCustomKeyEventHandler((event) => {
+    // Ctrl+Q — toggle voice recording (prevent xterm from sending XON)
+    if (event.code === 'KeyQ' && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
+      return false
+    }
+
     // Ctrl+A — select all (layout-independent via event.code)
     if (event.code === 'KeyA' && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
       if (event.type === 'keydown') terminal.selectAll()
@@ -214,10 +255,8 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
   })
 
   // PTY data → xterm
-  const unsubData = window.api.pty.onData((id, data) => {
-    if (id === ptyId) {
-      terminal.write(data)
-    }
+  const unsubData = window.api.pty.onData(ptyId, (data) => {
+    terminal.write(data)
   })
 
   // xterm input → PTY

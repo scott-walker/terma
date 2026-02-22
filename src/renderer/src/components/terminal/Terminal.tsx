@@ -1,27 +1,12 @@
 import { useRef, useEffect, useState, useCallback, memo } from 'react'
 import { attach, detach, focus, getTerminal, getPtyId } from '@/lib/terminal-manager'
 import { useTabStore } from '@/stores/tab-store'
+import { useSettingsStore } from '@/stores/settings-store'
 import { ContextMenu, type MenuEntry } from '@/components/ui/ContextMenu'
+import { TranslationSnippet } from '@/components/ui/TranslationSnippet'
+import { relativePath, shellEscape } from '@shared/path-utils'
 
 const MIME_FILES = 'application/x-terma-files'
-
-function relativePath(from: string, to: string): string {
-  const fromParts = from.split('/').filter(Boolean)
-  const toParts = to.split('/').filter(Boolean)
-  let i = 0
-  while (i < fromParts.length && i < toParts.length && fromParts[i] === toParts[i]) i++
-  const ups = fromParts.length - i
-  const rest = toParts.slice(i)
-  const rel = [...Array<string>(ups).fill('..'), ...rest].join('/')
-  if (!rel) return '.'
-  if (!rel.startsWith('.')) return './' + rel
-  return rel
-}
-
-function shellEscape(s: string): string {
-  if (/^[a-zA-Z0-9._\-/=@:]+$/.test(s)) return s
-  return "'" + s.replace(/'/g, "'\\''") + "'"
-}
 
 interface TerminalPaneProps {
   tabId: string
@@ -39,6 +24,12 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
   const setPaneTerminal = useTabStore((s) => s.setPaneTerminal)
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
   const [hasSelection, setHasSelection] = useState(false)
+  const hasApiKey = useSettingsStore((s) => !!s.settings.openaiApiKey)
+  const [translationSnippet, setTranslationSnippet] = useState<{
+    position: { x: number; y: number }
+    original: string
+    translated: string | null
+  } | null>(null)
 
   useEffect(() => {
     const container = containerRef.current
@@ -82,9 +73,22 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
       }
     }
     poll()
-    const interval = setInterval(poll, 2000)
+    const interval = setInterval(poll, 5000)
     return () => clearInterval(interval)
   }, [tmKey, tabId, updatePaneCwd])
+
+  // Refresh CWD immediately when pane gains focus
+  useEffect(() => {
+    if (!active) return
+    const ptyId = getPtyId(tmKey)
+    if (!ptyId) return
+    window.api.pty.getCwd(ptyId).then((current) => {
+      if (current && current !== lastCwdRef.current) {
+        lastCwdRef.current = current
+        updatePaneCwd(tabId, paneId, current)
+      }
+    }).catch(() => {})
+  }, [active, tmKey, tabId, paneId, updatePaneCwd])
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
@@ -191,6 +195,23 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
     }
   }, [tabId, paneId, tmKey])
 
+  const handleTranslate = useCallback(async () => {
+    const terminal = getTerminal(tmKey)
+    const selection = terminal?.getSelection()
+    if (!selection) return
+
+    const pos = menuPosition ?? { x: 100, y: 100 }
+    setTranslationSnippet({ position: pos, original: selection, translated: null })
+    setMenuPosition(null)
+
+    try {
+      const result = await window.api.translate.translate(selection)
+      setTranslationSnippet((prev) => prev ? { ...prev, translated: result } : null)
+    } catch {
+      setTranslationSnippet((prev) => prev ? { ...prev, translated: '[Translation error]' } : null)
+    }
+  }, [tmKey, menuPosition])
+
   const menuEntries: MenuEntry[] = [
     {
       type: 'item',
@@ -204,6 +225,12 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
       label: 'Paste',
       shortcut: 'Ctrl+Shift+V',
       onAction: handlePaste
+    },
+    {
+      type: 'item',
+      label: 'Translate',
+      disabled: !hasSelection || !hasApiKey,
+      onAction: handleTranslate
     },
     { type: 'separator' },
     {
@@ -235,6 +262,14 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
         entries={menuEntries}
         onClose={() => setMenuPosition(null)}
       />
+      {translationSnippet && (
+        <TranslationSnippet
+          position={translationSnippet.position}
+          original={translationSnippet.original}
+          translated={translationSnippet.translated}
+          onClose={() => setTranslationSnippet(null)}
+        />
+      )}
     </>
   )
 })

@@ -10,6 +10,8 @@ export const PTY_CHANNELS = {
 
 export const FS_CHANNELS = {
   READ_DIR: 'fs:readDir',
+  READ_FILE: 'fs:readFile',
+  READ_FILE_DATA_URL: 'fs:readFileDataUrl',
   STAT: 'fs:stat',
   RENAME: 'fs:rename',
   DELETE: 'fs:delete',
@@ -40,6 +42,7 @@ export const SHELL_CHANNELS = {
 
 export const CLIPBOARD_CHANNELS = {
   READ_FILE_PATHS: 'clipboard:readFilePaths',
+  WRITE_FILE_PATHS: 'clipboard:writeFilePaths',
   SAVE_IMAGE: 'clipboard:saveImage'
 } as const
 
@@ -51,6 +54,8 @@ export const WINDOW_CHANNELS = {
   MINIMIZE: 'window:minimize',
   MAXIMIZE: 'window:maximize',
   CLOSE: 'window:close',
+  FORCE_CLOSE: 'window:force-close',
+  CONFIRM_CLOSE: 'window:confirm-close',
   IS_MAXIMIZED: 'window:isMaximized',
   MAXIMIZED_CHANGE: 'window:maximized-change'
 } as const
@@ -58,5 +63,31 @@ export const WINDOW_CHANNELS = {
 export const LOG_CHANNELS = {
   GET_LOGS: 'log:getLogs',
   ON_LOG: 'log:onLog'
+} as const
+
+export const TRANSLATE_CHANNELS = {
+  TRANSLATE: 'translate:translate'
+} as const
+
+export const SYSMON_CHANNELS = {
+  METRICS: 'sysmon:metrics'
+} as const
+
+export const SELFMON_CHANNELS = {
+  METRICS: 'selfmon:metrics'
+} as const
+
+export const GIT_CHANNELS = {
+  GET_INFO: 'git:getInfo',
+  LIST_BRANCHES: 'git:listBranches',
+  CHECKOUT: 'git:checkout',
+  CREATE_BRANCH: 'git:createBranch'
+} as const
+
+export const SSH_CHANNELS = {
+  CONNECT: 'ssh:connect',
+  DISCONNECT: 'ssh:disconnect',
+  READ_DIR: 'ssh:readDir',
+  GET_HOME_DIR: 'ssh:getHomeDir'
 } as const
 

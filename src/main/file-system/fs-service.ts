@@ -1,7 +1,9 @@
-import { readdir, stat, rename, rm, copyFile, mkdir, access } from 'fs/promises'
+import { readdir, stat, lstat, realpath, rename, rm, copyFile, mkdir, access } from 'fs/promises'
 import { join, basename, dirname, extname } from 'path'
 import type { FileEntry } from '../../shared/types'
 import { logger } from '../services/logger-service'
+
+const MAX_DEPTH = 64
 
 export class FsService {
   async readDir(dirPath: string): Promise<FileEntry[]> {
@@ -36,7 +38,7 @@ export class FsService {
 
   async stat(filePath: string): Promise<FileEntry> {
     const stats = await stat(filePath)
-    const name = filePath.split('/').pop() || filePath
+    const name = basename(filePath)
     return {
       name,
       path: filePath,
@@ -64,9 +66,11 @@ export class FsService {
     const destPath = await this.resolveConflict(join(destDir, basename(srcPath)))
 
     if (srcStat.isDirectory()) {
-      const total = await this.countFiles(srcPath)
+      const visited = new Set<string>()
+      const total = await this.countFiles(srcPath, visited, 0)
       let done = 0
-      await this.copyDirRecursive(srcPath, destPath, () => {
+      visited.clear()
+      await this.copyDirRecursive(srcPath, destPath, visited, 0, () => {
         done++
         progressCb?.(done, total)
       })
@@ -100,13 +104,25 @@ export class FsService {
     }
   }
 
-  private async countFiles(dirPath: string): Promise<number> {
+  private async countFiles(dirPath: string, visited: Set<string>, depth: number): Promise<number> {
+    if (depth > MAX_DEPTH) {
+      logger.warn('fs', `countFiles: max depth ${MAX_DEPTH} reached at ${dirPath}`)
+      return 0
+    }
+
+    const real = await this.safeRealpath(dirPath)
+    if (real && visited.has(real)) {
+      logger.warn('fs', `countFiles: cyclic symlink detected at ${dirPath}`)
+      return 0
+    }
+    if (real) visited.add(real)
+
     let count = 0
     const entries = await readdir(dirPath, { withFileTypes: true })
     for (const entry of entries) {
       const full = join(dirPath, entry.name)
       if (entry.isDirectory()) {
-        count += await this.countFiles(full)
+        count += await this.countFiles(full, visited, depth + 1)
       } else {
         count++
       }
@@ -117,19 +133,41 @@ export class FsService {
   private async copyDirRecursive(
     src: string,
     dest: string,
+    visited: Set<string>,
+    depth: number,
     onFile: () => void
   ): Promise<void> {
+    if (depth > MAX_DEPTH) {
+      logger.warn('fs', `copyDirRecursive: max depth ${MAX_DEPTH} reached at ${src}`)
+      return
+    }
+
+    const real = await this.safeRealpath(src)
+    if (real && visited.has(real)) {
+      logger.warn('fs', `copyDirRecursive: cyclic symlink detected at ${src}`)
+      return
+    }
+    if (real) visited.add(real)
+
     await mkdir(dest, { recursive: true })
     const entries = await readdir(src, { withFileTypes: true })
     for (const entry of entries) {
       const srcFull = join(src, entry.name)
       const destFull = join(dest, entry.name)
       if (entry.isDirectory()) {
-        await this.copyDirRecursive(srcFull, destFull, onFile)
+        await this.copyDirRecursive(srcFull, destFull, visited, depth + 1, onFile)
       } else {
         await copyFile(srcFull, destFull)
         onFile()
       }
+    }
+  }
+
+  private async safeRealpath(p: string): Promise<string | null> {
+    try {
+      return await realpath(p)
+    } catch {
+      return null
     }
   }
 }

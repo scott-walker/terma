@@ -6,7 +6,8 @@ const TAB_COLOR_CLASSES: Record<string, { border: string; bg: string }> = {
   yellow: { border: 'border-tab-yellow', bg: 'bg-tab-yellow' },
   green: { border: 'border-tab-green', bg: 'bg-tab-green' },
   blue: { border: 'border-tab-blue', bg: 'bg-tab-blue' },
-  purple: { border: 'border-tab-purple', bg: 'bg-tab-purple' }
+  purple: { border: 'border-tab-purple', bg: 'bg-tab-purple' },
+  pink: { border: 'border-tab-pink', bg: 'bg-tab-pink' }
 }
 
 interface TabItemProps {
@@ -29,22 +30,34 @@ interface TabItemProps {
 
 export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, onClose, onRename, onEditEnd, onContextMenu, onDragStart, onDragOver, onDrop, onDragEnd, dropSide }: TabItemProps): JSX.Element {
   const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState(title)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const spanRef = useRef<HTMLSpanElement>(null)
+
+  const selectAll = useCallback(() => {
+    const el = spanRef.current
+    if (!el) return
+    const range = document.createRange()
+    range.selectNodeContents(el)
+    const sel = window.getSelection()
+    sel?.removeAllRanges()
+    sel?.addRange(range)
+  }, [])
+
+  const startEditing = useCallback(() => {
+    setEditing(true)
+  }, [])
 
   useEffect(() => {
-    if (editing) {
-      inputRef.current?.focus()
-      inputRef.current?.select()
+    if (editing && spanRef.current) {
+      spanRef.current.focus()
+      selectAll()
     }
-  }, [editing])
+  }, [editing, selectAll])
 
   useEffect(() => {
     if (forceEdit) {
-      setDraft(title)
-      setEditing(true)
+      startEditing()
     }
-  }, [forceEdit, title])
+  }, [forceEdit, startEditing])
 
   const stopEditing = useCallback(() => {
     setEditing(false)
@@ -52,14 +65,14 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
   }, [onEditEnd])
 
   const commit = useCallback(() => {
-    const trimmed = draft.trim()
+    const trimmed = spanRef.current?.textContent?.trim() ?? ''
     if (trimmed && trimmed !== title) {
       onRename(trimmed)
-    } else {
-      setDraft(title)
+    } else if (spanRef.current) {
+      spanRef.current.textContent = title
     }
     stopEditing()
-  }, [draft, title, onRename, stopEditing])
+  }, [title, onRename, stopEditing])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -67,7 +80,9 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
         e.preventDefault()
         commit()
       } else if (e.key === 'Escape') {
-        setDraft(title)
+        if (spanRef.current) {
+          spanRef.current.textContent = title
+        }
         stopEditing()
       }
     },
@@ -86,32 +101,27 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
     <div
       draggable={!editing}
       onClick={onClick}
-      onDoubleClick={() => {
-        setDraft(title)
-        setEditing(true)
-      }}
+      onDoubleClick={startEditing}
       onContextMenu={onContextMenu}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      className={`group relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-all ${borderClass} ${isActive ? 'bg-tab-active-bg' : ''} ${textClass} ${dropSide ? 'bg-tab-drop-indicator/10' : ''} ${dropSide === 'left' ? 'before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-tab-drop-indicator' : ''} ${dropSide === 'right' ? 'after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-tab-drop-indicator' : ''}`}
+      className={`group relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-colors hover:bg-fg/5 ${borderClass} ${isActive ? 'bg-tab-active-bg' : ''} ${textClass} ${dropSide ? 'bg-tab-drop-indicator/10' : ''} ${dropSide === 'left' ? 'before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-tab-drop-indicator' : ''} ${dropSide === 'right' ? 'after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-tab-drop-indicator' : ''}`}
     >
       <span className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${dotClass}`} />
-      {editing ? (
-        <input
-          ref={inputRef}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={commit}
-          onKeyDown={handleKeyDown}
-          size={Math.max(draft.length, 1)}
-          className="min-w-0 border-none bg-transparent text-fg outline-none focus-visible:outline-none"
-          onClick={(e) => e.stopPropagation()}
-        />
-      ) : (
-        title
-      )}
+      <span
+        ref={spanRef}
+        contentEditable={editing}
+        suppressContentEditableWarning
+        onBlur={editing ? commit : undefined}
+        onKeyDown={editing ? handleKeyDown : undefined}
+        onClick={editing ? (e) => e.stopPropagation() : undefined}
+        spellCheck={false}
+        className={editing ? 'outline-none' : undefined}
+      >
+        {title}
+      </span>
     </div>
   )
 }

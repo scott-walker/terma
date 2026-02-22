@@ -22,14 +22,19 @@
 ## Features
 
 - **Split panes** — vertical & horizontal splits, unlimited nesting
-- **Dynamic pane types** — terminal, file manager, agent — switch on the fly
+- **6 pane types** — terminal, file manager, agent, markdown, image, system monitor — switch on the fly
 - **Multiple tabs** — drag-reorder, color coding, close confirmation
+- **Git integration** — branch info, checkout, create branches from UI
+- **SSH file browsing** — connect to remote servers via SFTP, manage profiles
+- **System monitor** — CPU, RAM, disk metrics + app self-monitoring gauges
 - **4 built-in themes** — Tokyo Night, Dracula, Catppuccin Mocha, One Dark
 - **Session persistence** — tabs, panes, working directories survive restart
-- **File manager** — virtual tree, live updates, trash & restore, file type icons
+- **File manager** — virtual tree, live updates, trash & restore, SSH remote browsing
 - **Voice input** — Whisper transcription via OpenAI API
-- **Settings panel** — font, theme, cursor style, file associations, zoom
-- **Frameless window** — custom titlebar, maximize/restore border handling
+- **Translation** — text translation via OpenAI API
+- **Agent profiles** — configurable AI agent commands (Claude, Aider, etc.)
+- **Settings panel** — font, theme, cursor style, file associations, SSH/agent profiles, zoom
+- **Frameless window** — custom titlebar, close confirmation dialog
 
 ## Quick Start
 
@@ -54,6 +59,8 @@ npm run dev
 | `Ctrl+Shift+A` | Toggle agent mode |
 | `Ctrl+Shift+,` | Settings |
 | `Ctrl+=` / `Ctrl+-` | Zoom in/out |
+| `Ctrl+/` | Toggle voice recording |
+| `Ctrl+W` / `Ctrl+Q` | Close window |
 | `Ctrl+Shift+1-9` | Switch tabs |
 
 ## Documentation
@@ -84,6 +91,9 @@ Full documentation is available in the [wiki](docs/wiki/index.md):
 | State | Zustand 5 |
 | Persistence | electron-store 11 |
 | Panels | react-resizable-panels 4 |
+| SSH | ssh2 |
+| System info | systeminformation |
+| Markdown | react-markdown |
 | Icons | lucide-react |
 | Animations | framer-motion |
 

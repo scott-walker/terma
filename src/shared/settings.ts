@@ -1,3 +1,6 @@
+import type { SshProfile } from './ssh-types'
+import type { AgentProfile } from './agent-types'
+
 export interface FileAssociation {
   pattern: string
   command: string
@@ -16,10 +19,12 @@ export interface TerminalSettings {
   agentCommand: string
   openaiApiKey: string
   whisperLanguage: 'ru' | 'en'
+  sshProfiles: SshProfile[]
+  agentProfiles: AgentProfile[]
 }
 
 export const DEFAULT_SETTINGS: TerminalSettings = {
-  activeThemeId: 'tokyo-night',
+  activeThemeId: 'terma',
   fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', Menlo, monospace",
   fontSize: 14,
   lineHeight: 1.2,
@@ -30,7 +35,9 @@ export const DEFAULT_SETTINGS: TerminalSettings = {
   fileAssociations: [],
   agentCommand: 'claude',
   openaiApiKey: '',
-  whisperLanguage: 'ru'
+  whisperLanguage: 'ru',
+  sshProfiles: [],
+  agentProfiles: [{ id: 'default-claude', name: 'Claude', command: 'claude' }]
 }
 
 export function getEffectiveFontSize(settings: TerminalSettings): number {

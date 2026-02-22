@@ -13,10 +13,10 @@ import {
   Settings2,
   Paintbrush,
   FileCode2,
-  Bot,
-  Mic,
   Eye,
-  EyeOff
+  EyeOff,
+  KeyRound,
+  ChevronDown
 } from 'lucide-react'
 import type { FileAssociation } from '@shared/settings'
 import { useSettingsStore } from '@/stores/settings-store'
@@ -29,6 +29,19 @@ import { Input } from '../ui/Input'
 import { Divider } from '../ui/Divider'
 import { ThemeCard } from './ThemeCard'
 
+const FONT_PRESETS = [
+  { label: 'JetBrains Mono', value: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', Menlo, monospace" },
+  { label: 'Cascadia Code', value: "'Cascadia Code', 'JetBrains Mono', 'Fira Code', Menlo, monospace" },
+  { label: 'Fira Code', value: "'Fira Code', 'JetBrains Mono', 'Cascadia Code', Menlo, monospace" },
+  { label: 'Source Code Pro', value: "'Source Code Pro', 'JetBrains Mono', Menlo, monospace" },
+  { label: 'IBM Plex Mono', value: "'IBM Plex Mono', 'JetBrains Mono', Menlo, monospace" },
+  { label: 'Hack', value: "'Hack', 'JetBrains Mono', Menlo, monospace" },
+  { label: 'Inconsolata', value: "'Inconsolata', 'JetBrains Mono', Menlo, monospace" },
+  { label: 'Ubuntu Mono', value: "'Ubuntu Mono', 'JetBrains Mono', Menlo, monospace" },
+  { label: 'Menlo', value: "Menlo, 'JetBrains Mono', monospace" },
+  { label: 'Consolas', value: "Consolas, 'JetBrains Mono', Menlo, monospace" }
+]
+
 type SettingsTab = 'general' | 'style'
 
 const TABS: { id: SettingsTab; label: string; icon: typeof Settings2 }[] = [
@@ -36,12 +49,12 @@ const TABS: { id: SettingsTab; label: string; icon: typeof Settings2 }[] = [
   { id: 'style', label: 'Style', icon: Paintbrush }
 ]
 
-function VoiceInputSection(): JSX.Element {
+function OpenAISection(): JSX.Element {
   const { settings, updateSettings } = useSettingsStore()
   const [showKey, setShowKey] = useState(false)
 
   return (
-    <Section icon={Mic} title="Voice Input">
+    <Section icon={KeyRound} title="OpenAI">
       <div>
         <label className="mb-2 block text-xs text-fg-muted">OpenAI API Key</label>
         <div className="flex items-center gap-2">
@@ -60,7 +73,7 @@ function VoiceInputSection(): JSX.Element {
           </button>
         </div>
         <p className="mt-2 text-[11px] text-fg-muted">
-          Required for voice input. Click the mic button in terminal header to record.
+          Used for voice input and translation.
         </p>
       </div>
       <div>
@@ -100,7 +113,7 @@ export function SettingsPanel(): JSX.Element {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-backdrop backdrop-blur-sm"
+          className="pointer-events-none absolute inset-0 bg-backdrop backdrop-blur-sm"
         />
 
         {/* Panel */}
@@ -118,15 +131,15 @@ export function SettingsPanel(): JSX.Element {
               <h2 className="text-lg font-semibold text-fg">Settings</h2>
               <p className="mt-1 text-xs text-fg-muted">Customize your terminal</p>
             </div>
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 90 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-              onClick={toggleSettings}
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-fg-muted transition-colors hover:bg-surface hover:text-fg"
+            <button
+              onPointerDown={(e) => {
+                e.stopPropagation()
+                toggleSettings()
+              }}
+              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border-none bg-transparent text-fg-muted hover:bg-surface hover:text-fg"
             >
-              <X size={16} />
-            </motion.button>
+              <X size={18} className="pointer-events-none" />
+            </button>
           </div>
 
           {/* Tab navigation */}
@@ -252,25 +265,8 @@ export function SettingsPanel(): JSX.Element {
 
                 <Divider />
 
-                {/* Agent */}
-                <Section icon={Bot} title="Agent">
-                  <div>
-                    <label className="mb-2 block text-xs text-fg-muted">Command</label>
-                    <Input
-                      value={settings.agentCommand}
-                      placeholder="claude"
-                      onChange={(e) => updateSettings({ agentCommand: e.target.value })}
-                    />
-                    <p className="mt-2 text-[11px] text-fg-muted">
-                      Command to run when opening an Agent tab (e.g. claude, aider, copilot)
-                    </p>
-                  </div>
-                </Section>
-
-                <Divider />
-
-                {/* Voice Input */}
-                <VoiceInputSection />
+                {/* OpenAI */}
+                <OpenAISection />
 
                 {/* Reset */}
                 <div className="pt-2">
@@ -311,10 +307,21 @@ export function SettingsPanel(): JSX.Element {
                   <div className="space-y-4">
                     <div>
                       <label className="mb-2 block text-xs text-fg-muted">Family</label>
-                      <Input
-                        value={settings.fontFamily}
-                        onChange={(e) => updateSettings({ fontFamily: e.target.value })}
-                      />
+                      <div className="relative">
+                        <select
+                          value={settings.fontFamily}
+                          onChange={(e) => updateSettings({ fontFamily: e.target.value })}
+                          className="w-full appearance-none rounded-xl border border-border bg-surface px-4 py-2.5 pr-9 text-sm text-fg outline-none transition-colors focus:border-accent/40 focus:bg-surface-hover"
+                        >
+                          {FONT_PRESETS.map((f) => (
+                            <option key={f.label} value={f.value}>{f.label}</option>
+                          ))}
+                          {!FONT_PRESETS.some((f) => f.value === settings.fontFamily) && (
+                            <option value={settings.fontFamily}>{settings.fontFamily}</option>
+                          )}
+                        </select>
+                        <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-fg-muted" />
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>

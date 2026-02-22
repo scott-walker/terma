@@ -35,7 +35,8 @@ const COLOR_BG_CLASSES: Record<string, string> = {
   yellow: 'bg-tab-yellow',
   green: 'bg-tab-green',
   blue: 'bg-tab-blue',
-  purple: 'bg-tab-purple'
+  purple: 'bg-tab-purple',
+  pink: 'bg-tab-pink'
 }
 
 export function ContextMenu({ position, entries, onClose }: ContextMenuProps): JSX.Element {

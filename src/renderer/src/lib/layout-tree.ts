@@ -182,6 +182,54 @@ export function swapPanes(root: LayoutNode, paneId1: string, paneId2: string): L
   return walk(root)
 }
 
+const PREVIEW_RATIO = 30
+
+export function appendRight(
+  root: LayoutNode,
+  paneType: PaneType = 'terminal',
+  cwd: string | null = null
+): { tree: LayoutNode; newPaneId: string } {
+  const newPane = createPane(paneType, null, cwd)
+  const scale = (100 - PREVIEW_RATIO) / 100
+
+  if (root.type === 'pane') {
+    return {
+      tree: {
+        type: 'branch',
+        id: nanoid(),
+        direction: 'vertical',
+        children: [root, newPane],
+        ratios: [100 - PREVIEW_RATIO, PREVIEW_RATIO]
+      },
+      newPaneId: newPane.id
+    }
+  }
+
+  // Already side-by-side → append as last child
+  if (root.direction === 'vertical') {
+    return {
+      tree: {
+        ...root,
+        children: [...root.children, newPane],
+        ratios: [...root.ratios.map((r) => r * scale), PREVIEW_RATIO]
+      },
+      newPaneId: newPane.id
+    }
+  }
+
+  // Stacked → wrap in a vertical branch
+  return {
+    tree: {
+      type: 'branch',
+      id: nanoid(),
+      direction: 'vertical',
+      children: [root, newPane],
+      ratios: [100 - PREVIEW_RATIO, PREVIEW_RATIO]
+    },
+    newPaneId: newPane.id
+  }
+}
+
 export function setPaneType(
   root: LayoutNode,
   paneId: string,

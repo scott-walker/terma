@@ -9,6 +9,7 @@ import { logger } from './logger-service'
 export interface PlatformService {
   getCwd(pid: number): string | null
   getClipboardFilePaths(): string[]
+  setClipboardFilePaths(paths: string[]): void
   restoreFromTrash(originalPaths: string[]): Promise<{ ok: number; fail: number }>
 }
 
@@ -33,6 +34,11 @@ class LinuxPlatformService implements PlatformService {
         .map((uri) => decodeURIComponent(new URL(uri.trim()).pathname))
     }
     return []
+  }
+
+  setClipboardFilePaths(paths: string[]): void {
+    const lines = ['copy', ...paths.map((p) => `file://${encodeURI(p)}`)].join('\n')
+    clipboard.writeBuffer('x-special/gnome-copied-files', Buffer.from(lines, 'utf-8'))
   }
 
   async restoreFromTrash(originalPaths: string[]): Promise<{ ok: number; fail: number }> {
@@ -110,26 +116,54 @@ class MacPlatformService implements PlatformService {
   }
 
   getClipboardFilePaths(): string[] {
-    // TODO: implement macOS clipboard file paths
-    return []
+    try {
+      const buf = clipboard.readBuffer('public.file-url')
+      if (buf.length === 0) return []
+      const raw = buf.toString('utf-8')
+      return raw
+        .split(/\r?\n/)
+        .filter((line) => line.startsWith('file://'))
+        .map((uri) => decodeURIComponent(new URL(uri.trim()).pathname))
+    } catch {
+      return []
+    }
+  }
+
+  setClipboardFilePaths(paths: string[]): void {
+    const lines = paths.map((p) => `file://${encodeURI(p)}`).join('\n')
+    clipboard.writeBuffer('public.file-url', Buffer.from(lines, 'utf-8'))
   }
 
   async restoreFromTrash(_originalPaths: string[]): Promise<{ ok: number; fail: number }> {
-    // TODO: implement macOS trash restore
+    // macOS Trash restore requires Finder scripting — not feasible without native addon
     return { ok: 0, fail: _originalPaths.length }
   }
 }
 
 class WindowsPlatformService implements PlatformService {
   getCwd(_pid: number): string | null {
+    // Windows CWD polling requires native addons — not supported yet
     return null
   }
 
   getClipboardFilePaths(): string[] {
-    return []
+    try {
+      const buf = clipboard.readBuffer('FileNameW')
+      if (buf.length === 0) return []
+      // FileNameW is null-terminated UTF-16LE paths separated by null chars
+      const raw = buf.toString('utf16le')
+      return raw.split('\0').filter((p) => p.length > 0)
+    } catch {
+      return []
+    }
+  }
+
+  setClipboardFilePaths(_paths: string[]): void {
+    // Windows clipboard file write requires CF_HDROP format — not feasible via Electron clipboard API
   }
 
   async restoreFromTrash(_originalPaths: string[]): Promise<{ ok: number; fail: number }> {
+    // Windows Recycle Bin restore requires COM API — not supported yet
     return { ok: 0, fail: _originalPaths.length }
   }
 }

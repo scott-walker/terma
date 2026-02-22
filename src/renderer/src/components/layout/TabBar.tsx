@@ -13,7 +13,8 @@ const TAB_COLORS = [
   { id: 'yellow', label: 'Yellow' },
   { id: 'green', label: 'Green' },
   { id: 'blue', label: 'Blue' },
-  { id: 'purple', label: 'Purple' }
+  { id: 'purple', label: 'Purple' },
+  { id: 'pink', label: 'Pink' }
 ]
 
 export function TabBar(): JSX.Element {

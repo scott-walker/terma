@@ -20,46 +20,28 @@ export const SplitPane = memo(function SplitPane({ node, tabId, isTabActive }: S
   const activePaneId = useTabStore((s) => s.tabs[tabId]?.activePaneId)
   const setActivePaneId = useTabStore((s) => s.setActivePaneId)
   const updateLayoutRatios = useTabStore((s) => s.updateLayoutRatios)
-  const pendingSizes = useRef<number[] | null>(null)
+  const isResizingRef = useRef(false)
 
-  const handleLayoutChanged = useCallback((sizes: number[]) => {
-    pendingSizes.current = sizes
-  }, [])
-
-  const handlePointerDownCapture = useCallback((e: React.PointerEvent) => {
-    const target = e.target as HTMLElement
-    const separator = target.closest('[data-separator]') as HTMLElement
-    if (!separator) return
-
-    // Only handle separators that are direct children of this Group
-    const groupEl = (e.currentTarget as HTMLElement).firstElementChild
-    if (!groupEl || separator.parentElement !== groupEl) return
-
-    // Find separator index among sibling separators
-    const separators = groupEl.querySelectorAll(':scope > [data-separator]')
-    let sepIndex = -1
-    separators.forEach((el, i) => {
-      if (el === separator) sepIndex = i
-    })
-    if (sepIndex < 0 || node.type === 'pane') return
-
-    const leftChild = node.children[sepIndex]
-    const rightChild = node.children[sepIndex + 1]
-    if (!leftChild || !rightChild) return
-
-    const paneIds = [...collectPaneIds(leftChild), ...collectPaneIds(rightChild)]
-    setResizingPanes(paneIds)
-    pendingSizes.current = null
-
-    const handleUp = (): void => {
-      window.removeEventListener('pointerup', handleUp)
-      clearResizingPanes()
-      if (pendingSizes.current) {
-        updateLayoutRatios(tabId, node.id, pendingSizes.current)
-        pendingSizes.current = null
-      }
+  // Fires on every frame during pointer-driven resize; once for programmatic changes
+  const handleLayoutChange = useCallback(() => {
+    if (!isResizingRef.current && node.type === 'branch') {
+      isResizingRef.current = true
+      const allPaneIds = node.children.flatMap(collectPaneIds)
+      setResizingPanes(allPaneIds)
     }
-    window.addEventListener('pointerup', handleUp)
+  }, [node])
+
+  // Fires after pointer release (for drag) or immediately (for programmatic changes)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleLayoutChanged = useCallback((layout: any) => {
+    if (isResizingRef.current) {
+      isResizingRef.current = false
+      clearResizingPanes()
+    }
+    if (node.type === 'branch') {
+      const sizes: number[] = Array.isArray(layout) ? layout : Object.values(layout)
+      updateLayoutRatios(tabId, node.id, sizes)
+    }
   }, [tabId, node, updateLayoutRatios])
 
   if (node.type === 'pane') {
@@ -81,11 +63,15 @@ export const SplitPane = memo(function SplitPane({ node, tabId, isTabActive }: S
   // Layout tree 'horizontal' = horizontal divider = panels stacked → orientation 'vertical'
   const orientation = node.direction === 'vertical' ? 'horizontal' : 'vertical'
   const handleClass = orientation === 'horizontal' ? 'h-full w-1.5' : 'w-full h-1.5'
+  // Width minimum: header tabs (Terminal/Files/Agent) + action buttons + padding
+  // Height minimum: header + enough content to be usable
+  const minPanelSize = orientation === 'horizontal' ? '370px' : '120px'
 
   return (
-    <div className="h-full w-full" onPointerDownCapture={handlePointerDownCapture}>
+    <div className="h-full w-full">
       <Group
         orientation={orientation}
+        onLayoutChange={handleLayoutChange}
         onLayoutChanged={handleLayoutChanged}
         resizeTargetMinimumSize={{ fine: 0, coarse: 0 }}
       >
@@ -99,7 +85,7 @@ export const SplitPane = memo(function SplitPane({ node, tabId, isTabActive }: S
             )
           }
           items.push(
-            <Panel key={child.id} order={i} min="10%" default={`${100 / node.children.length}%`}>
+            <Panel key={child.id} minSize={minPanelSize} defaultSize={`${node.ratios[i]}%`}>
               <SplitPane node={child} tabId={tabId} isTabActive={isTabActive} />
             </Panel>
           )

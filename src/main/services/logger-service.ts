@@ -3,6 +3,7 @@ import { LOG_CHANNELS } from '../../shared/channels'
 import type { LogLevel, LogEntry } from '../../shared/types'
 
 const MAX_ENTRIES = 500
+const BROADCAST_LEVELS: Set<LogLevel> = new Set(['info', 'warn', 'error'])
 
 class LoggerService {
   private entries: LogEntry[] = []
@@ -31,10 +32,12 @@ class LoggerService {
       console.log(prefix, message, data ?? '')
     }
 
-    // Broadcast to all renderer windows
-    for (const win of BrowserWindow.getAllWindows()) {
-      if (!win.isDestroyed()) {
-        win.webContents.send(LOG_CHANNELS.ON_LOG, entry)
+    // Broadcast to renderer — skip debug to reduce IPC traffic
+    if (BROADCAST_LEVELS.has(level)) {
+      for (const win of BrowserWindow.getAllWindows()) {
+        if (!win.isDestroyed()) {
+          win.webContents.send(LOG_CHANNELS.ON_LOG, entry)
+        }
       }
     }
   }

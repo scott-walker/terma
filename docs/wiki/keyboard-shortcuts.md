@@ -1,6 +1,13 @@
 # Горячие клавиши
 
-Все сочетания обрабатываются в `App.tsx` через глобальный `keydown` listener. Используется `e.code` для буквенных клавиш, что обеспечивает работу независимо от раскладки клавиатуры.
+Все сочетания обрабатываются в `App.tsx` через глобальный `keydown` listener. Используется `e.code` для буквенных клавиш, что обеспечивает работу независимо от раскладки клавиатуры. Модификатор определяется через `isModKey()` (Ctrl на Linux/Windows, Cmd на macOS).
+
+## Управление окном
+
+| Сочетание | Действие |
+|-----------|----------|
+| `Ctrl+W` | Закрыть окно (с подтверждением) |
+| `Ctrl+Q` | Закрыть окно (с подтверждением) |
 
 ## Управление табами
 
@@ -21,6 +28,12 @@
 | `Ctrl+Shift+B` | Разделить + открыть файловый менеджер (горизонтально) |
 | `Ctrl+Shift+A` | Переключить тип панели: terminal ↔ agent |
 
+## Голосовой ввод
+
+| Сочетание | Действие |
+|-----------|----------|
+| `Ctrl+/` | Toggle записи голоса (Whisper транскрипция) |
+
 ## Масштаб
 
 | Сочетание | Действие |
@@ -35,12 +48,12 @@
 |-----------|----------|
 | `Ctrl+Shift+,` | Открыть/закрыть панель настроек |
 
-## Управление окном
+## Управление окном (titlebar)
 
 Кнопки в titlebar:
 - Свернуть (minimize)
 - Развернуть / восстановить (maximize toggle)
-- Закрыть окно (close)
+- Закрыть окно (close — с подтверждением)
 
 ## Реализация
 
@@ -48,16 +61,29 @@
 
 ```typescript
 const handleKeyDown = useCallback((e: KeyboardEvent) => {
-  const { ctrlKey, shiftKey, code, key } = e
+  const { shiftKey, code, key } = e
+  const mod = isModKey(e) // Ctrl (Linux/Win) или Cmd (macOS)
 
-  // Zoom: Ctrl+= / Ctrl+- / Ctrl+0 (без Shift)
-  if (ctrlKey && !shiftKey) {
+  // Close window: Ctrl+W / Ctrl+Q (без Shift)
+  if (mod && !shiftKey && (code === 'KeyW' || code === 'KeyQ')) {
+    window.api.window.close()
+    return
+  }
+
+  // Toggle voice: Ctrl+/
+  if (mod && !shiftKey && code === 'Slash') {
+    window.dispatchEvent(new CustomEvent('terma:toggle-recording'))
+    return
+  }
+
+  // Zoom: Mod+= / Mod+- / Mod+0 (без Shift)
+  if (mod && !shiftKey) {
     if (key === '=' || key === '+') { zoomIn(); return }
     if (key === '-') { zoomOut(); return }
     if (key === '0') { zoomReset(); return }
   }
 
-  if (ctrlKey && shiftKey) {
+  if (mod && shiftKey) {
     // Settings: Ctrl+Shift+,
     if (key === '<' || key === ',' || code === 'Comma') {
       toggleSettings(); return
@@ -84,3 +110,5 @@ const handleKeyDown = useCallback((e: KeyboardEvent) => {
 Все сочетания используют `e.preventDefault()` для предотвращения стандартных действий браузера.
 
 Состояние читается через `useTabStore.getState()` и `useSettingsStore.getState()` (не из React state), чтобы обработчик всегда имел актуальные данные без необходимости пересоздания.
+
+`isModKey()` определена в `src/shared/path-utils.ts` и возвращает `e.metaKey` на macOS, `e.ctrlKey` на остальных платформах.

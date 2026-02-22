@@ -13,10 +13,11 @@ npm run dev
 ### Добавление нового IPC-канала
 
 1. Объявите константу канала в `src/shared/channels.ts`
-2. Создайте обработчик в `src/main/ipc/` (отдельный файл или добавьте в существующий)
-3. Зарегистрируйте обработчик в `src/main/index.ts`
-4. Добавьте метод в preload API (`src/preload/index.ts`)
-5. Обновите типы в `src/renderer/src/types/electron.d.ts`
+2. Добавьте типы в IPC-контракт (`src/shared/ipc-types.ts` — `IpcInvokeMap`, `IpcSendMap` или `IpcEventMap`)
+3. Создайте обработчик в `src/main/ipc/` (отдельный файл или добавьте в существующий)
+4. Зарегистрируйте обработчик в `src/main/index.ts`
+5. Добавьте метод в preload API (`src/preload/index.ts`)
+6. Обновите типы в `src/renderer/src/types/electron.d.ts`
 
 ### Добавление нового Zustand store
 
@@ -33,10 +34,13 @@ npm run dev
 
 ### Добавление нового типа панели
 
+Текущие типы: `terminal`, `file-manager`, `agent`, `markdown`, `image`, `system-monitor`.
+
 1. Добавьте значение в `PaneType` в `src/shared/types.ts`
-2. Добавьте конфигурацию в `PANE_TYPE_CONFIGS` в `src/renderer/src/lib/pane-types.ts`
+2. Добавьте конфигурацию в `PANE_TYPE_CONFIGS` в `src/renderer/src/lib/pane-types.ts` (label + lucide icon)
 3. Добавьте ветку рендеринга в `PaneContent.tsx`
 4. При необходимости — обработчик в `terminal-manager.ts`
+5. При необходимости — создайте компонент в `src/renderer/src/components/<type>/`
 
 ### Добавление новой темы
 

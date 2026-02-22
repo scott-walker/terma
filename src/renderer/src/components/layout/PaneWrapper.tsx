@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, useEffect, useSyncExternalStore } from 'react'
+import { memo, useState, useCallback, useEffect, useRef, useSyncExternalStore } from 'react'
 import type { PaneNode } from '@/lib/layout-tree'
 import { PANE_TYPE_CONFIGS, PANE_ACTIVE_CLASSES } from '@/lib/pane-types'
 import { useTabStore } from '@/stores/tab-store'
@@ -16,6 +16,7 @@ interface PaneWrapperProps {
 
 export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: PaneWrapperProps): JSX.Element {
   const paneType = node.paneType ?? 'terminal'
+  const containerRef = useRef<HTMLDivElement>(null)
   const paneResizing = useSyncExternalStore(
     subscribeResizing,
     useCallback(() => isPaneResizing(node.id), [node.id])
@@ -65,6 +66,7 @@ export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: 
 
   return (
     <div
+      ref={containerRef}
       className={`relative flex h-full w-full flex-col overflow-hidden rounded-lg border-2 bg-base transition-[border-color] duration-200 ${
         isActive ? PANE_ACTIVE_CLASSES.paneBorderClass : 'border-border'
       }`}
@@ -72,7 +74,7 @@ export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: 
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <PaneHeader tabId={tabId} paneId={node.id} paneType={paneType} />
+      <PaneHeader tabId={tabId} paneId={node.id} paneType={paneType} cwd={node.cwd} paneRef={containerRef} />
       <div className="relative flex-1">
         <div className="absolute inset-0 overflow-hidden">
           <PaneContent paneType={paneType} tabId={tabId} paneId={node.id} isActive={isActive} cwd={node.cwd} />

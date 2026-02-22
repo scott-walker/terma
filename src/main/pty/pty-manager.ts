@@ -1,5 +1,6 @@
 import * as pty from 'node-pty'
 import { BrowserWindow } from 'electron'
+import { homedir } from 'os'
 import { PTY_CHANNELS } from '../../shared/channels'
 import type { PtyCreateOpts } from '../../shared/types'
 import type { PlatformService } from '../services/platform-service'
@@ -7,10 +8,15 @@ import { logger } from '../services/logger-service'
 
 export class PtyManager {
   private sessions = new Map<string, pty.IPty>()
+  private disposables = new Map<string, pty.IDisposable[]>()
   private platform: PlatformService
 
   constructor(platform: PlatformService) {
     this.platform = platform
+  }
+
+  get sessionCount(): number {
+    return this.sessions.size
   }
 
   private get shell(): string {
@@ -24,25 +30,27 @@ export class PtyManager {
       name: 'xterm-256color',
       cols: opts.cols || 80,
       rows: opts.rows || 24,
-      cwd: opts.cwd || process.env.HOME || '/',
+      cwd: opts.cwd || homedir(),
       env: process.env as Record<string, string>
     })
 
     this.sessions.set(id, term)
     logger.info('pty', `PTY created: ${id} (pid=${term.pid})`)
 
-    term.onData((data) => {
+    const d1 = term.onData((data) => {
       if (!win.isDestroyed()) {
         win.webContents.send(PTY_CHANNELS.DATA, id, data)
       }
     })
 
-    term.onExit(({ exitCode, signal }) => {
-      this.sessions.delete(id)
+    const d2 = term.onExit(({ exitCode, signal }) => {
+      this.dispose(id)
       if (!win.isDestroyed()) {
         win.webContents.send(PTY_CHANNELS.EXIT, id, exitCode, signal)
       }
     })
+
+    this.disposables.set(id, [d1, d2])
   }
 
   write(id: string, data: string): void {
@@ -57,11 +65,20 @@ export class PtyManager {
     }
   }
 
+  private dispose(id: string): void {
+    const subs = this.disposables.get(id)
+    if (subs) {
+      for (const d of subs) d.dispose()
+      this.disposables.delete(id)
+    }
+    this.sessions.delete(id)
+  }
+
   destroy(id: string): void {
     const term = this.sessions.get(id)
     if (term) {
+      this.dispose(id)
       term.kill()
-      this.sessions.delete(id)
       logger.info('pty', `PTY destroyed: ${id}`)
     }
   }

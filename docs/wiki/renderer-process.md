@@ -45,7 +45,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 Обязанности:
 - Загрузка настроек и подписка на их изменения
 - Загрузка сохранённой сессии или создание начального таба
-- Автосохранение сессии каждые 2 секунды + на `beforeunload`
+- Автосохранение сессии каждые 10 секунд + на `beforeunload`
 - Применение цветовой темы к DOM (`applyThemeToDOM`)
 - Глобальные обработчики горячих клавиш (подробнее: [Горячие клавиши](keyboard-shortcuts.md))
 - Отслеживание состояния maximize/unmaximize для бордюров окна
@@ -180,6 +180,67 @@ Per-pane состояние файлового менеджера. Хранит 
 | `toggleDir(paneId, path)` | Раскрыть/свернуть директорию |
 | `removePane(paneId)` | Удалить состояние панели |
 
+### agent-store
+
+**Файл:** `src/renderer/src/stores/agent-store.ts`
+
+Per-pane привязка агент-профиля. Хранит маппинг paneId → agentProfileId.
+
+#### Состояние
+
+```typescript
+{
+  panes: Record<string, string>  // paneId → agentProfileId
+}
+```
+
+#### Действия
+
+| Действие | Описание |
+|----------|----------|
+| `selectAgent(paneId, profileId)` | Привязать агент-профиль к панели |
+| `clearAgent(paneId)` | Убрать привязку |
+
+Агент-профили (имя + команда) хранятся в `settings.agentProfiles`. Store лишь связывает конкретную панель с выбранным профилем.
+
+### ssh-store
+
+**Файл:** `src/renderer/src/stores/ssh-store.ts`
+
+Per-pane SSH-подключения. Управляет состоянием SSH для панелей файлового менеджера.
+
+#### Состояние
+
+```typescript
+{
+  panes: Record<string, SshPaneState>
+  editorPanes: Record<string, SshEditorMeta>
+}
+```
+
+Каждый `SshPaneState`:
+
+```typescript
+{
+  profileId: string
+  state: 'idle' | 'connecting' | 'connected' | 'error'
+  error?: string
+}
+```
+
+#### Действия
+
+| Действие | Описание |
+|----------|----------|
+| `enterSshMode(paneId)` | Инициализировать SSH-состояние для панели |
+| `exitSshMode(paneId)` | Отключиться и убрать состояние |
+| `connect(paneId, profileId)` | Подключиться к SSH-серверу |
+| `disconnect(paneId)` | Отключиться от сервера |
+| `removePaneSsh(paneId)` | Очистить SSH при удалении панели |
+| `getPaneState(paneId)` | Получить текущее состояние |
+| `registerEditor(paneId, meta)` | Привязать SSH-контекст для редактирования файла |
+| `removeEditor(paneId)` | Убрать SSH-контекст |
+
 ---
 
 ## terminal-manager.ts
@@ -240,6 +301,9 @@ Per-pane состояние файлового менеджера. Хранит 
 - `terminal` → `Terminal` (xterm.js)
 - `file-manager` → `FileManagerPane`
 - `agent` → `Terminal` (с отдельным PTY для agentCommand)
+- `markdown` → `MarkdownPane` (просмотр markdown-файлов)
+- `image` → `ImagePane` (просмотр изображений)
+- `system-monitor` → `SystemMonitorPane` (метрики системы)
 
 ### PaneWrapper
 
@@ -264,7 +328,9 @@ Per-pane состояние файлового менеджера. Хранит 
 
 **Файл:** `src/renderer/src/components/layout/StatusBar.tsx`
 
-Нижняя статусная строка: текущий рабочий каталог, количество панелей, кнопка копирования логов.
+Нижняя статусная строка. Слева: текущий рабочий каталог. Справа: активный агент-профиль, SSH-статус (с цветовой индикацией), self-monitoring gauges (RAM и CPU приложения с цветовыми порогами), количество панелей, кнопка копирования логов.
+
+Self-monitoring опрашивается каждые 3 секунды через `window.api.selfmon.getMetrics()`. Gauge'и отображают RSS (пороги: 200/400/600 MB) и CPU (пороги: 5/15/30%).
 
 ### SettingsPanel
 
@@ -283,3 +349,69 @@ React-обёртка для xterm.js. При монтировании вызыв
 ### FileManagerPane, FileTree, FileItem, FileTypeIcon
 
 Панель файлового менеджера. Подробнее: [Файловый менеджер](file-manager.md)
+
+### SshDropdown
+
+**Файл:** `src/renderer/src/components/file-manager/SshDropdown.tsx`
+
+Dropdown в заголовке файлового менеджера для выбора SSH-профиля. Позволяет подключаться к удалённым серверам и переключать файловый менеджер в SSH-режим. Отображает статус подключения.
+
+### SshProfilesModal
+
+**Файл:** `src/renderer/src/components/file-manager/SshProfilesModal.tsx`
+
+Модальное окно для управления SSH-профилями (CRUD): хост, порт, пользователь, путь к ключу, путь по умолчанию. Профили сохраняются в `settings.sshProfiles`.
+
+### AgentDropdown
+
+**Файл:** `src/renderer/src/components/agent/AgentDropdown.tsx`
+
+Dropdown в заголовке agent-панели для выбора агент-профиля. Отображает список профилей из `settings.agentProfiles` и позволяет переключаться между ними.
+
+### AgentProfilesModal
+
+**Файл:** `src/renderer/src/components/agent/AgentProfilesModal.tsx`
+
+Модальное окно для управления агент-профилями: имя и команда запуска (например, `claude`, `aider --model gpt-4`). Профили сохраняются в `settings.agentProfiles`.
+
+### SystemMonitorPane
+
+**Файл:** `src/renderer/src/components/system-monitor/SystemMonitorPane.tsx`
+
+Панель системного мониторинга. Отображает метрики CPU (средняя нагрузка + per-core), RAM, дисков, количество процессов. Данные получает через `window.api.sysmon.getMetrics()` с периодическим опросом.
+
+### MarkdownPane
+
+**Файл:** `src/renderer/src/components/markdown/MarkdownPane.tsx`
+
+Панель просмотра Markdown-файлов. Использует `react-markdown` для рендеринга. Файл загружается через `window.api.fs.readFile()`.
+
+### ImagePane
+
+**Файл:** `src/renderer/src/components/image/ImagePane.tsx`
+
+Панель просмотра изображений. Загружает файл через `window.api.fs.readFileAsDataUrl()` и отображает как `<img>`.
+
+### GitInfo
+
+**Файл:** `src/renderer/src/components/layout/GitInfo.tsx`
+
+Отображает информацию о текущем git-репозитории: имя репо и текущую ветку. Данные получает через `window.api.git.getInfo()`.
+
+### GitBranchDropdown
+
+**Файл:** `src/renderer/src/components/layout/GitBranchDropdown.tsx`
+
+Dropdown для переключения git-веток. Показывает локальные и remote ветки, позволяет переключаться (`checkout`) и создавать новые. Использует `window.api.git.listBranches()`, `checkout()`, `createBranch()`.
+
+### WhisperButton
+
+**Файл:** `src/renderer/src/components/layout/WhisperButton.tsx`
+
+Кнопка голосового ввода в заголовке панели. При нажатии начинает запись аудио через Web Audio API, по завершении отправляет в main process для транскрипции через OpenAI Whisper.
+
+### TranslationSnippet
+
+**Файл:** `src/renderer/src/components/ui/TranslationSnippet.tsx`
+
+Компонент для отображения переведённого текста. Вызывает `window.api.translate.translate()` и показывает результат.

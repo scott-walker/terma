@@ -14,13 +14,30 @@ window.api = {
   clipboard: ClipboardApi, // Буфер обмена
   window: WindowApi,     // Управление окном
   whisper: WhisperApi,   // Голосовая транскрипция
-  log: LogApi            // Логирование
+  log: LogApi,           // Логирование
+  ssh: SshApi,           // SSH-подключения
+  translate: TranslateApi, // Перевод текста
+  sysmon: SysmonApi,     // Метрики системы
+  selfmon: SelfmonApi,   // Self-monitoring (ресурсы приложения)
+  git: GitApi            // Git-интеграция
 }
 ```
 
+## Типизированный IPC-контракт
+
+**Файл:** `src/shared/ipc-types.ts`
+
+Единый источник истины для IPC-коммуникации. Определяет три интерфейса:
+
+| Интерфейс | Назначение |
+|-----------|-----------|
+| `IpcInvokeMap` | Каналы `invoke/handle` (запрос-ответ), ключ → `[args, return]` |
+| `IpcSendMap` | Каналы `send/on` (fire-and-forget), ключ → `args` |
+| `IpcEventMap` | События main → renderer через `webContents.send` |
+
 ## IPC-каналы
 
-Определены в `src/shared/channels.ts` и используются обоими процессами.
+Определены в `src/shared/channels.ts` (13 групп) и используются обоими процессами.
 
 ### PTY-каналы
 
@@ -39,6 +56,8 @@ window.api = {
 | Канал | Направление | Тип | Описание |
 |-------|-------------|-----|----------|
 | `fs:readDir` | renderer → main | `invoke` | Чтение директории |
+| `fs:readFile` | renderer → main | `invoke` | Чтение файла как текст (UTF-8) |
+| `fs:readFileDataUrl` | renderer → main | `invoke` | Чтение файла как data URL (для изображений) |
 | `fs:stat` | renderer → main | `invoke` | Получение метаданных файла |
 | `fs:rename` | renderer → main | `invoke` | Переименование |
 | `fs:delete` | renderer → main | `invoke` | Удаление (в корзину) |
@@ -77,6 +96,7 @@ window.api = {
 | Канал | Направление | Тип | Описание |
 |-------|-------------|-----|----------|
 | `clipboard:readFilePaths` | renderer → main | `invoke` | Прочитать пути файлов из буфера |
+| `clipboard:writeFilePaths` | renderer → main | `invoke` | Записать пути файлов в буфер |
 | `clipboard:saveImage` | renderer → main | `invoke` | Сохранить изображение из буфера |
 
 ### Каналы управления окном
@@ -85,7 +105,9 @@ window.api = {
 |-------|-------------|-----|----------|
 | `window:minimize` | renderer → main | `send` | Свернуть окно |
 | `window:maximize` | renderer → main | `send` | Toggle maximize/unmaximize |
-| `window:close` | renderer → main | `send` | Закрыть окно |
+| `window:close` | renderer → main | `send` | Запросить закрытие окна (с подтверждением) |
+| `window:force-close` | renderer → main | `send` | Принудительное закрытие без подтверждения |
+| `window:confirm-close` | main → renderer | event | Запрос подтверждения закрытия от main |
 | `window:isMaximized` | renderer → main | `invoke` | Текущее состояние maximize |
 | `window:maximized-change` | main → renderer | event | Смена состояния maximize |
 
@@ -102,6 +124,42 @@ window.api = {
 | `log:getLogs` | renderer → main | `invoke` | Получить все логи из буфера |
 | `log:onLog` | main → renderer | event | Новая запись в логе |
 
+### Каналы перевода
+
+| Канал | Направление | Тип | Описание |
+|-------|-------------|-----|----------|
+| `translate:translate` | renderer → main | `invoke` | Перевести текст через OpenAI API |
+
+### Каналы системного мониторинга
+
+| Канал | Направление | Тип | Описание |
+|-------|-------------|-----|----------|
+| `sysmon:metrics` | renderer → main | `invoke` | Получить метрики системы (CPU, RAM, диски) |
+
+### Каналы self-monitoring
+
+| Канал | Направление | Тип | Описание |
+|-------|-------------|-----|----------|
+| `selfmon:metrics` | renderer → main | `invoke` | Получить метрики приложения (RSS, heap, CPU, PTY count) |
+
+### Каналы Git
+
+| Канал | Направление | Тип | Описание |
+|-------|-------------|-----|----------|
+| `git:getInfo` | renderer → main | `invoke` | Информация о git-репозитории (repo, branch, url) |
+| `git:listBranches` | renderer → main | `invoke` | Список веток (локальные + remote) |
+| `git:checkout` | renderer → main | `invoke` | Переключение на ветку |
+| `git:createBranch` | renderer → main | `invoke` | Создание новой ветки |
+
+### Каналы SSH
+
+| Канал | Направление | Тип | Описание |
+|-------|-------------|-----|----------|
+| `ssh:connect` | renderer → main | `invoke` | Подключение к SSH-серверу |
+| `ssh:disconnect` | renderer → main | `invoke` | Отключение от сервера |
+| `ssh:readDir` | renderer → main | `invoke` | Чтение удалённой директории через SFTP |
+| `ssh:getHomeDir` | renderer → main | `invoke` | Получение домашней директории на сервере |
+
 ## Типы `invoke` vs `send`
 
 - **`invoke`** (запрос-ответ) — используется когда renderer нужен результат: `pty:create` (нужен ID), `fs:readDir` (нужен список файлов), `settings:get` (нужны настройки)
@@ -110,6 +168,10 @@ window.api = {
 ---
 
 ## PTY API
+
+### Per-PTY dispatch
+
+Preload реализует оптимизированную per-PTY маршрутизацию данных. Вместо одного глобального callback'а для всех PTY-данных используются `Map<string, callback>` — по одному listener'у на каждый PTY ID. Это обеспечивает O(1) lookup при получении данных.
 
 ### `window.api.pty.create(opts?)`
 
@@ -160,32 +222,28 @@ const cwd = await window.api.pty.getCwd(ptyId)
 // '/home/user/projects' или null если PTY не найден
 ```
 
-### `window.api.pty.onData(callback)`
+### `window.api.pty.onData(id, callback)`
 
-Подписка на данные из PTY.
+Подписка на данные из конкретного PTY (per-PTY dispatch).
 
 ```typescript
-const unsubscribe = window.api.pty.onData((id, data) => {
-  if (id === myPtyId) {
-    terminal.write(data)
-  }
+const unsubscribe = window.api.pty.onData(myPtyId, (data) => {
+  terminal.write(data)
 })
 
 // Отписка
 unsubscribe()
 ```
 
-**Важно:** Callback вызывается для ВСЕХ PTY-сессий. Фильтрация по ID выполняется на стороне renderer.
-
 **Возвращает:** `() => void` — функция отписки.
 
-### `window.api.pty.onExit(callback)`
+### `window.api.pty.onExit(id, callback)`
 
-Подписка на завершение PTY-процесса.
+Подписка на завершение конкретного PTY-процесса.
 
 ```typescript
-const unsubscribe = window.api.pty.onExit((id, exitCode, signal) => {
-  console.log(`PTY ${id} exited with code ${exitCode}`)
+const unsubscribe = window.api.pty.onExit(myPtyId, (exitCode, signal) => {
+  console.log(`PTY exited with code ${exitCode}`)
 })
 ```
 
@@ -200,6 +258,23 @@ const entries: FileEntry[] = await window.api.fs.readDir('/home/user/projects')
 ```
 
 Возвращает массив `FileEntry`, отсортированный: директории первыми, затем алфавитно.
+
+### `window.api.fs.readFile(filePath)`
+
+```typescript
+const content: string = await window.api.fs.readFile('/path/to/file.md')
+```
+
+Читает файл как текст (UTF-8). Используется для markdown-панелей.
+
+### `window.api.fs.readFileAsDataUrl(filePath)`
+
+```typescript
+const dataUrl: string = await window.api.fs.readFileAsDataUrl('/path/to/image.png')
+// 'data:image/png;base64,...'
+```
+
+Читает файл и возвращает как data URL. Используется для панелей просмотра изображений.
 
 ### `window.api.fs.stat(filePath)`
 
@@ -323,6 +398,9 @@ await window.api.shell.openWith('code', '/path/to/file.ts')
 
 // Путь к домашней директории (синхронный)
 const home = window.api.shell.homePath
+
+// Текущая платформа
+const platform = window.api.shell.platform // 'darwin' | 'win32' | 'linux'
 ```
 
 ---
@@ -332,6 +410,9 @@ const home = window.api.shell.homePath
 ```typescript
 // Прочитать пути файлов из буфера обмена
 const paths = await window.api.clipboard.readFilePaths()
+
+// Записать пути файлов в буфер обмена
+await window.api.clipboard.writeFilePaths(['/path/to/file1', '/path/to/file2'])
 
 // Сохранить изображение из буфера в директорию
 const savedPath = await window.api.clipboard.saveImage('/path/to/dest')
@@ -345,14 +426,20 @@ const savedPath = await window.api.clipboard.saveImage('/path/to/dest')
 ```typescript
 window.api.window.minimize()  // Свернуть окно
 window.api.window.maximize()  // Toggle maximize/unmaximize
-window.api.window.close()     // Закрыть окно
+window.api.window.close()     // Запросить закрытие (с подтверждением)
+window.api.window.forceClose() // Принудительное закрытие
 
 // Текущее состояние maximize
 const isMax = await window.api.window.isMaximized()
 
-// Подписка на смену состояния
+// Подписка на смену состояния maximize
 const unsubscribe = window.api.window.onMaximizedChange((maximized) => {
   // true/false
+})
+
+// Подписка на запрос подтверждения закрытия
+const unsubscribe = window.api.window.onConfirmClose(() => {
+  // Показать диалог подтверждения
 })
 ```
 
@@ -383,8 +470,89 @@ const unsubscribe = window.api.log.onLog((entry) => {
 
 ---
 
+## Translate API
+
+```typescript
+// Перевести текст (требуется OpenAI API key в настройках)
+const translated = await window.api.translate.translate('Hello, world!')
+```
+
+Использует OpenAI API для перевода текста. Результат отображается в `TranslationSnippet`.
+
+---
+
+## Sysmon API
+
+```typescript
+// Получить метрики системы
+const metrics: SystemMetrics = await window.api.sysmon.getMetrics()
+// { processCount, ram: { total, used, free, usedPercent },
+//   cpu: { cores, model, avgLoad, coreLoads },
+//   disks: [{ fs, size, used, usedPercent, mount }] }
+```
+
+Используется в панели `system-monitor` для отображения метрик в реальном времени.
+
+---
+
+## Selfmon API
+
+```typescript
+// Получить метрики приложения (self-monitoring)
+const metrics: SelfMetrics = await window.api.selfmon.getMetrics()
+// { rss, heapUsed, heapTotal, cpuPercent, ptyCount, uptime }
+```
+
+Используется в `StatusBar` для отображения gauge'ей потребления памяти и CPU приложением.
+
+---
+
+## Git API
+
+```typescript
+// Получить информацию о git-репозитории
+const info = await window.api.git.getInfo('/path/to/repo')
+// { repo: 'terma', branch: 'main', url: 'https://github.com/...' } | null
+
+// Список веток (локальные + remote)
+const branches = await window.api.git.listBranches('/path/to/repo')
+// [{ name: 'main', current: true, isRemote: false }, ...]
+
+// Переключение на ветку
+await window.api.git.checkout('/path/to/repo', 'feature-branch')
+
+// Создание новой ветки
+await window.api.git.createBranch('/path/to/repo', 'new-feature')
+```
+
+Используется компонентами `GitInfo` и `GitBranchDropdown` в `StatusBar` / `PaneHeader`.
+
+---
+
+## SSH API
+
+```typescript
+// Подключение к SSH-серверу (по ID профиля из настроек)
+await window.api.ssh.connect('profile-id')
+
+// Отключение
+await window.api.ssh.disconnect('profile-id')
+
+// Чтение удалённой директории через SFTP
+const entries: FileEntry[] = await window.api.ssh.readDir('profile-id', '/home/user')
+
+// Получение домашней директории
+const home = await window.api.ssh.getHomeDir('profile-id')
+```
+
+SSH-профили хранятся в настройках (`settings.sshProfiles`). Используется в файловом менеджере для навигации по удалённым файловым системам.
+
+---
+
 ## Типизация
 
-Типы для `window.api` объявлены в `src/renderer/src/types/electron.d.ts` через `declare global`. Это обеспечивает автодополнение в renderer-коде без явных импортов.
+Типы для `window.api` объявлены в `src/renderer/src/types/electron.d.ts` через `declare global`. Это обеспечивает автодополнение в renderer-коде без явных импортов. Определено 14 API-интерфейсов: `PtyApi`, `FsApi`, `SettingsApi`, `SessionApi`, `ShellApi`, `ClipboardApi`, `WindowApi`, `WhisperApi`, `LogApi`, `TranslateApi`, `SysmonApi`, `SelfmonApi`, `GitApi`, `SshApi`.
 
-Общие типы данных (FileEntry, SessionState, LogEntry и др.) определены в `src/shared/types.ts` и используются обоими процессами.
+Общие типы данных (FileEntry, SessionState, LogEntry, SystemMetrics, SelfMetrics и др.) определены в `src/shared/types.ts` и используются обоими процессами.
+
+Типизированный IPC-контракт (`IpcInvokeMap`, `IpcSendMap`, `IpcEventMap`) определён в `src/shared/ipc-types.ts` и обеспечивает типобезопасность на обеих сторонах.

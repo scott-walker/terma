@@ -1,8 +1,20 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { homedir } from 'os'
-import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS, WINDOW_CHANNELS, LOG_CHANNELS } from '../shared/channels'
+import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS, WINDOW_CHANNELS, LOG_CHANNELS, SSH_CHANNELS, TRANSLATE_CHANNELS, SYSMON_CHANNELS, GIT_CHANNELS, SELFMON_CHANNELS } from '../shared/channels'
 import type { TerminalSettings } from '../shared/settings'
-import type { FileEntry, SessionState, LogEntry } from '../shared/types'
+import type { FileEntry, SessionState, LogEntry, SystemMetrics, SelfMetrics } from '../shared/types'
+
+// Per-PTY dispatch: single IPC listener, O(1) lookup per event
+const dataListeners = new Map<string, (data: string) => void>()
+const exitListeners = new Map<string, (exitCode: number, signal: number) => void>()
+
+ipcRenderer.on(PTY_CHANNELS.DATA, (_event, id: string, data: string) => {
+  dataListeners.get(id)?.(data)
+})
+
+ipcRenderer.on(PTY_CHANNELS.EXIT, (_event, id: string, exitCode: number, signal: number) => {
+  exitListeners.get(id)?.(exitCode, signal)
+})
 
 const ptyApi = {
   create: (opts?: { cols?: number; rows?: number; cwd?: string; command?: string; args?: string[] }): Promise<string> =>
@@ -18,30 +30,23 @@ const ptyApi = {
   },
   getCwd: (id: string): Promise<string | null> =>
     ipcRenderer.invoke(PTY_CHANNELS.GET_CWD, id),
-  onData: (cb: (id: string, data: string) => void): (() => void) => {
-    const listener = (_event: Electron.IpcRendererEvent, id: string, data: string): void => {
-      cb(id, data)
-    }
-    ipcRenderer.on(PTY_CHANNELS.DATA, listener)
-    return () => ipcRenderer.removeListener(PTY_CHANNELS.DATA, listener)
+  onData: (id: string, cb: (data: string) => void): (() => void) => {
+    dataListeners.set(id, cb)
+    return () => { dataListeners.delete(id) }
   },
-  onExit: (cb: (id: string, exitCode: number, signal: number) => void): (() => void) => {
-    const listener = (
-      _event: Electron.IpcRendererEvent,
-      id: string,
-      exitCode: number,
-      signal: number
-    ): void => {
-      cb(id, exitCode, signal)
-    }
-    ipcRenderer.on(PTY_CHANNELS.EXIT, listener)
-    return () => ipcRenderer.removeListener(PTY_CHANNELS.EXIT, listener)
+  onExit: (id: string, cb: (exitCode: number, signal: number) => void): (() => void) => {
+    exitListeners.set(id, cb)
+    return () => { exitListeners.delete(id) }
   }
 }
 
 const fsApi = {
   readDir: (dirPath: string): Promise<FileEntry[]> =>
     ipcRenderer.invoke(FS_CHANNELS.READ_DIR, dirPath),
+  readFile: (filePath: string): Promise<string> =>
+    ipcRenderer.invoke(FS_CHANNELS.READ_FILE, filePath),
+  readFileAsDataUrl: (filePath: string): Promise<string> =>
+    ipcRenderer.invoke(FS_CHANNELS.READ_FILE_DATA_URL, filePath),
   stat: (filePath: string): Promise<FileEntry> =>
     ipcRenderer.invoke(FS_CHANNELS.STAT, filePath),
   rename: (oldPath: string, newPath: string): Promise<void> =>
@@ -110,12 +115,15 @@ const shellApi = {
     ipcRenderer.invoke(SHELL_CHANNELS.OPEN_PATH, path),
   openWith: (command: string, filePath: string): Promise<void> =>
     ipcRenderer.invoke(SHELL_CHANNELS.OPEN_WITH, command, filePath),
-  homePath: homedir()
+  homePath: homedir(),
+  platform: process.platform as 'darwin' | 'win32' | 'linux'
 }
 
 const clipboardApi = {
   readFilePaths: (): Promise<string[]> =>
     ipcRenderer.invoke(CLIPBOARD_CHANNELS.READ_FILE_PATHS),
+  writeFilePaths: (paths: string[]): Promise<void> =>
+    ipcRenderer.invoke(CLIPBOARD_CHANNELS.WRITE_FILE_PATHS, paths),
   saveImage: (destDir: string): Promise<string | null> =>
     ipcRenderer.invoke(CLIPBOARD_CHANNELS.SAVE_IMAGE, destDir)
 }
@@ -124,6 +132,7 @@ const windowApi = {
   minimize: (): void => ipcRenderer.send(WINDOW_CHANNELS.MINIMIZE),
   maximize: (): void => ipcRenderer.send(WINDOW_CHANNELS.MAXIMIZE),
   close: (): void => ipcRenderer.send(WINDOW_CHANNELS.CLOSE),
+  forceClose: (): void => ipcRenderer.send(WINDOW_CHANNELS.FORCE_CLOSE),
   isMaximized: (): Promise<boolean> => ipcRenderer.invoke(WINDOW_CHANNELS.IS_MAXIMIZED),
   onMaximizedChange: (cb: (maximized: boolean) => void): (() => void) => {
     const listener = (_event: Electron.IpcRendererEvent, maximized: boolean): void => {
@@ -131,6 +140,11 @@ const windowApi = {
     }
     ipcRenderer.on(WINDOW_CHANNELS.MAXIMIZED_CHANGE, listener)
     return () => ipcRenderer.removeListener(WINDOW_CHANNELS.MAXIMIZED_CHANGE, listener)
+  },
+  onConfirmClose: (cb: () => void): (() => void) => {
+    const listener = (): void => { cb() }
+    ipcRenderer.on(WINDOW_CHANNELS.CONFIRM_CLOSE, listener)
+    return () => ipcRenderer.removeListener(WINDOW_CHANNELS.CONFIRM_CLOSE, listener)
   }
 }
 
@@ -151,6 +165,43 @@ const logApi = {
   }
 }
 
+const translateApi = {
+  translate: (text: string): Promise<string> =>
+    ipcRenderer.invoke(TRANSLATE_CHANNELS.TRANSLATE, text)
+}
+
+const sysmonApi = {
+  getMetrics: (): Promise<SystemMetrics> =>
+    ipcRenderer.invoke(SYSMON_CHANNELS.METRICS)
+}
+
+const gitApi = {
+  getInfo: (cwd: string): Promise<{ repo: string; branch: string; url: string | null } | null> =>
+    ipcRenderer.invoke(GIT_CHANNELS.GET_INFO, cwd),
+  listBranches: (cwd: string): Promise<{ name: string; current: boolean; isRemote: boolean }[]> =>
+    ipcRenderer.invoke(GIT_CHANNELS.LIST_BRANCHES, cwd),
+  checkout: (cwd: string, branch: string): Promise<void> =>
+    ipcRenderer.invoke(GIT_CHANNELS.CHECKOUT, cwd, branch),
+  createBranch: (cwd: string, name: string): Promise<void> =>
+    ipcRenderer.invoke(GIT_CHANNELS.CREATE_BRANCH, cwd, name)
+}
+
+const sshApi = {
+  connect: (profileId: string): Promise<void> =>
+    ipcRenderer.invoke(SSH_CHANNELS.CONNECT, profileId),
+  disconnect: (profileId: string): Promise<void> =>
+    ipcRenderer.invoke(SSH_CHANNELS.DISCONNECT, profileId),
+  readDir: (profileId: string, remotePath: string): Promise<FileEntry[]> =>
+    ipcRenderer.invoke(SSH_CHANNELS.READ_DIR, profileId, remotePath),
+  getHomeDir: (profileId: string): Promise<string> =>
+    ipcRenderer.invoke(SSH_CHANNELS.GET_HOME_DIR, profileId)
+}
+
+const selfmonApi = {
+  getMetrics: (): Promise<SelfMetrics> =>
+    ipcRenderer.invoke(SELFMON_CHANNELS.METRICS)
+}
+
 contextBridge.exposeInMainWorld('api', {
   pty: ptyApi,
   fs: fsApi,
@@ -160,5 +211,10 @@ contextBridge.exposeInMainWorld('api', {
   clipboard: clipboardApi,
   window: windowApi,
   whisper: whisperApi,
-  log: logApi
+  log: logApi,
+  ssh: sshApi,
+  translate: translateApi,
+  sysmon: sysmonApi,
+  selfmon: selfmonApi,
+  git: gitApi
 })

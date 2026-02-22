@@ -3,6 +3,7 @@ import { create } from 'zustand'
 interface PaneFileState {
   rootPath: string
   expandedDirs: Set<string>
+  sshProfileId?: string
 }
 
 interface FileManagerStore {
@@ -13,6 +14,7 @@ interface FileManagerStore {
   setRootPath: (paneId: string, rootPath: string) => void
   toggleDir: (paneId: string, path: string) => void
   collapseDir: (paneId: string, path: string) => void
+  setSshProfile: (paneId: string, profileId: string | null) => void
 }
 
 export const useFileManagerStore = create<FileManagerStore>((set) => ({
@@ -70,6 +72,18 @@ export const useFileManagerStore = create<FileManagerStore>((set) => ({
       next.delete(path)
       return {
         panes: { ...state.panes, [paneId]: { ...pane, expandedDirs: next } }
+      }
+    }),
+
+  setSshProfile: (paneId, profileId) =>
+    set((state) => {
+      const pane = state.panes[paneId]
+      if (!pane) return state
+      return {
+        panes: {
+          ...state.panes,
+          [paneId]: { ...pane, sshProfileId: profileId ?? undefined }
+        }
       }
     })
 }))

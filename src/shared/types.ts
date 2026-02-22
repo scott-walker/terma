@@ -1,5 +1,25 @@
 // Layout types (pure data, no runtime deps)
-export type PaneType = 'terminal' | 'file-manager' | 'agent'
+export type PaneType = 'terminal' | 'file-manager' | 'agent' | 'markdown' | 'image' | 'system-monitor'
+
+export interface CpuCoreLoad {
+  core: number
+  load: number
+}
+
+export interface DiskInfo {
+  fs: string
+  size: number
+  used: number
+  usedPercent: number
+  mount: string
+}
+
+export interface SystemMetrics {
+  processCount: number
+  ram: { total: number; used: number; free: number; usedPercent: number }
+  cpu: { cores: number; model: string; avgLoad: number; coreLoads: CpuCoreLoad[] }
+  disks: DiskInfo[]
+}
 
 export interface PaneNode {
   type: 'pane'
@@ -60,6 +80,21 @@ export interface LogEntry {
   source: string
   message: string
   data?: unknown
+}
+
+export interface SelfMetrics {
+  /** Resident Set Size in bytes (total memory footprint) */
+  rss: number
+  /** V8 heap used in bytes */
+  heapUsed: number
+  /** V8 heap total in bytes */
+  heapTotal: number
+  /** CPU percent (0-100) since last measurement */
+  cpuPercent: number
+  /** Number of active PTY sessions */
+  ptyCount: number
+  /** Uptime in seconds */
+  uptime: number
 }
 
 export interface SessionState {

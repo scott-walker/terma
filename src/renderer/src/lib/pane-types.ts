@@ -1,4 +1,4 @@
-import { Terminal, FolderOpen, Bot, type LucideIcon } from 'lucide-react'
+import { Terminal, FolderOpen, Bot, FileText, Image, Monitor, type LucideIcon } from 'lucide-react'
 import type { PaneType } from './layout-tree'
 
 export interface PaneTypeConfig {
@@ -25,6 +25,18 @@ export const PANE_TYPE_CONFIGS: Record<PaneType, PaneTypeConfig> = {
   agent: {
     label: 'Agent',
     icon: Bot
+  },
+  markdown: {
+    label: 'Markdown',
+    icon: FileText
+  },
+  image: {
+    label: 'Image',
+    icon: Image
+  },
+  'system-monitor': {
+    label: 'System',
+    icon: Monitor
   }
 }
 

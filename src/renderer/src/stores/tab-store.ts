@@ -6,6 +6,7 @@ import {
   PaneType,
   createPane,
   splitNode,
+  appendRight,
   removeNode,
   updateRatios,
   getAllPaneIds,
@@ -17,6 +18,8 @@ import {
 } from '@/lib/layout-tree'
 import type { SessionState } from '@shared/types'
 import { useFileManagerStore } from './file-manager-store'
+import { useSshStore } from './ssh-store'
+import { useAgentStore } from './agent-store'
 import * as terminalManager from '@/lib/terminal-manager'
 
 export type Tab = SessionState['tabs'][string]
@@ -36,6 +39,8 @@ async function resolvePaneCwd(paneId: string, layoutTree: LayoutNode): Promise<s
   } else if (node.paneType === 'file-manager') {
     const fmPane = useFileManagerStore.getState().panes[paneId]
     if (fmPane) return fmPane.rootPath
+  } else if (node.paneType === 'markdown' || node.paneType === 'image') {
+    return node.cwd
   }
   return null
 }
@@ -60,14 +65,14 @@ interface TabStore {
   reorderTabs: (fromIndex: number, toIndex: number) => void
 
   // Split pane operations
-  splitPane: (tabId: string, paneId: string, direction: 'horizontal' | 'vertical') => Promise<void>
+  splitPane: (tabId: string, paneId: string, direction: 'horizontal' | 'vertical') => Promise<string | null>
   splitPaneWithType: (
     tabId: string,
     paneId: string,
     direction: 'horizontal' | 'vertical',
     paneType: PaneType,
     cwd?: string | null
-  ) => Promise<void>
+  ) => Promise<string | null>
   closePane: (tabId: string, paneId: string) => void
   setActivePaneId: (tabId: string, paneId: string) => void
   updateLayoutRatios: (tabId: string, branchId: string, ratios: number[]) => void
@@ -75,6 +80,7 @@ interface TabStore {
   setPaneType: (tabId: string, paneId: string, paneType: PaneType) => void
   updatePaneCwd: (tabId: string, paneId: string, cwd: string) => void
   swapPanes: (tabId: string, paneId1: string, paneId2: string) => void
+  openRightPane: (tabId: string, paneType: PaneType, cwd: string) => void
 
   getSessionState: () => Promise<SessionState>
   restoreSession: (snapshot: SessionState) => void
@@ -107,11 +113,16 @@ export const useTabStore = create<TabStore>((set, get) => ({
     const tab = state.tabs[id]
     if (!tab) return
 
-    // Destroy all terminals in this tab (both shell and agent PTYs)
+    // Destroy all terminals and clean up stores for this tab
     const paneIds = getAllPaneIds(tab.layoutTree)
     for (const paneId of paneIds) {
       terminalManager.destroy(paneId)
+      terminalManager.destroy(paneId + ':ssh')
       terminalManager.destroy(paneId + ':agent')
+      useFileManagerStore.getState().removePane(paneId)
+      useSshStore.getState().removePaneSsh(paneId)
+      useSshStore.getState().removeEditor(paneId)
+      useAgentStore.getState().clearAgent(paneId)
     }
 
     const newOrder = state.tabOrder.filter((tid) => tid !== id)
@@ -159,10 +170,12 @@ export const useTabStore = create<TabStore>((set, get) => ({
   splitPane: async (tabId, paneId, direction) => {
     const tab = get().tabs[tabId]
     const cwd = tab ? await resolvePaneCwd(paneId, tab.layoutTree) : null
+    let resultPaneId: string | null = null
     set((state) => {
       const currentTab = state.tabs[tabId]
       if (!currentTab) return state
       const { tree, newPaneId } = splitNode(currentTab.layoutTree, paneId, direction, 'terminal', cwd)
+      resultPaneId = newPaneId
       return {
         tabs: {
           ...state.tabs,
@@ -170,6 +183,7 @@ export const useTabStore = create<TabStore>((set, get) => ({
         }
       }
     })
+    return resultPaneId
   },
 
   splitPaneWithType: async (tabId, paneId, direction, paneType, cwd) => {
@@ -177,10 +191,12 @@ export const useTabStore = create<TabStore>((set, get) => ({
       const tab = get().tabs[tabId]
       cwd = tab ? await resolvePaneCwd(paneId, tab.layoutTree) : null
     }
+    let resultPaneId: string | null = null
     set((state) => {
       const currentTab = state.tabs[tabId]
       if (!currentTab) return state
       const { tree, newPaneId } = splitNode(currentTab.layoutTree, paneId, direction, paneType, cwd ?? null)
+      resultPaneId = newPaneId
       return {
         tabs: {
           ...state.tabs,
@@ -188,6 +204,7 @@ export const useTabStore = create<TabStore>((set, get) => ({
         }
       }
     })
+    return resultPaneId
   },
 
   closePane: (tabId, paneId) =>
@@ -196,7 +213,12 @@ export const useTabStore = create<TabStore>((set, get) => ({
       if (!tab) return state
 
       terminalManager.destroy(paneId)
+      terminalManager.destroy(paneId + ':ssh')
       terminalManager.destroy(paneId + ':agent')
+      useFileManagerStore.getState().removePane(paneId)
+      useSshStore.getState().removePaneSsh(paneId)
+      useSshStore.getState().removeEditor(paneId)
+      useAgentStore.getState().clearAgent(paneId)
 
       const newTree = removeNode(tab.layoutTree, paneId)
       if (!newTree) {
@@ -287,6 +309,19 @@ export const useTabStore = create<TabStore>((set, get) => ({
         tabs: {
           ...state.tabs,
           [tabId]: { ...tab, layoutTree: swapPanesInTree(tab.layoutTree, paneId1, paneId2) }
+        }
+      }
+    }),
+
+  openRightPane: (tabId, paneType, cwd) =>
+    set((state) => {
+      const tab = state.tabs[tabId]
+      if (!tab) return state
+      const { tree } = appendRight(tab.layoutTree, paneType, cwd)
+      return {
+        tabs: {
+          ...state.tabs,
+          [tabId]: { ...tab, layoutTree: tree }
         }
       }
     }),

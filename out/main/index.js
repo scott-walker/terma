@@ -4,6 +4,7 @@ const child_process = require("child_process");
 const path = require("path");
 const promises = require("fs/promises");
 const pty = require("node-pty");
+const os = require("os");
 const chokidar = require("chokidar");
 const nanoid = require("nanoid");
 const process$1 = require("node:process");
@@ -12,11 +13,12 @@ const node_util = require("node:util");
 const fs = require("node:fs");
 const crypto = require("node:crypto");
 const assert = require("node:assert");
-const os = require("node:os");
+const os$1 = require("node:os");
 require("node:events");
 require("node:stream");
+const si = require("systeminformation");
+const ssh2 = require("ssh2");
 const fs$1 = require("fs");
-const os$1 = require("os");
 function _interopNamespaceDefault(e) {
   const n = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
   if (e) {
@@ -45,6 +47,8 @@ const PTY_CHANNELS = {
 };
 const FS_CHANNELS = {
   READ_DIR: "fs:readDir",
+  READ_FILE: "fs:readFile",
+  READ_FILE_DATA_URL: "fs:readFileDataUrl",
   STAT: "fs:stat",
   RENAME: "fs:rename",
   DELETE: "fs:delete",
@@ -71,6 +75,7 @@ const SHELL_CHANNELS = {
 };
 const CLIPBOARD_CHANNELS = {
   READ_FILE_PATHS: "clipboard:readFilePaths",
+  WRITE_FILE_PATHS: "clipboard:writeFilePaths",
   SAVE_IMAGE: "clipboard:saveImage"
 };
 const WHISPER_CHANNELS = {
@@ -80,6 +85,8 @@ const WINDOW_CHANNELS = {
   MINIMIZE: "window:minimize",
   MAXIMIZE: "window:maximize",
   CLOSE: "window:close",
+  FORCE_CLOSE: "window:force-close",
+  CONFIRM_CLOSE: "window:confirm-close",
   IS_MAXIMIZED: "window:isMaximized",
   MAXIMIZED_CHANGE: "window:maximized-change"
 };
@@ -87,7 +94,29 @@ const LOG_CHANNELS = {
   GET_LOGS: "log:getLogs",
   ON_LOG: "log:onLog"
 };
+const TRANSLATE_CHANNELS = {
+  TRANSLATE: "translate:translate"
+};
+const SYSMON_CHANNELS = {
+  METRICS: "sysmon:metrics"
+};
+const SELFMON_CHANNELS = {
+  METRICS: "selfmon:metrics"
+};
+const GIT_CHANNELS = {
+  GET_INFO: "git:getInfo",
+  LIST_BRANCHES: "git:listBranches",
+  CHECKOUT: "git:checkout",
+  CREATE_BRANCH: "git:createBranch"
+};
+const SSH_CHANNELS = {
+  CONNECT: "ssh:connect",
+  DISCONNECT: "ssh:disconnect",
+  READ_DIR: "ssh:readDir",
+  GET_HOME_DIR: "ssh:getHomeDir"
+};
 const MAX_ENTRIES = 500;
+const BROADCAST_LEVELS = /* @__PURE__ */ new Set(["info", "warn", "error"]);
 class LoggerService {
   entries = [];
   log(level, source, message, data) {
@@ -110,9 +139,11 @@ class LoggerService {
     } else {
       console.log(prefix, message, data ?? "");
     }
-    for (const win of electron.BrowserWindow.getAllWindows()) {
-      if (!win.isDestroyed()) {
-        win.webContents.send(LOG_CHANNELS.ON_LOG, entry);
+    if (BROADCAST_LEVELS.has(level)) {
+      for (const win of electron.BrowserWindow.getAllWindows()) {
+        if (!win.isDestroyed()) {
+          win.webContents.send(LOG_CHANNELS.ON_LOG, entry);
+        }
       }
     }
   }
@@ -135,9 +166,13 @@ class LoggerService {
 const logger = new LoggerService();
 class PtyManager {
   sessions = /* @__PURE__ */ new Map();
+  disposables = /* @__PURE__ */ new Map();
   platform;
   constructor(platform2) {
     this.platform = platform2;
+  }
+  get sessionCount() {
+    return this.sessions.size;
   }
   get shell() {
     return process.platform === "win32" ? process.env.COMSPEC || "powershell.exe" : process.env.SHELL || "/bin/bash";
@@ -147,22 +182,23 @@ class PtyManager {
       name: "xterm-256color",
       cols: opts.cols || 80,
       rows: opts.rows || 24,
-      cwd: opts.cwd || process.env.HOME || "/",
+      cwd: opts.cwd || os.homedir(),
       env: process.env
     });
     this.sessions.set(id2, term);
     logger.info("pty", `PTY created: ${id2} (pid=${term.pid})`);
-    term.onData((data) => {
+    const d1 = term.onData((data) => {
       if (!win.isDestroyed()) {
         win.webContents.send(PTY_CHANNELS.DATA, id2, data);
       }
     });
-    term.onExit(({ exitCode, signal }) => {
-      this.sessions.delete(id2);
+    const d2 = term.onExit(({ exitCode, signal }) => {
+      this.dispose(id2);
       if (!win.isDestroyed()) {
         win.webContents.send(PTY_CHANNELS.EXIT, id2, exitCode, signal);
       }
     });
+    this.disposables.set(id2, [d1, d2]);
   }
   write(id2, data) {
     this.sessions.get(id2)?.write(data);
@@ -174,11 +210,19 @@ class PtyManager {
       logger.warn("pty", `Resize failed for ${id2}`, err);
     }
   }
+  dispose(id2) {
+    const subs = this.disposables.get(id2);
+    if (subs) {
+      for (const d of subs) d.dispose();
+      this.disposables.delete(id2);
+    }
+    this.sessions.delete(id2);
+  }
   destroy(id2) {
     const term = this.sessions.get(id2);
     if (term) {
+      this.dispose(id2);
       term.kill();
-      this.sessions.delete(id2);
       logger.info("pty", `PTY destroyed: ${id2}`);
     }
   }
@@ -193,6 +237,7 @@ class PtyManager {
     }
   }
 }
+const MAX_DEPTH = 64;
 class FsService {
   async readDir(dirPath) {
     const entries = await promises.readdir(dirPath, { withFileTypes: true });
@@ -221,7 +266,7 @@ class FsService {
   }
   async stat(filePath) {
     const stats = await promises.stat(filePath);
-    const name = filePath.split("/").pop() || filePath;
+    const name = path.basename(filePath);
     return {
       name,
       path: filePath,
@@ -241,9 +286,11 @@ class FsService {
     const srcStat = await promises.stat(srcPath);
     const destPath = await this.resolveConflict(path.join(destDir, path.basename(srcPath)));
     if (srcStat.isDirectory()) {
-      const total = await this.countFiles(srcPath);
+      const visited = /* @__PURE__ */ new Set();
+      const total = await this.countFiles(srcPath, visited, 0);
       let done = 0;
-      await this.copyDirRecursive(srcPath, destPath, () => {
+      visited.clear();
+      await this.copyDirRecursive(srcPath, destPath, visited, 0, () => {
         done++;
         progressCb?.(done, total);
       });
@@ -274,36 +321,64 @@ class FsService {
       return false;
     }
   }
-  async countFiles(dirPath) {
+  async countFiles(dirPath, visited, depth) {
+    if (depth > MAX_DEPTH) {
+      logger.warn("fs", `countFiles: max depth ${MAX_DEPTH} reached at ${dirPath}`);
+      return 0;
+    }
+    const real = await this.safeRealpath(dirPath);
+    if (real && visited.has(real)) {
+      logger.warn("fs", `countFiles: cyclic symlink detected at ${dirPath}`);
+      return 0;
+    }
+    if (real) visited.add(real);
     let count = 0;
     const entries = await promises.readdir(dirPath, { withFileTypes: true });
     for (const entry of entries) {
       const full = path.join(dirPath, entry.name);
       if (entry.isDirectory()) {
-        count += await this.countFiles(full);
+        count += await this.countFiles(full, visited, depth + 1);
       } else {
         count++;
       }
     }
     return count;
   }
-  async copyDirRecursive(src, dest, onFile) {
+  async copyDirRecursive(src, dest, visited, depth, onFile) {
+    if (depth > MAX_DEPTH) {
+      logger.warn("fs", `copyDirRecursive: max depth ${MAX_DEPTH} reached at ${src}`);
+      return;
+    }
+    const real = await this.safeRealpath(src);
+    if (real && visited.has(real)) {
+      logger.warn("fs", `copyDirRecursive: cyclic symlink detected at ${src}`);
+      return;
+    }
+    if (real) visited.add(real);
     await promises.mkdir(dest, { recursive: true });
     const entries = await promises.readdir(src, { withFileTypes: true });
     for (const entry of entries) {
       const srcFull = path.join(src, entry.name);
       const destFull = path.join(dest, entry.name);
       if (entry.isDirectory()) {
-        await this.copyDirRecursive(srcFull, destFull, onFile);
+        await this.copyDirRecursive(srcFull, destFull, visited, depth + 1, onFile);
       } else {
         await promises.copyFile(srcFull, destFull);
         onFile();
       }
     }
   }
+  async safeRealpath(p) {
+    try {
+      return await promises.realpath(p);
+    } catch {
+      return null;
+    }
+  }
 }
 class FsWatcher {
   watchers = /* @__PURE__ */ new Map();
+  winCleanups = /* @__PURE__ */ new Map();
   watch(dirPath, win) {
     if (this.watchers.has(dirPath)) return;
     logger.debug("fs-watcher", `Watching: ${dirPath}`);
@@ -317,79 +392,197 @@ class FsWatcher {
         win.webContents.send(FS_CHANNELS.FS_EVENT, { event, path: path2, dirPath });
       }
     });
-    this.watchers.set(dirPath, watcher);
+    this.watchers.set(dirPath, { watcher, winId: win.id });
+    this.ensureWinCleanup(win);
   }
   unwatch(dirPath) {
-    const watcher = this.watchers.get(dirPath);
-    if (watcher) {
+    const entry = this.watchers.get(dirPath);
+    if (entry) {
       logger.debug("fs-watcher", `Unwatching: ${dirPath}`);
-      watcher.close();
+      entry.watcher.close();
       this.watchers.delete(dirPath);
     }
   }
   unwatchAll() {
-    for (const [, watcher] of this.watchers) {
-      watcher.close();
+    for (const [, entry] of this.watchers) {
+      entry.watcher.close();
     }
     this.watchers.clear();
   }
+  /** Register a one-time cleanup for all watchers bound to this window */
+  ensureWinCleanup(win) {
+    if (this.winCleanups.has(win.id)) return;
+    const cleanup = () => {
+      this.winCleanups.delete(win.id);
+      const toRemove = [];
+      for (const [dirPath, entry] of this.watchers) {
+        if (entry.winId === win.id) {
+          entry.watcher.close();
+          toRemove.push(dirPath);
+        }
+      }
+      for (const p of toRemove) this.watchers.delete(p);
+      if (toRemove.length > 0) {
+        logger.debug("fs-watcher", `Cleaned up ${toRemove.length} watchers for closed window`);
+      }
+    };
+    win.once("closed", cleanup);
+    this.winCleanups.set(win.id, cleanup);
+  }
 }
-function wrapHandler(channel, fn) {
-  return async (event, ...args) => {
+function git(cwd, args) {
+  return new Promise((resolve2, reject) => {
+    child_process.execFile("git", args, { cwd, timeout: 3e3 }, (err, stdout) => {
+      if (err) return reject(err);
+      resolve2(stdout.trim());
+    });
+  });
+}
+function remoteToHttps(raw) {
+  const ssh = raw.match(/^git@([^:]+):(.+?)(?:\.git)?$/);
+  if (ssh) return `https://${ssh[1]}/${ssh[2]}`;
+  if (raw.startsWith("https://") || raw.startsWith("http://")) {
+    return raw.replace(/\.git$/, "");
+  }
+  return null;
+}
+async function listBranches(cwd) {
+  const raw = await git(cwd, ["branch", "-a", "--sort=-committerdate"]);
+  return raw.split("\n").filter((l) => l.trim() !== "").filter((l) => !l.includes("->")).map((line) => {
+    const current = line.startsWith("* ");
+    const name = line.replace(/^\*?\s+/, "").trim();
+    const isRemote = name.startsWith("remotes/");
+    return { name: isRemote ? name.replace(/^remotes\//, "") : name, current, isRemote };
+  });
+}
+async function checkoutBranch(cwd, branch) {
+  const match = branch.match(/^([^/]+)\/(.+)$/);
+  if (match) {
+    const localName = match[2];
+    await git(cwd, ["checkout", "-b", localName, "--track", branch]);
+  } else {
+    await git(cwd, ["checkout", branch]);
+  }
+}
+async function createBranch(cwd, name) {
+  await git(cwd, ["checkout", "-b", name]);
+}
+async function getGitInfo(cwd) {
+  try {
+    const [toplevel, branch] = await Promise.all([
+      git(cwd, ["rev-parse", "--show-toplevel"]),
+      git(cwd, ["rev-parse", "--abbrev-ref", "HEAD"])
+    ]);
+    let url = null;
+    try {
+      const raw = await git(cwd, ["remote", "get-url", "origin"]);
+      url = remoteToHttps(raw);
+    } catch {
+    }
+    return { repo: path.basename(toplevel), branch, url };
+  } catch {
+    return null;
+  }
+}
+function typedHandle(channel, fn) {
+  electron.ipcMain.handle(channel, async (event, ...args) => {
     try {
       return await fn(event, ...args);
     } catch (err) {
       logger.error("ipc", `Handler error [${channel}]`, err instanceof Error ? err.message : err);
       throw err;
     }
-  };
+  });
+}
+function typedOn(channel, fn) {
+  electron.ipcMain.on(channel, (event, ...args) => {
+    try {
+      ;
+      fn(event, ...args);
+    } catch (err) {
+      logger.error("ipc", `Send handler error [${channel}]`, err instanceof Error ? err.message : err);
+    }
+  });
 }
 function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2, platform2) {
-  electron.ipcMain.handle(PTY_CHANNELS.CREATE, wrapHandler(PTY_CHANNELS.CREATE, (event, opts) => {
+  typedHandle(PTY_CHANNELS.CREATE, (event, opts) => {
     const id2 = nanoid.nanoid();
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     if (!win) throw new Error("No window found");
     ptyManager2.create(id2, win, opts);
     return id2;
-  }));
-  electron.ipcMain.on(PTY_CHANNELS.WRITE, (_event, id2, data) => {
+  });
+  typedOn(PTY_CHANNELS.WRITE, (_event, id2, data) => {
     ptyManager2.write(id2, data);
   });
-  electron.ipcMain.on(PTY_CHANNELS.RESIZE, (_event, id2, cols, rows) => {
+  typedOn(PTY_CHANNELS.RESIZE, (_event, id2, cols, rows) => {
     ptyManager2.resize(id2, cols, rows);
   });
-  electron.ipcMain.on(PTY_CHANNELS.DESTROY, (_event, id2) => {
+  typedOn(PTY_CHANNELS.DESTROY, (_event, id2) => {
     ptyManager2.destroy(id2);
   });
-  electron.ipcMain.handle(PTY_CHANNELS.GET_CWD, wrapHandler(PTY_CHANNELS.GET_CWD, (_event, id2) => {
+  typedHandle(PTY_CHANNELS.GET_CWD, (_event, id2) => {
     return ptyManager2.getCwd(id2);
-  }));
-  electron.ipcMain.handle(FS_CHANNELS.READ_DIR, wrapHandler(FS_CHANNELS.READ_DIR, (_event, dirPath) => {
+  });
+  typedHandle(
+    FS_CHANNELS.READ_FILE,
+    (_event, filePath) => promises.readFile(filePath, "utf-8")
+  );
+  const MIME_MAP = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".svg": "image/svg+xml",
+    ".bmp": "image/bmp",
+    ".ico": "image/x-icon",
+    ".avif": "image/avif"
+  };
+  typedHandle(FS_CHANNELS.READ_FILE_DATA_URL, async (_event, filePath) => {
+    const ext = path.extname(filePath).toLowerCase();
+    const mime = MIME_MAP[ext] || "application/octet-stream";
+    const buffer = await promises.readFile(filePath);
+    return `data:${mime};base64,${buffer.toString("base64")}`;
+  });
+  typedHandle(FS_CHANNELS.READ_DIR, (_event, dirPath) => {
     return fsService2.readDir(dirPath);
-  }));
-  electron.ipcMain.handle(FS_CHANNELS.STAT, wrapHandler(FS_CHANNELS.STAT, (_event, filePath) => {
+  });
+  typedHandle(FS_CHANNELS.STAT, (_event, filePath) => {
     return fsService2.stat(filePath);
-  }));
-  electron.ipcMain.handle(FS_CHANNELS.RENAME, wrapHandler(FS_CHANNELS.RENAME, (_event, oldPath, newPath) => {
+  });
+  typedHandle(FS_CHANNELS.RENAME, (_event, oldPath, newPath) => {
     return fsService2.rename(oldPath, newPath);
-  }));
-  electron.ipcMain.handle(FS_CHANNELS.DELETE, wrapHandler(FS_CHANNELS.DELETE, (_event, filePath) => {
+  });
+  typedHandle(FS_CHANNELS.DELETE, (_event, filePath) => {
     return electron.shell.trashItem(filePath);
-  }));
-  electron.ipcMain.handle(FS_CHANNELS.RESTORE, wrapHandler(FS_CHANNELS.RESTORE, (_event, originalPaths) => {
+  });
+  typedHandle(FS_CHANNELS.RESTORE, (_event, originalPaths) => {
     return platform2.restoreFromTrash(originalPaths);
-  }));
-  electron.ipcMain.handle(FS_CHANNELS.COPY, wrapHandler(FS_CHANNELS.COPY, (event, srcPath, destDir) => {
+  });
+  typedHandle(FS_CHANNELS.COPY, (event, srcPath, destDir) => {
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     return fsService2.copy(srcPath, destDir, (done, total) => {
       if (win) win.webContents.send(FS_CHANNELS.COPY_PROGRESS, { done, total });
     });
-  }));
-  electron.ipcMain.on(FS_CHANNELS.WATCH, (event, dirPath) => {
+  });
+  typedHandle(GIT_CHANNELS.GET_INFO, (_event, cwd) => {
+    return getGitInfo(cwd);
+  });
+  typedHandle(GIT_CHANNELS.LIST_BRANCHES, (_event, cwd) => {
+    return listBranches(cwd);
+  });
+  typedHandle(GIT_CHANNELS.CHECKOUT, (_event, cwd, branch) => {
+    return checkoutBranch(cwd, branch);
+  });
+  typedHandle(GIT_CHANNELS.CREATE_BRANCH, (_event, cwd, name) => {
+    return createBranch(cwd, name);
+  });
+  typedOn(FS_CHANNELS.WATCH, (event, dirPath) => {
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     if (win) fsWatcher2.watch(dirPath, win);
   });
-  electron.ipcMain.on(FS_CHANNELS.UNWATCH, (_event, dirPath) => {
+  typedOn(FS_CHANNELS.UNWATCH, (_event, dirPath) => {
     fsWatcher2.unwatch(dirPath);
   });
 }
@@ -652,8 +845,8 @@ function hasProperty(object, path2) {
   }
   return true;
 }
-const homedir = os.homedir();
-const tmpdir = os.tmpdir();
+const homedir = os$1.homedir();
+const tmpdir = os$1.tmpdir();
 const { env } = process$1;
 const macos = (name) => {
   const library = path$1.join(homedir, "Library");
@@ -11068,7 +11261,7 @@ class ElectronStore extends Conf {
   }
 }
 const DEFAULT_SETTINGS = {
-  activeThemeId: "tokyo-night",
+  activeThemeId: "terma",
   fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', Menlo, monospace",
   fontSize: 14,
   lineHeight: 1.2,
@@ -11079,7 +11272,9 @@ const DEFAULT_SETTINGS = {
   fileAssociations: [],
   agentCommand: "claude",
   openaiApiKey: "",
-  whisperLanguage: "ru"
+  whisperLanguage: "ru",
+  sshProfiles: [],
+  agentProfiles: [{ id: "default-claude", name: "Claude", command: "claude" }]
 };
 const store$1 = new ElectronStore({
   name: "terma-settings",
@@ -11108,20 +11303,20 @@ function broadcastSettings(settings) {
   }
 }
 function registerSettingsHandlers() {
-  electron.ipcMain.handle(SETTINGS_CHANNELS.GET, wrapHandler(SETTINGS_CHANNELS.GET, () => {
+  typedHandle(SETTINGS_CHANNELS.GET, () => {
     return SettingsService.getAll();
-  }));
-  electron.ipcMain.handle(SETTINGS_CHANNELS.UPDATE, wrapHandler(SETTINGS_CHANNELS.UPDATE, (_event, partial) => {
+  });
+  typedHandle(SETTINGS_CHANNELS.UPDATE, (_event, partial) => {
     logger.info("settings", "Settings updated", Object.keys(partial));
     const settings = SettingsService.update(partial);
     broadcastSettings(settings);
     return settings;
-  }));
-  electron.ipcMain.handle(SETTINGS_CHANNELS.RESET, wrapHandler(SETTINGS_CHANNELS.RESET, () => {
+  });
+  typedHandle(SETTINGS_CHANNELS.RESET, () => {
     const settings = SettingsService.reset();
     broadcastSettings(settings);
     return settings;
-  }));
+  });
 }
 const store = new ElectronStore({
   name: "terma-session",
@@ -11136,88 +11331,360 @@ const SessionService = {
   }
 };
 function registerSessionHandlers() {
-  electron.ipcMain.handle(SESSION_CHANNELS.SAVE, wrapHandler(SESSION_CHANNELS.SAVE, (_event, state) => {
+  typedHandle(SESSION_CHANNELS.SAVE, (_event, state) => {
     SessionService.save(state);
-  }));
-  electron.ipcMain.handle(SESSION_CHANNELS.LOAD, wrapHandler(SESSION_CHANNELS.LOAD, () => {
+  });
+  typedHandle(SESSION_CHANNELS.LOAD, () => {
     return SessionService.load();
-  }));
+  });
 }
 function registerWhisperHandlers() {
-  electron.ipcMain.handle(
-    WHISPER_CHANNELS.TRANSCRIBE,
-    wrapHandler(WHISPER_CHANNELS.TRANSCRIBE, async (_event, audioBytes) => {
-      const { openaiApiKey, whisperLanguage } = SettingsService.getAll();
-      if (!openaiApiKey) {
-        throw new Error("OpenAI API key is not configured");
-      }
-      logger.info("whisper", "Transcription started");
-      const boundary = "----FormBoundary" + Math.random().toString(36).slice(2);
-      const filename = "audio.webm";
-      const parts = [];
-      parts.push(
-        Buffer.from(
-          `--${boundary}\r
+  typedHandle(WHISPER_CHANNELS.TRANSCRIBE, async (_event, audioBytes) => {
+    const { openaiApiKey, whisperLanguage } = SettingsService.getAll();
+    if (!openaiApiKey) {
+      throw new Error("OpenAI API key is not configured");
+    }
+    logger.info("whisper", "Transcription started");
+    const boundary = "----FormBoundary" + Math.random().toString(36).slice(2);
+    const filename = "audio.webm";
+    const parts = [];
+    parts.push(
+      Buffer.from(
+        `--${boundary}\r
 Content-Disposition: form-data; name="file"; filename="${filename}"\r
 Content-Type: audio/webm\r
 \r
 `
-        )
-      );
-      parts.push(Buffer.from(audioBytes));
-      parts.push(Buffer.from("\r\n"));
-      parts.push(
-        Buffer.from(
-          `--${boundary}\r
+      )
+    );
+    parts.push(Buffer.from(audioBytes));
+    parts.push(Buffer.from("\r\n"));
+    parts.push(
+      Buffer.from(
+        `--${boundary}\r
 Content-Disposition: form-data; name="model"\r
 \r
 whisper-1\r
 `
-        )
-      );
-      parts.push(
-        Buffer.from(
-          `--${boundary}\r
+      )
+    );
+    parts.push(
+      Buffer.from(
+        `--${boundary}\r
 Content-Disposition: form-data; name="response_format"\r
 \r
 text\r
 `
-        )
-      );
-      parts.push(
-        Buffer.from(
-          `--${boundary}\r
+      )
+    );
+    parts.push(
+      Buffer.from(
+        `--${boundary}\r
 Content-Disposition: form-data; name="language"\r
 \r
 ${whisperLanguage || "ru"}\r
 `
-        )
-      );
-      parts.push(Buffer.from(`--${boundary}--\r
+      )
+    );
+    parts.push(Buffer.from(`--${boundary}--\r
 `));
-      const body = Buffer.concat(parts);
-      const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${openaiApiKey}`,
-          "Content-Type": `multipart/form-data; boundary=${boundary}`
-        },
-        body
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Whisper API error ${res.status}: ${errText}`);
-      }
-      const text = await res.text();
-      logger.info("whisper", "Transcription complete");
-      return text.trim();
-    })
-  );
+    const body = Buffer.concat(parts);
+    const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiApiKey}`,
+        "Content-Type": `multipart/form-data; boundary=${boundary}`
+      },
+      body
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Whisper API error ${res.status}: ${errText}`);
+    }
+    const text = await res.text();
+    logger.info("whisper", "Transcription complete");
+    return text.trim();
+  });
 }
 function registerLogHandlers() {
-  electron.ipcMain.handle(LOG_CHANNELS.GET_LOGS, () => {
+  typedHandle(LOG_CHANNELS.GET_LOGS, () => {
     return logger.getEntries();
   });
+}
+function registerSshHandlers(sshService2) {
+  typedHandle(SSH_CHANNELS.CONNECT, async (_event, profileId) => {
+    const settings = SettingsService.getAll();
+    const profile = settings.sshProfiles.find((p) => p.id === profileId);
+    if (!profile) throw new Error(`SSH profile not found: ${profileId}`);
+    await sshService2.connect(profile);
+  });
+  typedHandle(SSH_CHANNELS.DISCONNECT, async (_event, profileId) => {
+    await sshService2.disconnect(profileId);
+  });
+  typedHandle(SSH_CHANNELS.READ_DIR, async (_event, profileId, remotePath) => {
+    return sshService2.readDir(profileId, remotePath);
+  });
+  typedHandle(SSH_CHANNELS.GET_HOME_DIR, async (_event, profileId) => {
+    return sshService2.getHomeDir(profileId);
+  });
+}
+function registerTranslateHandlers() {
+  typedHandle(TRANSLATE_CHANNELS.TRANSLATE, async (_event, text) => {
+    const { openaiApiKey } = SettingsService.getAll();
+    if (!openaiApiKey) {
+      throw new Error("OpenAI API key is not configured");
+    }
+    logger.info("translate", "Translation started");
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiApiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You are a translator. If the text is in Russian, translate to English. If the text is in any other language, translate to Russian. Return only the translation, no explanations."
+          },
+          { role: "user", content: text }
+        ],
+        temperature: 0.3
+      })
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`OpenAI API error ${res.status}: ${errText}`);
+    }
+    const data = await res.json();
+    const translated = data.choices[0]?.message?.content?.trim() ?? "";
+    logger.info("translate", "Translation complete");
+    return translated;
+  });
+}
+class SystemMonitorService {
+  async getMetrics() {
+    try {
+      const [load, mem, disks, procs, cpuInfo] = await Promise.all([
+        si.currentLoad(),
+        si.mem(),
+        si.fsSize(),
+        si.processes(),
+        si.cpu()
+      ]);
+      return {
+        processCount: procs.all,
+        ram: {
+          total: mem.total,
+          used: mem.used,
+          free: mem.free,
+          usedPercent: mem.used / mem.total * 100
+        },
+        cpu: {
+          cores: cpuInfo.cores,
+          model: `${cpuInfo.manufacturer} ${cpuInfo.brand}`,
+          avgLoad: load.currentLoad,
+          coreLoads: load.cpus.map((c, i) => ({ core: i, load: c.load }))
+        },
+        disks: disks.filter((d) => d.size > 0).map((d) => ({
+          fs: d.fs,
+          size: d.size,
+          used: d.used,
+          usedPercent: d.use,
+          mount: d.mount
+        }))
+      };
+    } catch (err) {
+      logger.error("sysmon", "Failed to collect metrics", err instanceof Error ? err.message : err);
+      throw err;
+    }
+  }
+}
+const systemMonitorService = new SystemMonitorService();
+function registerSysmonHandlers() {
+  typedHandle(SYSMON_CHANNELS.METRICS, async () => {
+    return systemMonitorService.getMetrics();
+  });
+}
+const CONNECT_TIMEOUT = 1e4;
+const SFTP_TIMEOUT = 15e3;
+const DIR_CACHE_MAX = 20;
+const DIR_CACHE_TTL = 1e4;
+class DirCache {
+  entries = /* @__PURE__ */ new Map();
+  get(key) {
+    const entry = this.entries.get(key);
+    if (!entry) return null;
+    if (Date.now() - entry.ts > DIR_CACHE_TTL) {
+      this.entries.delete(key);
+      return null;
+    }
+    this.entries.delete(key);
+    this.entries.set(key, entry);
+    return entry.data;
+  }
+  set(key, data) {
+    this.entries.delete(key);
+    if (this.entries.size >= DIR_CACHE_MAX) {
+      const first = this.entries.keys().next().value;
+      if (first !== void 0) this.entries.delete(first);
+    }
+    this.entries.set(key, { data, ts: Date.now() });
+  }
+  /** Invalidate all entries for a given profileId */
+  invalidate(profileId) {
+    const prefix = profileId + ":";
+    for (const key of this.entries.keys()) {
+      if (key.startsWith(prefix)) {
+        this.entries.delete(key);
+      }
+    }
+  }
+  clear() {
+    this.entries.clear();
+  }
+}
+function withTimeout(promise, ms, label) {
+  return new Promise((resolve2, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${label}: timeout after ${ms}ms`)), ms);
+    promise.then(
+      (v) => {
+        clearTimeout(timer);
+        resolve2(v);
+      },
+      (e) => {
+        clearTimeout(timer);
+        reject(e);
+      }
+    );
+  });
+}
+class SshService {
+  connections = /* @__PURE__ */ new Map();
+  dirCache = new DirCache();
+  async connect(profile) {
+    if (this.connections.has(profile.id)) {
+      logger.info("ssh", `Already connected: ${profile.name}`);
+      return;
+    }
+    const client = new ssh2.Client();
+    const privateKey = fs$1.readFileSync(profile.keyPath.replace(/^~/, process.env.HOME || ""));
+    await withTimeout(
+      new Promise((resolve2, reject) => {
+        client.on("ready", () => resolve2());
+        client.on("error", (err) => {
+          logger.error("ssh", `Connection error: ${profile.host}`, err.message);
+          reject(err);
+        });
+        client.connect({
+          host: profile.host,
+          port: profile.port,
+          username: profile.username,
+          privateKey,
+          readyTimeout: CONNECT_TIMEOUT
+        });
+      }),
+      CONNECT_TIMEOUT,
+      `SSH connect ${profile.host}`
+    );
+    client.on("close", () => {
+      if (this.connections.has(profile.id)) {
+        this.connections.delete(profile.id);
+        this.dirCache.invalidate(profile.id);
+        logger.warn("ssh", `Connection closed unexpectedly: ${profile.id}`);
+      }
+    });
+    client.on("error", (err) => {
+      logger.error("ssh", `Connection error (post-connect): ${profile.id}`, err.message);
+      this.connections.delete(profile.id);
+      this.dirCache.invalidate(profile.id);
+    });
+    const sftp = await withTimeout(
+      new Promise((resolve2, reject) => {
+        client.sftp((err, sftp2) => {
+          if (err) reject(err);
+          else resolve2(sftp2);
+        });
+      }),
+      SFTP_TIMEOUT,
+      `SFTP init ${profile.host}`
+    );
+    this.connections.set(profile.id, { client, sftp });
+    logger.info("ssh", `Connected to ${profile.host}`);
+  }
+  async disconnect(profileId) {
+    const conn = this.connections.get(profileId);
+    if (!conn) return;
+    this.connections.delete(profileId);
+    this.dirCache.invalidate(profileId);
+    conn.client.end();
+    logger.info("ssh", `Disconnected: ${profileId}`);
+  }
+  async readDir(profileId, remotePath) {
+    const conn = this.connections.get(profileId);
+    if (!conn) throw new Error(`Not connected: ${profileId}`);
+    const cacheKey = profileId + ":" + remotePath;
+    const cached = this.dirCache.get(cacheKey);
+    if (cached) return cached;
+    const list = await withTimeout(
+      new Promise((resolve2, reject) => {
+        conn.sftp.readdir(remotePath, (err, list2) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          const entries = list2.map((item) => {
+            const isDirectory = (item.attrs.mode & 61440) === 16384;
+            const isSymlink = (item.attrs.mode & 61440) === 40960;
+            const fullPath = remotePath === "/" ? `/${item.filename}` : `${remotePath}/${item.filename}`;
+            return {
+              name: item.filename,
+              path: fullPath,
+              isDirectory,
+              isSymlink,
+              size: item.attrs.size,
+              modified: (item.attrs.mtime ?? 0) * 1e3
+            };
+          });
+          entries.sort((a, b) => {
+            if (a.isDirectory !== b.isDirectory) return a.isDirectory ? -1 : 1;
+            return a.name.localeCompare(b.name);
+          });
+          resolve2(entries);
+        });
+      }),
+      SFTP_TIMEOUT,
+      `SFTP readdir ${remotePath}`
+    );
+    this.dirCache.set(cacheKey, list);
+    return list;
+  }
+  async getHomeDir(profileId) {
+    const conn = this.connections.get(profileId);
+    if (!conn) throw new Error(`Not connected: ${profileId}`);
+    return withTimeout(
+      new Promise((resolve2, reject) => {
+        conn.sftp.realpath(".", (err, absPath) => {
+          if (err) reject(err);
+          else resolve2(absPath);
+        });
+      }),
+      SFTP_TIMEOUT,
+      `SFTP realpath ${profileId}`
+    );
+  }
+  isConnected(profileId) {
+    return this.connections.has(profileId);
+  }
+  disconnectAll() {
+    for (const [id2, conn] of this.connections) {
+      conn.client.end();
+      logger.info("ssh", `Disconnected on cleanup: ${id2}`);
+    }
+    this.connections.clear();
+    this.dirCache.clear();
+  }
 }
 class LinuxPlatformService {
   getCwd(pid) {
@@ -11237,8 +11704,12 @@ class LinuxPlatformService {
     }
     return [];
   }
+  setClipboardFilePaths(paths) {
+    const lines = ["copy", ...paths.map((p) => `file://${encodeURI(p)}`)].join("\n");
+    electron.clipboard.writeBuffer("x-special/gnome-copied-files", Buffer.from(lines, "utf-8"));
+  }
   async restoreFromTrash(originalPaths) {
-    const trashBase = path.join(os$1.homedir(), ".local/share/Trash");
+    const trashBase = path.join(os.homedir(), ".local/share/Trash");
     const infoDir = path.join(trashBase, "info");
     const filesDir = path.join(trashBase, "files");
     let infoFiles;
@@ -11301,7 +11772,18 @@ class MacPlatformService {
     }
   }
   getClipboardFilePaths() {
-    return [];
+    try {
+      const buf = electron.clipboard.readBuffer("public.file-url");
+      if (buf.length === 0) return [];
+      const raw = buf.toString("utf-8");
+      return raw.split(/\r?\n/).filter((line) => line.startsWith("file://")).map((uri2) => decodeURIComponent(new URL(uri2.trim()).pathname));
+    } catch {
+      return [];
+    }
+  }
+  setClipboardFilePaths(paths) {
+    const lines = paths.map((p) => `file://${encodeURI(p)}`).join("\n");
+    electron.clipboard.writeBuffer("public.file-url", Buffer.from(lines, "utf-8"));
   }
   async restoreFromTrash(_originalPaths) {
     return { ok: 0, fail: _originalPaths.length };
@@ -11312,7 +11794,16 @@ class WindowsPlatformService {
     return null;
   }
   getClipboardFilePaths() {
-    return [];
+    try {
+      const buf = electron.clipboard.readBuffer("FileNameW");
+      if (buf.length === 0) return [];
+      const raw = buf.toString("utf16le");
+      return raw.split("\0").filter((p) => p.length > 0);
+    } catch {
+      return [];
+    }
+  }
+  setClipboardFilePaths(_paths) {
   }
   async restoreFromTrash(_originalPaths) {
     return { ok: 0, fail: _originalPaths.length };
@@ -11338,6 +11829,9 @@ const platform = createPlatformService();
 const ptyManager = new PtyManager(platform);
 const fsService = new FsService();
 const fsWatcher = new FsWatcher();
+const sshService = new SshService();
+let lastCpuUsage = process.cpuUsage();
+let lastCpuTime = Date.now();
 function createWindow() {
   const win = new electron.BrowserWindow({
     width: 1200,
@@ -11352,9 +11846,6 @@ function createWindow() {
       preload: path.join(__dirname, "../preload/index.js"),
       sandbox: false
     }
-  });
-  win.webContents.on("before-input-event", (_event, input) => {
-    if (input.control && !input.shift && !input.alt && (input.key === "=" || input.key === "+" || input.key === "-" || input.key === "0")) ;
   });
   win.webContents.setZoomFactor(1);
   win.webContents.setVisualZoomLevelLimits(1, 1);
@@ -11375,11 +11866,17 @@ electron.app.whenReady().then(() => {
   registerSessionHandlers();
   registerWhisperHandlers();
   registerLogHandlers();
+  registerSshHandlers(sshService);
+  registerTranslateHandlers();
+  registerSysmonHandlers();
   logger.info("app", "App ready");
-  electron.ipcMain.handle(CLIPBOARD_CHANNELS.READ_FILE_PATHS, () => {
+  typedHandle(CLIPBOARD_CHANNELS.READ_FILE_PATHS, () => {
     return platform.getClipboardFilePaths();
   });
-  electron.ipcMain.handle(CLIPBOARD_CHANNELS.SAVE_IMAGE, async (_event, destDir) => {
+  typedHandle(CLIPBOARD_CHANNELS.WRITE_FILE_PATHS, (_event, paths) => {
+    platform.setClipboardFilePaths(paths);
+  });
+  typedHandle(CLIPBOARD_CHANNELS.SAVE_IMAGE, async (_event, destDir) => {
     const img = electron.clipboard.readImage();
     if (img.isEmpty()) return null;
     const png = img.toPNG();
@@ -11408,14 +11905,14 @@ electron.app.whenReady().then(() => {
     await promises.writeFile(filePath, png);
     return filePath;
   });
-  electron.ipcMain.handle(SHELL_CHANNELS.OPEN_PATH, (_event, path2) => electron.shell.openPath(path2));
-  electron.ipcMain.handle(SHELL_CHANNELS.OPEN_WITH, (_event, command, filePath) => {
+  typedHandle(SHELL_CHANNELS.OPEN_PATH, (_event, path2) => electron.shell.openPath(path2));
+  typedHandle(SHELL_CHANNELS.OPEN_WITH, (_event, command, filePath) => {
     child_process.spawn(command, [filePath], { detached: true, stdio: "ignore" }).unref();
   });
-  electron.ipcMain.on(WINDOW_CHANNELS.MINIMIZE, (event) => {
+  typedOn(WINDOW_CHANNELS.MINIMIZE, (event) => {
     electron.BrowserWindow.fromWebContents(event.sender)?.minimize();
   });
-  electron.ipcMain.on(WINDOW_CHANNELS.MAXIMIZE, (event) => {
+  typedOn(WINDOW_CHANNELS.MAXIMIZE, (event) => {
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     if (win?.isMaximized()) {
       win.unmaximize();
@@ -11423,19 +11920,56 @@ electron.app.whenReady().then(() => {
       win?.maximize();
     }
   });
-  electron.ipcMain.on(WINDOW_CHANNELS.CLOSE, (event) => {
+  typedOn(WINDOW_CHANNELS.CLOSE, (event) => {
     electron.BrowserWindow.fromWebContents(event.sender)?.close();
   });
-  electron.ipcMain.handle(WINDOW_CHANNELS.IS_MAXIMIZED, (event) => {
+  typedOn(WINDOW_CHANNELS.FORCE_CLOSE, (event) => {
+    const win = electron.BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+      win._forceClose = true;
+      win.close();
+    }
+  });
+  typedHandle(WINDOW_CHANNELS.IS_MAXIMIZED, (event) => {
     return electron.BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false;
   });
+  typedHandle(SELFMON_CHANNELS.METRICS, () => {
+    const mem = process.memoryUsage();
+    const now = Date.now();
+    const elapsed = (now - lastCpuTime) / 1e3;
+    const cpu = process.cpuUsage(lastCpuUsage);
+    const cpuPercent = elapsed > 0 ? (cpu.user + cpu.system) / 1e6 / elapsed * 100 : 0;
+    lastCpuUsage = process.cpuUsage();
+    lastCpuTime = now;
+    return {
+      rss: mem.rss,
+      heapUsed: mem.heapUsed,
+      heapTotal: mem.heapTotal,
+      cpuPercent: Math.round(cpuPercent * 10) / 10,
+      ptyCount: ptyManager.sessionCount,
+      uptime: Math.floor(process.uptime())
+    };
+  });
+  function setupWindowEvents(win) {
+    win.on("close", (e) => {
+      if (win._forceClose) return;
+      e.preventDefault();
+      if (!win.isDestroyed()) win.webContents.send(WINDOW_CHANNELS.CONFIRM_CLOSE);
+    });
+    win.on("maximize", () => {
+      if (!win.isDestroyed()) win.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, true);
+    });
+    win.on("unmaximize", () => {
+      if (!win.isDestroyed()) win.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, false);
+    });
+  }
   const mainWin = createWindow();
+  setupWindowEvents(mainWin);
   logger.info("app", "Window created");
-  mainWin.on("maximize", () => mainWin.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, true));
-  mainWin.on("unmaximize", () => mainWin.webContents.send(WINDOW_CHANNELS.MAXIMIZED_CHANGE, false));
   electron.app.on("activate", () => {
     if (electron.BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      const win = createWindow();
+      setupWindowEvents(win);
     }
   });
 });
@@ -11443,6 +11977,7 @@ electron.app.on("window-all-closed", () => {
   logger.info("app", "All windows closed");
   ptyManager.destroyAll();
   fsWatcher.unwatchAll();
+  sshService.disconnectAll();
   if (process.platform !== "darwin") {
     electron.app.quit();
   }
@@ -11451,4 +11986,5 @@ electron.app.on("before-quit", () => {
   logger.info("app", "Quitting");
   ptyManager.destroyAll();
   fsWatcher.unwatchAll();
+  sshService.disconnectAll();
 });

@@ -234,6 +234,94 @@ In-memory буфер логов с broadcast в renderer.
 
 ---
 
+## GitService
+
+**Файл:** `src/main/services/git-service.ts`
+
+Интеграция с Git через `child_process.execFile`. Все команды выполняются с таймаутом 3 секунды.
+
+### Экспортируемые функции
+
+| Функция | Описание |
+|---------|----------|
+| `getGitInfo(cwd)` | Возвращает `{ repo, branch, url }` или `null` если не git-репо |
+| `listBranches(cwd)` | Список локальных и remote веток, отсортированных по committerdate |
+| `checkoutBranch(cwd, branch)` | Переключение на ветку (с автосозданием tracking для remote) |
+| `createBranch(cwd, name)` | Создание новой ветки (`git checkout -b name`) |
+
+### Обработка remote URL
+
+`remoteToHttps()` конвертирует SSH-формат (`git@github.com:user/repo.git`) и HTTPS-формат в чистый HTTPS URL для отображения в UI.
+
+---
+
+## SystemMonitorService
+
+**Файл:** `src/main/services/system-monitor-service.ts`
+
+Сбор системных метрик через библиотеку `systeminformation`.
+
+### API
+
+| Метод | Описание |
+|-------|----------|
+| `getMetrics()` | Собирает полный набор системных метрик |
+
+### SystemMetrics
+
+```typescript
+interface SystemMetrics {
+  processCount: number
+  ram: { total: number; used: number; free: number; usedPercent: number }
+  cpu: { cores: number; model: string; avgLoad: number; coreLoads: CpuCoreLoad[] }
+  disks: DiskInfo[]
+}
+```
+
+Метрики собираются параллельно через `Promise.all`: `currentLoad`, `mem`, `fsSize`, `processes`, `cpu`.
+
+---
+
+## SshService
+
+**Файл:** `src/main/ssh/ssh-service.ts`
+
+SSH-подключения через библиотеку `ssh2`. Поддерживает множественные одновременные подключения.
+
+### API
+
+| Метод | Описание |
+|-------|----------|
+| `connect(profile)` | Подключение к SSH-серверу по профилю |
+| `disconnect(profileId)` | Отключение от сервера |
+| `readDir(profileId, remotePath)` | Чтение удалённой директории через SFTP |
+| `getHomeDir(profileId)` | Получение домашней директории на удалённом сервере |
+| `isConnected(profileId)` | Проверка состояния подключения |
+| `disconnectAll()` | Отключение всех подключений (при закрытии приложения) |
+
+### Особенности
+
+- **Таймауты**: connect — 10с, SFTP-операции — 15с
+- **LRU-кэш директорий**: до 20 записей, TTL 10с. Инвалидируется при отключении.
+- **Автоочистка**: при неожиданном закрытии соединения — автоматическое удаление из карты и инвалидация кэша.
+- **Аутентификация**: по SSH-ключу (поддержка `~` в пути к ключу)
+
+### SshProfile
+
+```typescript
+interface SshProfile {
+  id: string
+  name: string
+  host: string
+  port: number
+  username: string
+  keyPath: string
+  defaultPath: string
+}
+```
+
+---
+
 ## Управление окном
 
 Main process обрабатывает IPC-сообщения для управления frameless окном:
@@ -242,8 +330,12 @@ Main process обрабатывает IPC-сообщения для управл
 |-------|----------|
 | `window:minimize` | `win.minimize()` |
 | `window:maximize` | Toggle: `maximize()` ↔ `unmaximize()` |
-| `window:close` | `win.close()` |
+| `window:close` | `win.close()` (инициирует подтверждение закрытия) |
+| `window:force-close` | Принудительное закрытие без подтверждения |
+| `window:confirm-close` | Событие: main → renderer, запрос подтверждения закрытия |
 | `window:isMaximized` | Возвращает текущее состояние maximize |
 | `window:maximized-change` | Событие при смене состояния maximize |
+
+При нажатии `window:close` main process отправляет `window:confirm-close` в renderer вместо немедленного закрытия. Renderer показывает `ConfirmDialog`, и при подтверждении вызывает `window:force-close`.
 
 При смене состояния maximize/unmaximize отправляет событие в renderer для обновления UI (бордюры окна видны только в не-maximize режиме).
