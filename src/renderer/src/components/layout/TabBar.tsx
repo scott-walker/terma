@@ -2,6 +2,8 @@ import { useState, useCallback, useRef } from 'react'
 import { useTabStore } from '@/stores/tab-store'
 import { TabItem } from '@/components/ui/TabItem'
 import { ContextMenu, type MenuEntry } from '@/components/ui/ContextMenu'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { getAllPaneIds } from '@/lib/layout-tree'
 
 const DRAG_FORMAT = 'application/x-terma-tab'
 
@@ -20,7 +22,17 @@ export function TabBar(): JSX.Element {
   const [dropTarget, setDropTarget] = useState<{ index: number; side: 'left' | 'right' } | null>(null)
   const [contextMenu, setContextMenu] = useState<{ position: { x: number; y: number }; tabId: string } | null>(null)
   const [editingTabId, setEditingTabId] = useState<string | null>(null)
+  const [confirmCloseTabId, setConfirmCloseTabId] = useState<string | null>(null)
   const dragCounters = useRef<Map<number, number>>(new Map())
+
+  const handleCloseTab = useCallback((tabId: string) => {
+    const tab = tabs[tabId]
+    if (tab && getAllPaneIds(tab.layoutTree).length > 1) {
+      setConfirmCloseTabId(tabId)
+    } else {
+      closeTab(tabId)
+    }
+  }, [tabs, closeTab])
 
   const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
     setDragIndex(index)
@@ -83,7 +95,7 @@ export function TabBar(): JSX.Element {
           type: 'item',
           label: 'Close',
           disabled: tabOrder.length <= 1,
-          onAction: () => closeTab(contextMenu.tabId)
+          onAction: () => handleCloseTab(contextMenu.tabId)
         }
       ]
     : []
@@ -103,7 +115,7 @@ export function TabBar(): JSX.Element {
             color={tab.color}
             forceEdit={isForceEditing}
             onClick={() => setActiveTab(id)}
-            onClose={() => closeTab(id)}
+            onClose={() => handleCloseTab(id)}
             onRename={(newTitle) => setTitle(id, newTitle)}
             onEditEnd={isForceEditing ? () => setEditingTabId(null) : undefined}
             onContextMenu={(e) => handleContextMenu(e, id)}
@@ -126,6 +138,18 @@ export function TabBar(): JSX.Element {
         entries={contextMenuEntries}
         onClose={() => setContextMenu(null)}
       />
+      {confirmCloseTabId && (
+        <ConfirmDialog
+          title="Close Tab"
+          message="This tab has multiple panes. Close all of them?"
+          confirmLabel="Close"
+          onConfirm={() => {
+            closeTab(confirmCloseTabId)
+            setConfirmCloseTabId(null)
+          }}
+          onCancel={() => setConfirmCloseTabId(null)}
+        />
+      )}
     </div>
   )
 }

@@ -12956,37 +12956,109 @@ function IconButton({
     }
   );
 }
+function ConfirmDialog({
+  title,
+  message,
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
+  onConfirm,
+  onCancel
+}) {
+  const handleKeyDown = reactExports.useCallback(
+    (e) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        onCancel();
+      }
+    },
+    [onCancel]
+  );
+  reactExports.useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [handleKeyDown]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: "fixed inset-0 z-50 flex items-center justify-center bg-backdrop",
+      onMouseDown: onCancel,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          className: "flex w-80 flex-col gap-4 rounded-lg bg-elevated p-5 shadow-2xl",
+          onMouseDown: (e) => e.stopPropagation(),
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-sm font-semibold text-fg", children: title }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-fg-secondary", children: message }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-end gap-2", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  onClick: onCancel,
+                  className: "cursor-pointer rounded-md px-3 py-1.5 text-sm text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
+                  children: cancelLabel
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  onClick: onConfirm,
+                  autoFocus: true,
+                  className: "cursor-pointer rounded-md bg-danger px-3 py-1.5 text-sm text-white transition-colors hover:opacity-90",
+                  children: confirmLabel
+                }
+              )
+            ] })
+          ]
+        }
+      )
+    }
+  );
+}
 const btnBase = "flex h-full w-[46px] cursor-pointer items-center justify-center border-none bg-transparent text-fg-muted transition-colors duration-[120ms] hover:bg-surface-hover hover:text-fg";
 function WindowControls() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-8", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "button",
+  const [showConfirm, setShowConfirm] = reactExports.useState(false);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          onClick: () => window.api.window.minimize(),
+          title: "Minimize",
+          className: btnBase,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { width: "10", height: "1", viewBox: "0 0 10 1", children: /* @__PURE__ */ jsxRuntimeExports.jsx("line", { x1: "0", y1: "0.5", x2: "10", y2: "0.5", stroke: "currentColor", strokeWidth: "1" }) })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          onClick: () => window.api.window.maximize(),
+          title: "Maximize",
+          className: btnBase,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "none", children: /* @__PURE__ */ jsxRuntimeExports.jsx("rect", { x: "0.5", y: "0.5", width: "9", height: "9", stroke: "currentColor", strokeWidth: "1" }) })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          onClick: () => setShowConfirm(true),
+          title: "Close",
+          className: "flex h-full w-[46px] cursor-pointer items-center justify-center border-none bg-transparent text-fg-muted transition-colors duration-[120ms] hover:bg-window-close hover:text-white",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs("svg", { width: "10", height: "10", viewBox: "0 0 10 10", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("line", { x1: "0", y1: "0", x2: "10", y2: "10", stroke: "currentColor", strokeWidth: "1.2" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("line", { x1: "10", y1: "0", x2: "0", y2: "10", stroke: "currentColor", strokeWidth: "1.2" })
+          ] })
+        }
+      )
+    ] }),
+    showConfirm && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ConfirmDialog,
       {
-        onClick: () => window.api.window.minimize(),
-        title: "Minimize",
-        className: btnBase,
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { width: "10", height: "1", viewBox: "0 0 10 1", children: /* @__PURE__ */ jsxRuntimeExports.jsx("line", { x1: "0", y1: "0.5", x2: "10", y2: "0.5", stroke: "currentColor", strokeWidth: "1" }) })
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "button",
-      {
-        onClick: () => window.api.window.maximize(),
-        title: "Maximize",
-        className: btnBase,
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "none", children: /* @__PURE__ */ jsxRuntimeExports.jsx("rect", { x: "0.5", y: "0.5", width: "9", height: "9", stroke: "currentColor", strokeWidth: "1" }) })
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "button",
-      {
-        onClick: () => window.api.window.close(),
-        title: "Close",
-        className: "flex h-full w-[46px] cursor-pointer items-center justify-center border-none bg-transparent text-fg-muted transition-colors duration-[120ms] hover:bg-window-close hover:text-white",
-        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("svg", { width: "10", height: "10", viewBox: "0 0 10 10", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("line", { x1: "0", y1: "0", x2: "10", y2: "10", stroke: "currentColor", strokeWidth: "1.2" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("line", { x1: "10", y1: "0", x2: "0", y2: "10", stroke: "currentColor", strokeWidth: "1.2" })
-        ] })
+        title: "Close Window",
+        message: "All terminal sessions will be terminated. Are you sure?",
+        confirmLabel: "Close",
+        onConfirm: () => window.api.window.close(),
+        onCancel: () => setShowConfirm(false)
       }
     )
   ] });
@@ -33508,7 +33580,16 @@ function TabBar() {
   const [dropTarget, setDropTarget] = reactExports.useState(null);
   const [contextMenu, setContextMenu] = reactExports.useState(null);
   const [editingTabId, setEditingTabId] = reactExports.useState(null);
+  const [confirmCloseTabId, setConfirmCloseTabId] = reactExports.useState(null);
   const dragCounters = reactExports.useRef(/* @__PURE__ */ new Map());
+  const handleCloseTab = reactExports.useCallback((tabId) => {
+    const tab = tabs[tabId];
+    if (tab && getAllPaneIds(tab.layoutTree).length > 1) {
+      setConfirmCloseTabId(tabId);
+    } else {
+      closeTab(tabId);
+    }
+  }, [tabs, closeTab]);
   const handleDragStart = reactExports.useCallback((e, index) => {
     setDragIndex(index);
     e.dataTransfer.effectAllowed = "move";
@@ -33564,7 +33645,7 @@ function TabBar() {
       type: "item",
       label: "Close",
       disabled: tabOrder.length <= 1,
-      onAction: () => closeTab(contextMenu.tabId)
+      onAction: () => handleCloseTab(contextMenu.tabId)
     }
   ] : [];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "no-drag-region flex shrink-0 items-center gap-0.5 overflow-x-auto border-b border-border px-3", children: [
@@ -33581,7 +33662,7 @@ function TabBar() {
           color: tab.color,
           forceEdit: isForceEditing,
           onClick: () => setActiveTab(id2),
-          onClose: () => closeTab(id2),
+          onClose: () => handleCloseTab(id2),
           onRename: (newTitle) => setTitle(id2, newTitle),
           onEditEnd: isForceEditing ? () => setEditingTabId(null) : void 0,
           onContextMenu: (e) => handleContextMenu(e, id2),
@@ -33608,6 +33689,19 @@ function TabBar() {
         position: contextMenu?.position ?? null,
         entries: contextMenuEntries,
         onClose: () => setContextMenu(null)
+      }
+    ),
+    confirmCloseTabId && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ConfirmDialog,
+      {
+        title: "Close Tab",
+        message: "This tab has multiple panes. Close all of them?",
+        confirmLabel: "Close",
+        onConfirm: () => {
+          closeTab(confirmCloseTabId);
+          setConfirmCloseTabId(null);
+        },
+        onCancel: () => setConfirmCloseTabId(null)
       }
     )
   ] });
@@ -41319,6 +41413,7 @@ function App() {
   const settingsOpen = useSettingsStore((s) => s.settingsOpen);
   const activeTheme = useSettingsStore((s) => s.getActiveTheme());
   const [maximized, setMaximized] = reactExports.useState(false);
+  const [confirmCloseTabId, setConfirmCloseTabId] = reactExports.useState(null);
   reactExports.useEffect(() => {
     window.api.window.isMaximized().then(setMaximized);
     return window.api.window.onMaximizedChange(setMaximized);
@@ -41399,7 +41494,14 @@ function App() {
           break;
         case "KeyW":
           e.preventDefault();
-          if (state.activeTabId) state.closeTab(state.activeTabId);
+          if (state.activeTabId) {
+            const tab = state.tabs[state.activeTabId];
+            if (tab && getAllPaneIds(tab.layoutTree).length > 1) {
+              setConfirmCloseTabId(state.activeTabId);
+            } else {
+              state.closeTab(state.activeTabId);
+            }
+          }
           break;
         case "KeyD":
           e.preventDefault();
@@ -41448,7 +41550,20 @@ function App() {
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 overflow-hidden p-2", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative h-full", children: tabOrder.map((tabId) => /* @__PURE__ */ jsxRuntimeExports.jsx(TabContent, { tabId, isActive: tabId === activeTabId }, tabId)) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBar, {}),
     /* @__PURE__ */ jsxRuntimeExports.jsx(ToastContainer, {}),
-    settingsOpen && /* @__PURE__ */ jsxRuntimeExports.jsx(SettingsPanel, {})
+    settingsOpen && /* @__PURE__ */ jsxRuntimeExports.jsx(SettingsPanel, {}),
+    confirmCloseTabId && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ConfirmDialog,
+      {
+        title: "Close Tab",
+        message: "This tab has multiple panes. Close all of them?",
+        confirmLabel: "Close",
+        onConfirm: () => {
+          useTabStore.getState().closeTab(confirmCloseTabId);
+          setConfirmCloseTabId(null);
+        },
+        onCancel: () => setConfirmCloseTabId(null)
+      }
+    )
   ] });
 }
 ReactDOM.createRoot(document.getElementById("root")).render(

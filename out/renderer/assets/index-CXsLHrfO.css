@@ -969,6 +969,10 @@
     width: calc(var(--spacing) * 12);
   }
 
+  .w-80 {
+    width: calc(var(--spacing) * 80);
+  }
+
   .w-\[3px\] {
     width: 3px;
   }
@@ -1461,6 +1465,10 @@
 
   .p-4 {
     padding: calc(var(--spacing) * 4);
+  }
+
+  .p-5 {
+    padding: calc(var(--spacing) * 5);
   }
 
   .px-1\.5 {
@@ -1962,6 +1970,10 @@
 
     .hover\:opacity-70:hover {
       opacity: .7;
+    }
+
+    .hover\:opacity-90:hover {
+      opacity: .9;
     }
   }
 

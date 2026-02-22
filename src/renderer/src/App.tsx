@@ -7,6 +7,8 @@ import { SettingsPanel } from './components/settings/SettingsPanel'
 import { useTabStore, type SessionSnapshot } from './stores/tab-store'
 import { useSettingsStore } from './stores/settings-store'
 import { ToastContainer } from './components/ui/Toast'
+import { ConfirmDialog } from './components/ui/ConfirmDialog'
+import { getAllPaneIds } from './lib/layout-tree'
 import type { ThemePreset } from '@shared/themes'
 
 /* ── Derive UI color tokens from a terminal theme ── */
@@ -101,6 +103,7 @@ export default function App(): JSX.Element {
   const settingsOpen = useSettingsStore((s) => s.settingsOpen)
   const activeTheme = useSettingsStore((s) => s.getActiveTheme())
   const [maximized, setMaximized] = useState(false)
+  const [confirmCloseTabId, setConfirmCloseTabId] = useState<string | null>(null)
 
   // Track window maximized state
   useEffect(() => {
@@ -208,7 +211,14 @@ export default function App(): JSX.Element {
           break
         case 'KeyW':
           e.preventDefault()
-          if (state.activeTabId) state.closeTab(state.activeTabId)
+          if (state.activeTabId) {
+            const tab = state.tabs[state.activeTabId]
+            if (tab && getAllPaneIds(tab.layoutTree).length > 1) {
+              setConfirmCloseTabId(state.activeTabId)
+            } else {
+              state.closeTab(state.activeTabId)
+            }
+          }
           break
         case 'KeyD':
           e.preventDefault()
@@ -270,6 +280,18 @@ export default function App(): JSX.Element {
       <StatusBar />
       <ToastContainer />
       {settingsOpen && <SettingsPanel />}
+      {confirmCloseTabId && (
+        <ConfirmDialog
+          title="Close Tab"
+          message="This tab has multiple panes. Close all of them?"
+          confirmLabel="Close"
+          onConfirm={() => {
+            useTabStore.getState().closeTab(confirmCloseTabId)
+            setConfirmCloseTabId(null)
+          }}
+          onCancel={() => setConfirmCloseTabId(null)}
+        />
+      )}
     </div>
   )
 }
