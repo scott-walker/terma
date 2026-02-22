@@ -1,7 +1,12 @@
 import * as pty from 'node-pty'
 import { readlinkSync } from 'fs'
+import { exec } from 'child_process'
 import { BrowserWindow } from 'electron'
 import { PTY_CHANNELS } from '../../shared/channels'
+
+function switchToEnglishLayout(): void {
+  exec('gsettings set org.gnome.desktop.input-sources current 0', () => {})
+}
 
 export interface PtyCreateOpts {
   cols?: number
@@ -28,6 +33,8 @@ export class PtyManager {
     })
 
     this.sessions.set(id, term)
+
+    switchToEnglishLayout()
 
     term.onData((data) => {
       if (!win.isDestroyed()) {

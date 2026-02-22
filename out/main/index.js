@@ -63,6 +63,10 @@ const SESSION_CHANNELS = {
   SAVE: "session:save",
   LOAD: "session:load"
 };
+function switchToEnglishLayout() {
+  child_process.exec("gsettings set org.gnome.desktop.input-sources current 0", () => {
+  });
+}
 class PtyManager {
   sessions = /* @__PURE__ */ new Map();
   get shell() {
@@ -77,6 +81,7 @@ class PtyManager {
       env: process.env
     });
     this.sessions.set(id2, term);
+    switchToEnglishLayout();
     term.onData((data) => {
       if (!win.isDestroyed()) {
         win.webContents.send(PTY_CHANNELS.DATA, id2, data);

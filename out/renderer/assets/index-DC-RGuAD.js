@@ -12530,14 +12530,14 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$j = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$j);
-const __iconNode$i = [
+const __iconNode$k = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$k);
+const __iconNode$j = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M12 3v18", key: "108xh3" }]
 ];
-const Columns2 = createLucideIcon("columns-2", __iconNode$i);
-const __iconNode$h = [
+const Columns2 = createLucideIcon("columns-2", __iconNode$j);
+const __iconNode$i = [
   [
     "path",
     {
@@ -12549,21 +12549,8 @@ const __iconNode$h = [
   ["path", { d: "m5 16-3 3 3 3", key: "331omg" }],
   ["path", { d: "m9 22 3-3-3-3", key: "lsp7cz" }]
 ];
-const FileCodeCorner = createLucideIcon("file-code-corner", __iconNode$h);
-const __iconNode$g = [
-  [
-    "path",
-    {
-      d: "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z",
-      key: "1oefj6"
-    }
-  ],
-  ["path", { d: "M14 2v5a1 1 0 0 0 1 1h5", key: "wfsgrz" }],
-  ["path", { d: "M10 12.5 8 15l2 2.5", key: "1tg20x" }],
-  ["path", { d: "m14 12.5 2 2.5-2 2.5", key: "yinavb" }]
-];
-const FileCode = createLucideIcon("file-code", __iconNode$g);
-const __iconNode$f = [
+const FileCodeCorner = createLucideIcon("file-code-corner", __iconNode$i);
+const __iconNode$h = [
   [
     "path",
     {
@@ -12572,8 +12559,8 @@ const __iconNode$f = [
     }
   ]
 ];
-const FolderOpen = createLucideIcon("folder-open", __iconNode$f);
-const __iconNode$e = [
+const FolderOpen = createLucideIcon("folder-open", __iconNode$h);
+const __iconNode$g = [
   [
     "path",
     {
@@ -12582,16 +12569,16 @@ const __iconNode$e = [
     }
   ]
 ];
-const Folder = createLucideIcon("folder", __iconNode$e);
-const __iconNode$d = [["path", { d: "M5 12h14", key: "1ays0h" }]];
-const Minus = createLucideIcon("minus", __iconNode$d);
-const __iconNode$c = [
+const Folder = createLucideIcon("folder", __iconNode$g);
+const __iconNode$f = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+const Minus = createLucideIcon("minus", __iconNode$f);
+const __iconNode$e = [
   ["rect", { width: "20", height: "14", x: "2", y: "3", rx: "2", key: "48i651" }],
   ["line", { x1: "8", x2: "16", y1: "21", y2: "21", key: "1svkeh" }],
   ["line", { x1: "12", x2: "12", y1: "17", y2: "21", key: "vw1qmm" }]
 ];
-const Monitor = createLucideIcon("monitor", __iconNode$c);
-const __iconNode$b = [
+const Monitor = createLucideIcon("monitor", __iconNode$e);
+const __iconNode$d = [
   ["path", { d: "m14.622 17.897-10.68-2.913", key: "vj2p1u" }],
   [
     "path",
@@ -12608,8 +12595,8 @@ const __iconNode$b = [
     }
   ]
 ];
-const Paintbrush = createLucideIcon("paintbrush", __iconNode$b);
-const __iconNode$a = [
+const Paintbrush = createLucideIcon("paintbrush", __iconNode$d);
+const __iconNode$c = [
   [
     "path",
     {
@@ -12622,23 +12609,30 @@ const __iconNode$a = [
   ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
   ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
 ];
-const Palette = createLucideIcon("palette", __iconNode$a);
-const __iconNode$9 = [
+const Palette = createLucideIcon("palette", __iconNode$c);
+const __iconNode$b = [
   ["path", { d: "M5 12h14", key: "1ays0h" }],
   ["path", { d: "M12 5v14", key: "s699le" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$9);
-const __iconNode$8 = [
+const Plus = createLucideIcon("plus", __iconNode$b);
+const __iconNode$a = [
+  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
+  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
+  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
+  ["path", { d: "M8 16H3v5", key: "1cv678" }]
+];
+const RefreshCw = createLucideIcon("refresh-cw", __iconNode$a);
+const __iconNode$9 = [
   ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
   ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
 ];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$8);
-const __iconNode$7 = [
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$9);
+const __iconNode$8 = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M3 12h18", key: "1i2n21" }]
 ];
-const Rows2 = createLucideIcon("rows-2", __iconNode$7);
-const __iconNode$6 = [
+const Rows2 = createLucideIcon("rows-2", __iconNode$8);
+const __iconNode$7 = [
   ["path", { d: "M15 12h-5", key: "r7krc0" }],
   ["path", { d: "M15 8h-5", key: "1khuty" }],
   ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -12650,15 +12644,15 @@ const __iconNode$6 = [
     }
   ]
 ];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$6);
-const __iconNode$5 = [
+const ScrollText = createLucideIcon("scroll-text", __iconNode$7);
+const __iconNode$6 = [
   ["path", { d: "M14 17H5", key: "gfn3mx" }],
   ["path", { d: "M19 7h-9", key: "6i9tg" }],
   ["circle", { cx: "17", cy: "17", r: "3", key: "18b49y" }],
   ["circle", { cx: "7", cy: "7", r: "3", key: "dfmy0x" }]
 ];
-const Settings2 = createLucideIcon("settings-2", __iconNode$5);
-const __iconNode$4 = [
+const Settings2 = createLucideIcon("settings-2", __iconNode$6);
+const __iconNode$5 = [
   [
     "path",
     {
@@ -12668,7 +12662,13 @@ const __iconNode$4 = [
   ],
   ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
 ];
-const Settings = createLucideIcon("settings", __iconNode$4);
+const Settings = createLucideIcon("settings", __iconNode$5);
+const __iconNode$4 = [
+  ["path", { d: "m7 11 2-2-2-2", key: "1lz0vl" }],
+  ["path", { d: "M11 13h4", key: "1p7l4v" }],
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }]
+];
+const SquareTerminal = createLucideIcon("square-terminal", __iconNode$4);
 const __iconNode$3 = [
   ["path", { d: "M12 19h8", key: "baeox8" }],
   ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
@@ -12994,7 +12994,17 @@ function WindowControls() {
 function TitleBar() {
   const toggleSettings = useSettingsStore((s) => s.toggleSettings);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "drag-region flex shrink-0 items-center gap-3.5 border-b border-border px-5 py-2.5", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-gradient-logo text-[17px] font-semibold tracking-tight", children: "terma" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(SquareTerminal, { className: "size-4 text-accent", strokeWidth: 2 }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: "text-[24px] font-semibold uppercase tracking-widest text-white",
+          style: { fontFamily: "'Rajdhani', sans-serif" },
+          children: "terma"
+        }
+      )
+    ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1" }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "no-drag-region flex items-center gap-3", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -25042,6 +25052,55 @@ function createTerminalEntry(paneId, ptyId) {
     } catch {
     }
   }
+  terminal.attachCustomKeyEventHandler((event) => {
+    if (event.code === "KeyA" && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
+      if (event.type === "keydown") terminal.selectAll();
+      return false;
+    }
+    if (!terminal.hasSelection()) return true;
+    if (event.type !== "keydown") return false;
+    let insert = "";
+    const isCut = event.code === "KeyX" && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey;
+    if (isCut || event.key === "Delete" || event.key === "Backspace") ;
+    else if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+      insert = event.key;
+    } else {
+      return true;
+    }
+    const selection = terminal.getSelection();
+    const selPos = terminal.getSelectionPosition();
+    if (!selection || !selPos) return true;
+    const buf = terminal.buffer.active;
+    if (buf.type !== "normal") return true;
+    const cols = terminal.cols;
+    const cursorAbsY = buf.baseY + buf.cursorY;
+    const cursorX = buf.cursorX;
+    let logicalStartY = cursorAbsY;
+    while (logicalStartY > 0 && buf.getLine(logicalStartY)?.isWrapped) logicalStartY--;
+    let logicalEndY = cursorAbsY;
+    while (logicalEndY < buf.length - 1 && buf.getLine(logicalEndY + 1)?.isWrapped) logicalEndY++;
+    if (selPos.start.y < logicalStartY || selPos.end.y > logicalEndY) return true;
+    for (let y = selPos.start.y + 1; y <= selPos.end.y; y++) {
+      if (!buf.getLine(y)?.isWrapped) return true;
+    }
+    const cursorOff = (cursorAbsY - logicalStartY) * cols + cursorX;
+    const selEndOff = (selPos.end.y - logicalStartY) * cols + selPos.end.x;
+    const selStartOff = (selPos.start.y - logicalStartY) * cols + selPos.start.x;
+    const selLen = selEndOff - selStartOff;
+    if (selLen <= 0) return true;
+    if (isCut) {
+      navigator.clipboard.writeText(selection);
+    }
+    let seq = "";
+    const diff = selEndOff - cursorOff;
+    if (diff > 0) seq += "\x1B[C".repeat(diff);
+    else if (diff < 0) seq += "\x1B[D".repeat(-diff);
+    seq += "".repeat(selLen);
+    seq += insert;
+    terminal.clearSelection();
+    window.api.pty.write(ptyId, seq);
+    return false;
+  });
   const unsubData = window.api.pty.onData((id2, data) => {
     if (id2 === ptyId) {
       terminal.write(data);
@@ -25232,6 +25291,12 @@ const useTabStore = create((set, get) => ({
       [tabId]: { ...state.tabs[tabId], title }
     }
   })),
+  setTabColor: (tabId, color2) => set((state) => ({
+    tabs: {
+      ...state.tabs,
+      [tabId]: { ...state.tabs[tabId], color: color2 }
+    }
+  })),
   reorderTabs: (fromIndex, toIndex) => set((state) => {
     const newOrder = [...state.tabOrder];
     const [moved] = newOrder.splice(fromIndex, 1);
@@ -25403,7 +25468,15 @@ const useTabStore = create((set, get) => ({
     }
   }
 }));
-function TabItem({ title, isActive, canClose, onClick, onClose, onRename }) {
+const TAB_COLOR_CLASSES = {
+  red: { border: "border-tab-red", bg: "bg-tab-red" },
+  orange: { border: "border-tab-orange", bg: "bg-tab-orange" },
+  yellow: { border: "border-tab-yellow", bg: "bg-tab-yellow" },
+  green: { border: "border-tab-green", bg: "bg-tab-green" },
+  blue: { border: "border-tab-blue", bg: "bg-tab-blue" },
+  purple: { border: "border-tab-purple", bg: "bg-tab-purple" }
+};
+function TabItem({ title, isActive, canClose, color: color2, forceEdit, onClick, onClose, onRename, onEditEnd, onContextMenu, onDragStart, onDragOver, onDrop, onDragEnd, dropSide }) {
   const [editing, setEditing] = reactExports.useState(false);
   const [draft, setDraft] = reactExports.useState(title);
   const inputRef = reactExports.useRef(null);
@@ -25413,6 +25486,16 @@ function TabItem({ title, isActive, canClose, onClick, onClose, onRename }) {
       inputRef.current?.select();
     }
   }, [editing]);
+  reactExports.useEffect(() => {
+    if (forceEdit) {
+      setDraft(title);
+      setEditing(true);
+    }
+  }, [forceEdit, title]);
+  const stopEditing = reactExports.useCallback(() => {
+    setEditing(false);
+    onEditEnd?.();
+  }, [onEditEnd]);
   const commit = reactExports.useCallback(() => {
     const trimmed = draft.trim();
     if (trimmed && trimmed !== title) {
@@ -25420,8 +25503,8 @@ function TabItem({ title, isActive, canClose, onClick, onClose, onRename }) {
     } else {
       setDraft(title);
     }
-    setEditing(false);
-  }, [draft, title, onRename]);
+    stopEditing();
+  }, [draft, title, onRename, stopEditing]);
   const handleKeyDown = reactExports.useCallback(
     (e) => {
       if (e.key === "Enter") {
@@ -25429,28 +25512,32 @@ function TabItem({ title, isActive, canClose, onClick, onClose, onRename }) {
         commit();
       } else if (e.key === "Escape") {
         setDraft(title);
-        setEditing(false);
+        stopEditing();
       }
     },
-    [commit, title]
+    [commit, title, stopEditing]
   );
+  const effectiveColor = TAB_COLOR_CLASSES[color2 ?? "green"];
+  const borderClass = isActive ? effectiveColor.border : "border-transparent";
+  const dotClass = `${effectiveColor.bg} ${isActive ? "opacity-100" : "opacity-50"}`;
+  const textClass = isActive ? "text-fg" : "text-fg-muted";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
+      draggable: !editing,
       onClick,
       onDoubleClick: () => {
         setDraft(title);
         setEditing(true);
       },
-      className: `flex select-none items-center gap-2.5 whitespace-nowrap px-6 py-2.5 text-base transition-all ${isActive ? "border-b-2 border-accent bg-elevated text-fg" : "border-b-2 border-transparent text-fg-muted"}`,
+      onContextMenu,
+      onDragStart,
+      onDragOver,
+      onDrop,
+      onDragEnd,
+      className: `relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-all ${borderClass} ${isActive ? "bg-elevated" : ""} ${textClass} ${dropSide === "left" ? "before:absolute before:inset-y-1 before:left-0 before:w-0.5 before:rounded-full before:bg-accent" : ""} ${dropSide === "right" ? "after:absolute after:inset-y-1 after:right-0 after:w-0.5 after:rounded-full after:bg-accent" : ""}`,
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "span",
-          {
-            className: `text-sm text-accent ${isActive ? "opacity-100" : "opacity-40"}`,
-            children: "›_"
-          }
-        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `inline-block h-2.5 w-2.5 shrink-0 rounded-full ${dotClass}` }),
         editing ? /* @__PURE__ */ jsxRuntimeExports.jsx(
           "input",
           {
@@ -25475,2100 +25562,6 @@ function TabItem({ title, isActive, canClose, onClick, onClose, onRename }) {
             children: "×"
           }
         )
-      ]
-    }
-  );
-}
-function TabBar() {
-  const { tabOrder, tabs, activeTabId, createTab, closeTab, setActiveTab, setTitle } = useTabStore();
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "no-drag-region flex shrink-0 items-center gap-0.5 overflow-x-auto border-b border-border px-3", children: [
-    tabOrder.map((id2) => {
-      const tab = tabs[id2];
-      if (!tab) return null;
-      return /* @__PURE__ */ jsxRuntimeExports.jsx(
-        TabItem,
-        {
-          title: tab.title,
-          isActive: id2 === activeTabId,
-          canClose: tabOrder.length > 1,
-          onClick: () => setActiveTab(id2),
-          onClose: () => closeTab(id2),
-          onRename: (newTitle) => setTitle(id2, newTitle)
-        },
-        id2
-      );
-    }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "button",
-      {
-        onClick: () => createTab(),
-        className: "ml-1.5 cursor-pointer rounded-sm border border-dashed border-border bg-transparent px-3.5 py-1.5 text-lg leading-none text-fg-muted hover:border-border-hover hover:text-fg-secondary",
-        children: "+"
-      }
-    )
-  ] });
-}
-function lt(e, t) {
-  const n = getComputedStyle(e), o2 = parseFloat(n.fontSize);
-  return t * o2;
-}
-function ut(e, t) {
-  const n = getComputedStyle(e.ownerDocument.body), o2 = parseFloat(n.fontSize);
-  return t * o2;
-}
-function ct(e) {
-  return e / 100 * window.innerHeight;
-}
-function ft(e) {
-  return e / 100 * window.innerWidth;
-}
-function dt2(e) {
-  switch (typeof e) {
-    case "number":
-      return [e, "px"];
-    case "string": {
-      const t = parseFloat(e);
-      return e.endsWith("%") ? [t, "%"] : e.endsWith("px") ? [t, "px"] : e.endsWith("rem") ? [t, "rem"] : e.endsWith("em") ? [t, "em"] : e.endsWith("vh") ? [t, "vh"] : e.endsWith("vw") ? [t, "vw"] : [t, "%"];
-    }
-  }
-}
-function re({
-  groupSize: e,
-  panelElement: t,
-  styleProp: n
-}) {
-  let o2;
-  const [i8, s] = dt2(n);
-  switch (s) {
-    case "%": {
-      o2 = i8 / 100 * e;
-      break;
-    }
-    case "px": {
-      o2 = i8;
-      break;
-    }
-    case "rem": {
-      o2 = ut(t, i8);
-      break;
-    }
-    case "em": {
-      o2 = lt(t, i8);
-      break;
-    }
-    case "vh": {
-      o2 = ct(i8);
-      break;
-    }
-    case "vw": {
-      o2 = ft(i8);
-      break;
-    }
-  }
-  return o2;
-}
-function _2(e) {
-  return parseFloat(e.toFixed(3));
-}
-function J({
-  group: e
-}) {
-  const { orientation: t, panels: n } = e;
-  return n.reduce((o2, i8) => (o2 += t === "horizontal" ? i8.element.offsetWidth : i8.element.offsetHeight, o2), 0);
-}
-function pe(e) {
-  const { panels: t } = e, n = J({ group: e });
-  return n === 0 ? t.map((o2) => ({
-    collapsedSize: 0,
-    collapsible: o2.panelConstraints.collapsible === true,
-    defaultSize: void 0,
-    disabled: o2.panelConstraints.disabled,
-    minSize: 0,
-    maxSize: 100,
-    panelId: o2.id
-  })) : t.map((o2) => {
-    const { element: i8, panelConstraints: s } = o2;
-    let l2 = 0;
-    if (s.collapsedSize !== void 0) {
-      const c = re({
-        groupSize: n,
-        panelElement: i8,
-        styleProp: s.collapsedSize
-      });
-      l2 = _2(c / n * 100);
-    }
-    let r5;
-    if (s.defaultSize !== void 0) {
-      const c = re({
-        groupSize: n,
-        panelElement: i8,
-        styleProp: s.defaultSize
-      });
-      r5 = _2(c / n * 100);
-    }
-    let a = 0;
-    if (s.minSize !== void 0) {
-      const c = re({
-        groupSize: n,
-        panelElement: i8,
-        styleProp: s.minSize
-      });
-      a = _2(c / n * 100);
-    }
-    let u = 100;
-    if (s.maxSize !== void 0) {
-      const c = re({
-        groupSize: n,
-        panelElement: i8,
-        styleProp: s.maxSize
-      });
-      u = _2(c / n * 100);
-    }
-    return {
-      collapsedSize: l2,
-      collapsible: s.collapsible === true,
-      defaultSize: r5,
-      disabled: s.disabled,
-      minSize: a,
-      maxSize: u,
-      panelId: o2.id
-    };
-  });
-}
-function P(e, t = "Assertion error") {
-  if (!e)
-    throw Error(t);
-}
-function he(e, t) {
-  return Array.from(t).sort(
-    e === "horizontal" ? pt : ht
-  );
-}
-function pt(e, t) {
-  const n = e.element.offsetLeft - t.element.offsetLeft;
-  return n !== 0 ? n : e.element.offsetWidth - t.element.offsetWidth;
-}
-function ht(e, t) {
-  const n = e.element.offsetTop - t.element.offsetTop;
-  return n !== 0 ? n : e.element.offsetHeight - t.element.offsetHeight;
-}
-function $e(e) {
-  return e !== null && typeof e == "object" && "nodeType" in e && e.nodeType === Node.ELEMENT_NODE;
-}
-function He(e, t) {
-  return {
-    x: e.x >= t.left && e.x <= t.right ? 0 : Math.min(
-      Math.abs(e.x - t.left),
-      Math.abs(e.x - t.right)
-    ),
-    y: e.y >= t.top && e.y <= t.bottom ? 0 : Math.min(
-      Math.abs(e.y - t.top),
-      Math.abs(e.y - t.bottom)
-    )
-  };
-}
-function mt({
-  orientation: e,
-  rects: t,
-  targetRect: n
-}) {
-  const o2 = {
-    x: n.x + n.width / 2,
-    y: n.y + n.height / 2
-  };
-  let i8, s = Number.MAX_VALUE;
-  for (const l2 of t) {
-    const { x: r5, y: a } = He(o2, l2), u = e === "horizontal" ? r5 : a;
-    u < s && (s = u, i8 = l2);
-  }
-  return P(i8, "No rect found"), i8;
-}
-let se2;
-function gt() {
-  return se2 === void 0 && (typeof matchMedia == "function" ? se2 = !!matchMedia("(pointer:coarse)").matches : se2 = false), se2;
-}
-function Ve(e) {
-  const { element: t, orientation: n, panels: o2, separators: i8 } = e, s = he(
-    n,
-    Array.from(t.children).filter($e).map((m) => ({ element: m }))
-  ).map(({ element: m }) => m), l2 = [];
-  let r5 = false, a = false, u = -1, c = -1, g2 = 0, b, S = [];
-  {
-    let m = -1;
-    for (const d of s)
-      d.hasAttribute("data-panel") && (m++, d.ariaDisabled === null && (g2++, u === -1 && (u = m), c = m));
-  }
-  if (g2 > 1) {
-    let m = -1;
-    for (const d of s)
-      if (d.hasAttribute("data-panel")) {
-        m++;
-        const f = o2.find(
-          (h2) => h2.element === d
-        );
-        if (f) {
-          if (b) {
-            const h2 = b.element.getBoundingClientRect(), v2 = d.getBoundingClientRect();
-            let x;
-            if (a) {
-              const y = n === "horizontal" ? new DOMRect(
-                h2.right,
-                h2.top,
-                0,
-                h2.height
-              ) : new DOMRect(
-                h2.left,
-                h2.bottom,
-                h2.width,
-                0
-              ), p = n === "horizontal" ? new DOMRect(v2.left, v2.top, 0, v2.height) : new DOMRect(v2.left, v2.top, v2.width, 0);
-              switch (S.length) {
-                case 0: {
-                  x = [
-                    y,
-                    p
-                  ];
-                  break;
-                }
-                case 1: {
-                  const w2 = S[0], C2 = mt({
-                    orientation: n,
-                    rects: [h2, v2],
-                    targetRect: w2.element.getBoundingClientRect()
-                  });
-                  x = [
-                    w2,
-                    C2 === h2 ? p : y
-                  ];
-                  break;
-                }
-                default: {
-                  x = S;
-                  break;
-                }
-              }
-            } else
-              S.length ? x = S : x = [
-                n === "horizontal" ? new DOMRect(
-                  h2.right,
-                  v2.top,
-                  v2.left - h2.right,
-                  v2.height
-                ) : new DOMRect(
-                  v2.left,
-                  h2.bottom,
-                  v2.width,
-                  v2.top - h2.bottom
-                )
-              ];
-            for (const y of x) {
-              let p = "width" in y ? y : y.element.getBoundingClientRect();
-              const w2 = gt() ? e.resizeTargetMinimumSize.coarse : e.resizeTargetMinimumSize.fine;
-              if (p.width < w2) {
-                const R = w2 - p.width;
-                p = new DOMRect(
-                  p.x - R / 2,
-                  p.y,
-                  p.width + R,
-                  p.height
-                );
-              }
-              if (p.height < w2) {
-                const R = w2 - p.height;
-                p = new DOMRect(
-                  p.x,
-                  p.y - R / 2,
-                  p.width,
-                  p.height + R
-                );
-              }
-              const C2 = m <= u || m > c;
-              !r5 && !C2 && l2.push({
-                group: e,
-                groupSize: J({ group: e }),
-                panels: [b, f],
-                separator: "width" in y ? void 0 : y,
-                rect: p
-              }), r5 = false;
-            }
-          }
-          a = false, b = f, S = [];
-        }
-      } else if (d.hasAttribute("data-separator")) {
-        d.ariaDisabled !== null && (r5 = true);
-        const f = i8.find(
-          (h2) => h2.element === d
-        );
-        f ? S.push(f) : (b = void 0, S = []);
-      } else
-        a = true;
-  }
-  return l2;
-}
-class yt {
-  #e = {};
-  addListener(t, n) {
-    const o2 = this.#e[t];
-    return o2 === void 0 ? this.#e[t] = [n] : o2.includes(n) || o2.push(n), () => {
-      this.removeListener(t, n);
-    };
-  }
-  emit(t, n) {
-    const o2 = this.#e[t];
-    if (o2 !== void 0)
-      if (o2.length === 1)
-        o2[0].call(null, n);
-      else {
-        let i8 = false, s = null;
-        const l2 = Array.from(o2);
-        for (let r5 = 0; r5 < l2.length; r5++) {
-          const a = l2[r5];
-          try {
-            a.call(null, n);
-          } catch (u) {
-            s === null && (i8 = true, s = u);
-          }
-        }
-        if (i8)
-          throw s;
-      }
-  }
-  removeAllListeners() {
-    this.#e = {};
-  }
-  removeListener(t, n) {
-    const o2 = this.#e[t];
-    if (o2 !== void 0) {
-      const i8 = o2.indexOf(n);
-      i8 >= 0 && o2.splice(i8, 1);
-    }
-  }
-}
-function k(e, t, n = 0) {
-  return Math.abs(_2(e) - _2(t)) <= n;
-}
-let A = {
-  cursorFlags: 0,
-  interactionState: {
-    state: "inactive"
-  },
-  mountedGroups: /* @__PURE__ */ new Map()
-};
-const $ = new yt();
-function G2() {
-  return A;
-}
-function I(e) {
-  const t = typeof e == "function" ? e(A) : e;
-  if (A === t)
-    return A;
-  const n = A;
-  return A = {
-    ...A,
-    ...t
-  }, t.cursorFlags !== void 0 && $.emit("cursorFlagsChange", A.cursorFlags), t.interactionState !== void 0 && $.emit("interactionStateChange", A.interactionState), t.mountedGroups !== void 0 && (A.mountedGroups.forEach((o2, i8) => {
-    o2.derivedPanelConstraints.forEach((s) => {
-      if (s.collapsible) {
-        const { layout: l2 } = n.mountedGroups.get(i8) ?? {};
-        if (l2) {
-          const r5 = k(
-            s.collapsedSize,
-            o2.layout[s.panelId]
-          ), a = k(
-            s.collapsedSize,
-            l2[s.panelId]
-          );
-          r5 && !a && (i8.inMemoryLastExpandedPanelSizes[s.panelId] = l2[s.panelId]);
-        }
-      }
-    });
-  }), $.emit("mountedGroupsChange", A.mountedGroups)), A;
-}
-function St(e, t, n) {
-  let o2, i8 = {
-    x: 1 / 0,
-    y: 1 / 0
-  };
-  for (const s of t) {
-    const l2 = He(n, s.rect);
-    switch (e) {
-      case "horizontal": {
-        l2.x <= i8.x && (o2 = s, i8 = l2);
-        break;
-      }
-      case "vertical": {
-        l2.y <= i8.y && (o2 = s, i8 = l2);
-        break;
-      }
-    }
-  }
-  return o2 ? {
-    distance: i8,
-    hitRegion: o2
-  } : void 0;
-}
-function vt(e) {
-  return e !== null && typeof e == "object" && "nodeType" in e && e.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
-}
-function xt2(e, t) {
-  if (e === t) throw new Error("Cannot compare node with itself");
-  const n = {
-    a: we(e),
-    b: we(t)
-  };
-  let o2;
-  for (; n.a.at(-1) === n.b.at(-1); )
-    o2 = n.a.pop(), n.b.pop();
-  P(
-    o2,
-    "Stacking order can only be calculated for elements with a common ancestor"
-  );
-  const i8 = {
-    a: be2(ze(n.a)),
-    b: be2(ze(n.b))
-  };
-  if (i8.a === i8.b) {
-    const s = o2.childNodes, l2 = {
-      a: n.a.at(-1),
-      b: n.b.at(-1)
-    };
-    let r5 = s.length;
-    for (; r5--; ) {
-      const a = s[r5];
-      if (a === l2.a) return 1;
-      if (a === l2.b) return -1;
-    }
-  }
-  return Math.sign(i8.a - i8.b);
-}
-const zt2 = /\b(?:position|zIndex|opacity|transform|webkitTransform|mixBlendMode|filter|webkitFilter|isolation)\b/;
-function bt(e) {
-  const t = getComputedStyle(je(e) ?? e).display;
-  return t === "flex" || t === "inline-flex";
-}
-function wt(e) {
-  const t = getComputedStyle(e);
-  return !!(t.position === "fixed" || t.zIndex !== "auto" && (t.position !== "static" || bt(e)) || +t.opacity < 1 || "transform" in t && t.transform !== "none" || "webkitTransform" in t && t.webkitTransform !== "none" || "mixBlendMode" in t && t.mixBlendMode !== "normal" || "filter" in t && t.filter !== "none" || "webkitFilter" in t && t.webkitFilter !== "none" || "isolation" in t && t.isolation === "isolate" || zt2.test(t.willChange) || t.webkitOverflowScrolling === "touch");
-}
-function ze(e) {
-  let t = e.length;
-  for (; t--; ) {
-    const n = e[t];
-    if (P(n, "Missing node"), wt(n)) return n;
-  }
-  return null;
-}
-function be2(e) {
-  return e && Number(getComputedStyle(e).zIndex) || 0;
-}
-function we(e) {
-  const t = [];
-  for (; e; )
-    t.push(e), e = je(e);
-  return t;
-}
-function je(e) {
-  const { parentNode: t } = e;
-  return vt(t) ? t.host : t;
-}
-function Lt(e, t) {
-  return e.x < t.x + t.width && e.x + e.width > t.x && e.y < t.y + t.height && e.y + e.height > t.y;
-}
-function Pt({
-  groupElement: e,
-  hitRegion: t,
-  pointerEventTarget: n
-}) {
-  if (!$e(n) || n.contains(e) || e.contains(n))
-    return true;
-  if (xt2(n, e) > 0) {
-    let o2 = n;
-    for (; o2; ) {
-      if (o2.contains(e))
-        return true;
-      if (Lt(o2.getBoundingClientRect(), t))
-        return false;
-      o2 = o2.parentElement;
-    }
-  }
-  return true;
-}
-function me(e, t) {
-  const n = [];
-  return t.forEach((o2, i8) => {
-    if (i8.disabled)
-      return;
-    const s = Ve(i8), l2 = St(i8.orientation, s, {
-      x: e.clientX,
-      y: e.clientY
-    });
-    l2 && l2.distance.x <= 0 && l2.distance.y <= 0 && Pt({
-      groupElement: i8.element,
-      hitRegion: l2.hitRegion.rect,
-      pointerEventTarget: e.target
-    }) && n.push(l2.hitRegion);
-  }), n;
-}
-function Ct(e, t) {
-  if (e.length !== t.length)
-    return false;
-  for (let n = 0; n < e.length; n++)
-    if (e[n] != t[n])
-      return false;
-  return true;
-}
-function F(e, t) {
-  return k(e, t) ? 0 : e > t ? 1 : -1;
-}
-function Y({
-  overrideDisabledPanels: e,
-  panelConstraints: t,
-  prevSize: n,
-  size: o2
-}) {
-  const {
-    collapsedSize: i8 = 0,
-    collapsible: s,
-    disabled: l2,
-    maxSize: r5 = 100,
-    minSize: a = 0
-  } = t;
-  if (l2 && !e)
-    return n;
-  if (F(o2, a) < 0)
-    if (s) {
-      const u = (i8 + a) / 2;
-      F(o2, u) < 0 ? o2 = i8 : o2 = a;
-    } else
-      o2 = a;
-  return o2 = Math.min(r5, o2), o2 = _2(o2), o2;
-}
-function oe({
-  delta: e,
-  initialLayout: t,
-  panelConstraints: n,
-  pivotIndices: o2,
-  prevLayout: i8,
-  trigger: s
-}) {
-  if (k(e, 0))
-    return t;
-  const l2 = s === "imperative-api", r5 = Object.values(t), a = Object.values(i8), u = [...r5], [c, g2] = o2;
-  P(c != null, "Invalid first pivot index"), P(g2 != null, "Invalid second pivot index");
-  let b = 0;
-  switch (s) {
-    case "keyboard": {
-      {
-        const d = e < 0 ? g2 : c, f = n[d];
-        P(
-          f,
-          `Panel constraints not found for index ${d}`
-        );
-        const {
-          collapsedSize: h2 = 0,
-          collapsible: v2,
-          minSize: x = 0
-        } = f;
-        if (v2) {
-          const y = r5[d];
-          if (P(
-            y != null,
-            `Previous layout not found for panel index ${d}`
-          ), k(y, h2)) {
-            const p = x - y;
-            F(p, Math.abs(e)) > 0 && (e = e < 0 ? 0 - p : p);
-          }
-        }
-      }
-      {
-        const d = e < 0 ? c : g2, f = n[d];
-        P(
-          f,
-          `No panel constraints found for index ${d}`
-        );
-        const {
-          collapsedSize: h2 = 0,
-          collapsible: v2,
-          minSize: x = 0
-        } = f;
-        if (v2) {
-          const y = r5[d];
-          if (P(
-            y != null,
-            `Previous layout not found for panel index ${d}`
-          ), k(y, x)) {
-            const p = y - h2;
-            F(p, Math.abs(e)) > 0 && (e = e < 0 ? 0 - p : p);
-          }
-        }
-      }
-      break;
-    }
-    default: {
-      const d = e < 0 ? g2 : c, f = n[d];
-      P(
-        f,
-        `Panel constraints not found for index ${d}`
-      );
-      const h2 = r5[d], { collapsible: v2, collapsedSize: x, minSize: y } = f;
-      if (v2 && F(h2, y) < 0)
-        if (e > 0) {
-          const p = y - x, w2 = p / 2, C2 = h2 + e;
-          F(C2, y) < 0 && (e = F(e, w2) <= 0 ? 0 : p);
-        } else {
-          const p = y - x, w2 = 100 - p / 2, C2 = h2 - e;
-          F(C2, y) < 0 && (e = F(100 + e, w2) > 0 ? 0 : -p);
-        }
-      break;
-    }
-  }
-  {
-    const d = e < 0 ? 1 : -1;
-    let f = e < 0 ? g2 : c, h2 = 0;
-    for (; ; ) {
-      const x = r5[f];
-      P(
-        x != null,
-        `Previous layout not found for panel index ${f}`
-      );
-      const p = Y({
-        overrideDisabledPanels: l2,
-        panelConstraints: n[f],
-        prevSize: x,
-        size: 100
-      }) - x;
-      if (h2 += p, f += d, f < 0 || f >= n.length)
-        break;
-    }
-    const v2 = Math.min(Math.abs(e), Math.abs(h2));
-    e = e < 0 ? 0 - v2 : v2;
-  }
-  {
-    let f = e < 0 ? c : g2;
-    for (; f >= 0 && f < n.length; ) {
-      const h2 = Math.abs(e) - Math.abs(b), v2 = r5[f];
-      P(
-        v2 != null,
-        `Previous layout not found for panel index ${f}`
-      );
-      const x = v2 - h2, y = Y({
-        overrideDisabledPanels: l2,
-        panelConstraints: n[f],
-        prevSize: v2,
-        size: x
-      });
-      if (!k(v2, y) && (b += v2 - y, u[f] = y, b.toFixed(3).localeCompare(Math.abs(e).toFixed(3), void 0, {
-        numeric: true
-      }) >= 0))
-        break;
-      e < 0 ? f-- : f++;
-    }
-  }
-  if (Ct(a, u))
-    return i8;
-  {
-    const d = e < 0 ? g2 : c, f = r5[d];
-    P(
-      f != null,
-      `Previous layout not found for panel index ${d}`
-    );
-    const h2 = f + b, v2 = Y({
-      overrideDisabledPanels: l2,
-      panelConstraints: n[d],
-      prevSize: f,
-      size: h2
-    });
-    if (u[d] = v2, !k(v2, h2)) {
-      let x = h2 - v2, p = e < 0 ? g2 : c;
-      for (; p >= 0 && p < n.length; ) {
-        const w2 = u[p];
-        P(
-          w2 != null,
-          `Previous layout not found for panel index ${p}`
-        );
-        const C2 = w2 + x, R = Y({
-          overrideDisabledPanels: l2,
-          panelConstraints: n[p],
-          prevSize: w2,
-          size: C2
-        });
-        if (k(w2, R) || (x -= R - w2, u[p] = R), k(x, 0))
-          break;
-        e > 0 ? p-- : p++;
-      }
-    }
-  }
-  const S = Object.values(u).reduce(
-    (d, f) => f + d,
-    0
-  );
-  if (!k(S, 100, 0.1))
-    return i8;
-  const m = Object.keys(i8);
-  return u.reduce((d, f, h2) => (d[m[h2]] = f, d), {});
-}
-function U(e, t) {
-  if (Object.keys(e).length !== Object.keys(t).length)
-    return false;
-  for (const n in e)
-    if (t[n] === void 0 || F(e[n], t[n]) !== 0)
-      return false;
-  return true;
-}
-function B2({
-  layout: e,
-  panelConstraints: t
-}) {
-  const n = Object.values(e), o2 = [...n], i8 = o2.reduce(
-    (r5, a) => r5 + a,
-    0
-  );
-  if (o2.length !== t.length)
-    throw Error(
-      `Invalid ${t.length} panel layout: ${o2.map((r5) => `${r5}%`).join(", ")}`
-    );
-  if (!k(i8, 100) && o2.length > 0)
-    for (let r5 = 0; r5 < t.length; r5++) {
-      const a = o2[r5];
-      P(a != null, `No layout data found for index ${r5}`);
-      const u = 100 / i8 * a;
-      o2[r5] = u;
-    }
-  let s = 0;
-  for (let r5 = 0; r5 < t.length; r5++) {
-    const a = n[r5];
-    P(a != null, `No layout data found for index ${r5}`);
-    const u = o2[r5];
-    P(u != null, `No layout data found for index ${r5}`);
-    const c = Y({
-      overrideDisabledPanels: true,
-      panelConstraints: t[r5],
-      prevSize: a,
-      size: u
-    });
-    u != c && (s += u - c, o2[r5] = c);
-  }
-  if (!k(s, 0))
-    for (let r5 = 0; r5 < t.length; r5++) {
-      const a = o2[r5];
-      P(a != null, `No layout data found for index ${r5}`);
-      const u = a + s, c = Y({
-        overrideDisabledPanels: true,
-        panelConstraints: t[r5],
-        prevSize: a,
-        size: u
-      });
-      if (a !== c && (s -= c - a, o2[r5] = c, k(s, 0)))
-        break;
-    }
-  const l2 = Object.keys(e);
-  return o2.reduce((r5, a, u) => (r5[l2[u]] = a, r5), {});
-}
-function We2({
-  groupId: e,
-  panelId: t
-}) {
-  const n = () => {
-    const { mountedGroups: r5 } = G2();
-    for (const [
-      a,
-      {
-        defaultLayoutDeferred: u,
-        derivedPanelConstraints: c,
-        layout: g2,
-        separatorToPanels: b
-      }
-    ] of r5)
-      if (a.id === e)
-        return {
-          defaultLayoutDeferred: u,
-          derivedPanelConstraints: c,
-          group: a,
-          layout: g2,
-          separatorToPanels: b
-        };
-    throw Error(`Group ${e} not found`);
-  }, o2 = () => {
-    const r5 = n().derivedPanelConstraints.find(
-      (a) => a.panelId === t
-    );
-    if (r5 !== void 0)
-      return r5;
-    throw Error(`Panel constraints not found for Panel ${t}`);
-  }, i8 = () => {
-    const r5 = n().group.panels.find((a) => a.id === t);
-    if (r5 !== void 0)
-      return r5;
-    throw Error(`Layout not found for Panel ${t}`);
-  }, s = () => {
-    const r5 = n().layout[t];
-    if (r5 !== void 0)
-      return r5;
-    throw Error(`Layout not found for Panel ${t}`);
-  }, l2 = (r5) => {
-    const a = s();
-    if (r5 === a)
-      return;
-    const {
-      defaultLayoutDeferred: u,
-      derivedPanelConstraints: c,
-      group: g2,
-      layout: b,
-      separatorToPanels: S
-    } = n(), m = g2.panels.findIndex((v2) => v2.id === t), d = m === g2.panels.length - 1, f = oe({
-      delta: d ? a - r5 : r5 - a,
-      initialLayout: b,
-      panelConstraints: c,
-      pivotIndices: d ? [m - 1, m] : [m, m + 1],
-      prevLayout: b,
-      trigger: "imperative-api"
-    }), h2 = B2({
-      layout: f,
-      panelConstraints: c
-    });
-    U(b, h2) || I((v2) => ({
-      mountedGroups: new Map(v2.mountedGroups).set(g2, {
-        defaultLayoutDeferred: u,
-        derivedPanelConstraints: c,
-        layout: h2,
-        separatorToPanels: S
-      })
-    }));
-  };
-  return {
-    collapse: () => {
-      const { collapsible: r5, collapsedSize: a } = o2(), { mutableValues: u } = i8(), c = s();
-      r5 && c !== a && (u.expandToSize = c, l2(a));
-    },
-    expand: () => {
-      const { collapsible: r5, collapsedSize: a, minSize: u } = o2(), { mutableValues: c } = i8(), g2 = s();
-      if (r5 && g2 === a) {
-        let b = c.expandToSize ?? u;
-        b === 0 && (b = 1), l2(b);
-      }
-    },
-    getSize: () => {
-      const { group: r5 } = n(), a = s(), { element: u } = i8(), c = r5.orientation === "horizontal" ? u.offsetWidth : u.offsetHeight;
-      return {
-        asPercentage: a,
-        inPixels: c
-      };
-    },
-    isCollapsed: () => {
-      const { collapsible: r5, collapsedSize: a } = o2(), u = s();
-      return r5 && k(a, u);
-    },
-    resize: (r5) => {
-      if (s() !== r5) {
-        let u;
-        switch (typeof r5) {
-          case "number": {
-            const { group: c } = n(), g2 = J({ group: c });
-            u = _2(r5 / g2 * 100);
-            break;
-          }
-          case "string": {
-            u = parseFloat(r5);
-            break;
-          }
-        }
-        l2(u);
-      }
-    }
-  };
-}
-function Le(e) {
-  if (e.defaultPrevented)
-    return;
-  const { mountedGroups: t } = G2();
-  me(e, t).forEach((o2) => {
-    if (o2.separator) {
-      const i8 = o2.panels.find(
-        (s) => s.panelConstraints.defaultSize !== void 0
-      );
-      if (i8) {
-        const s = i8.panelConstraints.defaultSize, l2 = We2({
-          groupId: o2.group.id,
-          panelId: i8.id
-        });
-        l2 && s !== void 0 && (l2.resize(s), e.preventDefault());
-      }
-    }
-  });
-}
-function le(e) {
-  const { mountedGroups: t } = G2();
-  for (const [n] of t)
-    if (n.separators.some(
-      (o2) => o2.element === e
-    ))
-      return n;
-  throw Error("Could not find parent Group for separator element");
-}
-function Ue({
-  groupId: e
-}) {
-  const t = () => {
-    const { mountedGroups: n } = G2();
-    for (const [o2, i8] of n)
-      if (o2.id === e)
-        return { group: o2, ...i8 };
-    throw Error(`Could not find Group with id "${e}"`);
-  };
-  return {
-    getLayout() {
-      const { defaultLayoutDeferred: n, layout: o2 } = t();
-      return n ? {} : o2;
-    },
-    setLayout(n) {
-      const {
-        defaultLayoutDeferred: o2,
-        derivedPanelConstraints: i8,
-        group: s,
-        layout: l2,
-        separatorToPanels: r5
-      } = t(), a = B2({
-        layout: n,
-        panelConstraints: i8
-      });
-      return o2 ? l2 : (U(l2, a) || I((u) => ({
-        mountedGroups: new Map(u.mountedGroups).set(s, {
-          defaultLayoutDeferred: o2,
-          derivedPanelConstraints: i8,
-          layout: a,
-          separatorToPanels: r5
-        })
-      })), a);
-    }
-  };
-}
-function Be(e) {
-  const { mountedGroups: t } = G2(), n = t.get(e);
-  return P(n, `Mounted Group ${e.id} not found`), n;
-}
-function W(e, t) {
-  const n = le(e), o2 = Be(n), i8 = n.separators.find(
-    (g2) => g2.element === e
-  );
-  P(i8, "Matching separator not found");
-  const s = o2.separatorToPanels.get(i8);
-  P(s, "Matching panels not found");
-  const l2 = s.map((g2) => n.panels.indexOf(g2)), a = Ue({ groupId: n.id }).getLayout(), u = oe({
-    delta: t,
-    initialLayout: a,
-    panelConstraints: o2.derivedPanelConstraints,
-    pivotIndices: l2,
-    prevLayout: a,
-    trigger: "keyboard"
-  }), c = B2({
-    layout: u,
-    panelConstraints: o2.derivedPanelConstraints
-  });
-  U(a, c) || I((g2) => ({
-    mountedGroups: new Map(g2.mountedGroups).set(n, {
-      defaultLayoutDeferred: o2.defaultLayoutDeferred,
-      derivedPanelConstraints: o2.derivedPanelConstraints,
-      layout: c,
-      separatorToPanels: o2.separatorToPanels
-    })
-  }));
-}
-function Pe(e) {
-  if (e.defaultPrevented)
-    return;
-  const t = e.currentTarget, n = le(t);
-  if (!n.disabled)
-    switch (e.key) {
-      case "ArrowDown": {
-        e.preventDefault(), n.orientation === "vertical" && W(t, 5);
-        break;
-      }
-      case "ArrowLeft": {
-        e.preventDefault(), n.orientation === "horizontal" && W(t, -5);
-        break;
-      }
-      case "ArrowRight": {
-        e.preventDefault(), n.orientation === "horizontal" && W(t, 5);
-        break;
-      }
-      case "ArrowUp": {
-        e.preventDefault(), n.orientation === "vertical" && W(t, -5);
-        break;
-      }
-      case "End": {
-        e.preventDefault(), W(t, 100);
-        break;
-      }
-      case "Enter": {
-        e.preventDefault();
-        const o2 = le(t), { derivedPanelConstraints: i8, layout: s, separatorToPanels: l2 } = Be(o2), r5 = o2.separators.find(
-          (g2) => g2.element === t
-        );
-        P(r5, "Matching separator not found");
-        const a = l2.get(r5);
-        P(a, "Matching panels not found");
-        const u = a[0], c = i8.find(
-          (g2) => g2.panelId === u.id
-        );
-        if (P(c, "Panel metadata not found"), c.collapsible) {
-          const g2 = s[u.id], b = c.collapsedSize === g2 ? o2.inMemoryLastExpandedPanelSizes[u.id] ?? c.minSize : c.collapsedSize;
-          W(t, b - g2);
-        }
-        break;
-      }
-      case "F6": {
-        e.preventDefault();
-        const i8 = le(t).separators.map(
-          (a) => a.element
-        ), s = Array.from(i8).findIndex(
-          (a) => a === e.currentTarget
-        );
-        P(s !== null, "Index not found");
-        const l2 = e.shiftKey ? s > 0 ? s - 1 : i8.length - 1 : s + 1 < i8.length ? s + 1 : 0;
-        i8[l2].focus();
-        break;
-      }
-      case "Home": {
-        e.preventDefault(), W(t, -100);
-        break;
-      }
-    }
-}
-function Ce(e) {
-  if (e.defaultPrevented)
-    return;
-  if (e.pointerType === "mouse" && e.button > 0)
-    return;
-  const { mountedGroups: t } = G2(), n = me(e, t), o2 = /* @__PURE__ */ new Map();
-  let i8 = false;
-  n.forEach((s) => {
-    s.separator && (i8 || (i8 = true, s.separator.element.focus()));
-    const l2 = t.get(s.group);
-    l2 && o2.set(s.group, l2.layout);
-  }), I({
-    interactionState: {
-      hitRegions: n,
-      initialLayoutMap: o2,
-      pointerDownAtPoint: { x: e.clientX, y: e.clientY },
-      state: "active"
-    }
-  }), n.length && e.preventDefault();
-}
-const Rt = (e) => e, fe = () => {
-}, Ke2 = 1, Xe = 2, qe = 4, Ye2 = 8, Re = 3, Me = 12;
-let ae;
-function Ee() {
-  return ae === void 0 && (ae = false, typeof window < "u" && (window.navigator.userAgent.includes("Chrome") || window.navigator.userAgent.includes("Firefox")) && (ae = true)), ae;
-}
-function Mt({
-  cursorFlags: e,
-  groups: t,
-  state: n
-}) {
-  let o2 = 0, i8 = 0;
-  switch (n) {
-    case "active":
-    case "hover":
-      t.forEach((s) => {
-        if (!s.disableCursor)
-          switch (s.orientation) {
-            case "horizontal": {
-              o2++;
-              break;
-            }
-            case "vertical": {
-              i8++;
-              break;
-            }
-          }
-      });
-  }
-  if (!(o2 === 0 && i8 === 0)) {
-    switch (n) {
-      case "active": {
-        if (e && Ee()) {
-          const s = (e & Ke2) !== 0, l2 = (e & Xe) !== 0, r5 = (e & qe) !== 0, a = (e & Ye2) !== 0;
-          if (s)
-            return r5 ? "se-resize" : a ? "ne-resize" : "e-resize";
-          if (l2)
-            return r5 ? "sw-resize" : a ? "nw-resize" : "w-resize";
-          if (r5)
-            return "s-resize";
-          if (a)
-            return "n-resize";
-        }
-        break;
-      }
-    }
-    return Ee() ? o2 > 0 && i8 > 0 ? "move" : o2 > 0 ? "ew-resize" : "ns-resize" : o2 > 0 && i8 > 0 ? "grab" : o2 > 0 ? "col-resize" : "row-resize";
-  }
-}
-const ke = /* @__PURE__ */ new WeakMap();
-function ge(e) {
-  if (e.defaultView === null || e.defaultView === void 0)
-    return;
-  let { prevStyle: t, styleSheet: n } = ke.get(e) ?? {};
-  n === void 0 && (n = new e.defaultView.CSSStyleSheet(), e.adoptedStyleSheets && e.adoptedStyleSheets.push(n));
-  const { cursorFlags: o2, interactionState: i8 } = G2();
-  switch (i8.state) {
-    case "active":
-    case "hover": {
-      const s = Mt({
-        cursorFlags: o2,
-        groups: i8.hitRegions.map((r5) => r5.group),
-        state: i8.state
-      }), l2 = `*, *:hover {cursor: ${s} !important; }`;
-      if (t === l2)
-        return;
-      t = l2, s ? n.cssRules.length === 0 ? n.insertRule(l2) : n.replaceSync(l2) : n.cssRules.length === 1 && n.deleteRule(0);
-      break;
-    }
-    case "inactive": {
-      t = void 0, n.cssRules.length === 1 && n.deleteRule(0);
-      break;
-    }
-  }
-  ke.set(e, {
-    prevStyle: t,
-    styleSheet: n
-  });
-}
-function Je({
-  document: e,
-  event: t,
-  hitRegions: n,
-  initialLayoutMap: o2,
-  mountedGroups: i8,
-  pointerDownAtPoint: s,
-  prevCursorFlags: l2
-}) {
-  let r5 = 0;
-  const a = new Map(i8);
-  n.forEach((c) => {
-    const { group: g2, groupSize: b } = c, { disableCursor: S, orientation: m, panels: d } = g2;
-    let f = 0;
-    s ? m === "horizontal" ? f = (t.clientX - s.x) / b * 100 : f = (t.clientY - s.y) / b * 100 : m === "horizontal" ? f = t.clientX < 0 ? -100 : 100 : f = t.clientY < 0 ? -100 : 100;
-    const h2 = o2.get(g2), {
-      defaultLayoutDeferred: v2,
-      derivedPanelConstraints: x,
-      layout: y,
-      separatorToPanels: p
-    } = i8.get(g2) ?? { defaultLayoutDeferred: false };
-    if (x && h2 && y && p) {
-      const w2 = oe({
-        delta: f,
-        initialLayout: h2,
-        panelConstraints: x,
-        pivotIndices: c.panels.map((C2) => d.indexOf(C2)),
-        prevLayout: y,
-        trigger: "mouse-or-touch"
-      });
-      if (U(w2, y)) {
-        if (f !== 0 && !S)
-          switch (m) {
-            case "horizontal": {
-              r5 |= f < 0 ? Ke2 : Xe;
-              break;
-            }
-            case "vertical": {
-              r5 |= f < 0 ? qe : Ye2;
-              break;
-            }
-          }
-      } else
-        a.set(c.group, {
-          defaultLayoutDeferred: v2,
-          derivedPanelConstraints: x,
-          layout: w2,
-          separatorToPanels: p
-        });
-    }
-  });
-  let u = 0;
-  t.movementX === 0 ? u |= l2 & Re : u |= r5 & Re, t.movementY === 0 ? u |= l2 & Me : u |= r5 & Me, I({
-    cursorFlags: u,
-    mountedGroups: a
-  }), ge(e);
-}
-function Ge2(e) {
-  const { cursorFlags: t, interactionState: n, mountedGroups: o2 } = G2();
-  switch (n.state) {
-    case "active":
-      Je({
-        document: e.currentTarget,
-        event: e,
-        hitRegions: n.hitRegions,
-        initialLayoutMap: n.initialLayoutMap,
-        mountedGroups: o2,
-        prevCursorFlags: t
-      });
-  }
-}
-function Ie(e) {
-  if (e.defaultPrevented)
-    return;
-  const { cursorFlags: t, interactionState: n, mountedGroups: o2 } = G2();
-  switch (n.state) {
-    case "active": {
-      if (
-        // Skip this check for "pointerleave" events, else Firefox triggers a false positive (see #514)
-        e.buttons === 0
-      ) {
-        I(
-          (i8) => i8.interactionState.state === "inactive" ? i8 : {
-            cursorFlags: 0,
-            interactionState: { state: "inactive" }
-          }
-        ), I((i8) => ({
-          mountedGroups: new Map(i8.mountedGroups)
-        }));
-        return;
-      }
-      Je({
-        document: e.currentTarget,
-        event: e,
-        hitRegions: n.hitRegions,
-        initialLayoutMap: n.initialLayoutMap,
-        mountedGroups: o2,
-        pointerDownAtPoint: n.pointerDownAtPoint,
-        prevCursorFlags: t
-      });
-      break;
-    }
-    default: {
-      const i8 = me(e, o2);
-      i8.length === 0 ? n.state !== "inactive" && I({
-        interactionState: {
-          state: "inactive"
-        }
-      }) : I({
-        interactionState: {
-          hitRegions: i8,
-          state: "hover"
-        }
-      }), ge(e.currentTarget);
-      break;
-    }
-  }
-}
-function De2(e) {
-  if (e.relatedTarget instanceof HTMLIFrameElement) {
-    const { interactionState: t } = G2();
-    switch (t.state) {
-      case "hover":
-        I({
-          interactionState: {
-            state: "inactive"
-          }
-        });
-    }
-  }
-}
-function Oe(e) {
-  if (e.defaultPrevented)
-    return;
-  if (e.pointerType === "mouse" && e.button > 0)
-    return;
-  const { interactionState: t } = G2();
-  switch (t.state) {
-    case "active":
-      I({
-        cursorFlags: 0,
-        interactionState: {
-          state: "inactive"
-        }
-      }), t.hitRegions.length > 0 && (ge(e.currentTarget), I((n) => ({
-        mountedGroups: new Map(n.mountedGroups)
-      })), e.preventDefault());
-  }
-}
-function Te(e) {
-  let t = 0, n = 0;
-  const o2 = {};
-  for (const s of e)
-    if (s.defaultSize !== void 0) {
-      t++;
-      const l2 = _2(s.defaultSize);
-      n += l2, o2[s.panelId] = l2;
-    } else
-      o2[s.panelId] = void 0;
-  const i8 = e.length - t;
-  if (i8 !== 0) {
-    const s = _2((100 - n) / i8);
-    for (const l2 of e)
-      l2.defaultSize === void 0 && (o2[l2.panelId] = s);
-  }
-  return o2;
-}
-function Et(e, t, n) {
-  if (!n[0])
-    return;
-  const i8 = e.panels.find((u) => u.element === t);
-  if (!i8 || !i8.onResize)
-    return;
-  const s = J({ group: e }), l2 = e.orientation === "horizontal" ? i8.element.offsetWidth : i8.element.offsetHeight, r5 = i8.mutableValues.prevSize, a = {
-    asPercentage: _2(l2 / s * 100),
-    inPixels: l2
-  };
-  i8.mutableValues.prevSize = a, i8.onResize(a, i8.id, r5);
-}
-function kt(e, t) {
-  if (Object.keys(e).length !== Object.keys(t).length)
-    return false;
-  for (const o2 in e)
-    if (e[o2] !== t[o2])
-      return false;
-  return true;
-}
-function Gt(e, t) {
-  const n = e.map((i8) => i8.id), o2 = Object.keys(t);
-  if (n.length !== o2.length)
-    return false;
-  for (const i8 of n)
-    if (!o2.includes(i8))
-      return false;
-  return true;
-}
-const q = /* @__PURE__ */ new Map();
-function It(e) {
-  let t = true;
-  P(
-    e.element.ownerDocument.defaultView,
-    "Cannot register an unmounted Group"
-  );
-  const n = e.element.ownerDocument.defaultView.ResizeObserver, o2 = /* @__PURE__ */ new Set(), i8 = /* @__PURE__ */ new Set(), s = new n((m) => {
-    for (const d of m) {
-      const { borderBoxSize: f, target: h2 } = d;
-      if (h2 === e.element) {
-        if (t) {
-          if (J({ group: e }) === 0)
-            return;
-          I((x) => {
-            const y = x.mountedGroups.get(e);
-            if (y) {
-              const p = pe(e), w2 = y.defaultLayoutDeferred ? Te(p) : y.layout, C2 = B2({
-                layout: w2,
-                panelConstraints: p
-              });
-              return !y.defaultLayoutDeferred && U(w2, C2) && kt(
-                y.derivedPanelConstraints,
-                p
-              ) ? x : {
-                mountedGroups: new Map(x.mountedGroups).set(e, {
-                  defaultLayoutDeferred: false,
-                  derivedPanelConstraints: p,
-                  layout: C2,
-                  separatorToPanels: y.separatorToPanels
-                })
-              };
-            }
-            return x;
-          });
-        }
-      } else
-        Et(e, h2, f);
-    }
-  });
-  s.observe(e.element), e.panels.forEach((m) => {
-    P(
-      !o2.has(m.id),
-      `Panel ids must be unique; id "${m.id}" was used more than once`
-    ), o2.add(m.id), m.onResize && s.observe(m.element);
-  });
-  const l2 = J({ group: e }), r5 = pe(e), a = e.panels.map(({ id: m }) => m).join(",");
-  let u = e.defaultLayout;
-  u && (Gt(e.panels, u) || (u = void 0));
-  const c = e.inMemoryLayouts[a] ?? u ?? Te(r5), g2 = B2({
-    layout: c,
-    panelConstraints: r5
-  }), b = Ve(e), S = e.element.ownerDocument;
-  return I((m) => {
-    const d = /* @__PURE__ */ new Map();
-    return q.set(
-      S,
-      (q.get(S) ?? 0) + 1
-    ), b.forEach((f) => {
-      f.separator && d.set(f.separator, f.panels);
-    }), {
-      mountedGroups: new Map(m.mountedGroups).set(e, {
-        defaultLayoutDeferred: l2 === 0,
-        derivedPanelConstraints: r5,
-        layout: g2,
-        separatorToPanels: d
-      })
-    };
-  }), e.separators.forEach((m) => {
-    P(
-      !i8.has(m.id),
-      `Separator ids must be unique; id "${m.id}" was used more than once`
-    ), i8.add(m.id), m.element.addEventListener("keydown", Pe);
-  }), q.get(S) === 1 && (S.addEventListener("dblclick", Le, true), S.addEventListener("pointerdown", Ce, true), S.addEventListener("pointerleave", Ge2), S.addEventListener("pointermove", Ie), S.addEventListener("pointerout", De2), S.addEventListener("pointerup", Oe, true)), function() {
-    t = false, q.set(
-      S,
-      Math.max(0, (q.get(S) ?? 0) - 1)
-    ), I((d) => {
-      const f = new Map(d.mountedGroups);
-      return f.delete(e), { mountedGroups: f };
-    }), e.separators.forEach((d) => {
-      d.element.removeEventListener("keydown", Pe);
-    }), q.get(S) || (S.removeEventListener(
-      "dblclick",
-      Le,
-      true
-    ), S.removeEventListener(
-      "pointerdown",
-      Ce,
-      true
-    ), S.removeEventListener("pointerleave", Ge2), S.removeEventListener("pointermove", Ie), S.removeEventListener("pointerout", De2), S.removeEventListener("pointerup", Oe, true)), s.disconnect();
-  };
-}
-function Dt() {
-  const [e, t] = reactExports.useState({}), n = reactExports.useCallback(() => t({}), []);
-  return [e, n];
-}
-function ye(e) {
-  const t = reactExports.useId();
-  return `${e ?? t}`;
-}
-const K = typeof window < "u" ? reactExports.useLayoutEffect : reactExports.useEffect;
-function ee(e) {
-  const t = reactExports.useRef(e);
-  return K(() => {
-    t.current = e;
-  }, [e]), reactExports.useCallback(
-    (...n) => t.current?.(...n),
-    [t]
-  );
-}
-function Se(...e) {
-  return ee((t) => {
-    e.forEach((n) => {
-      if (n)
-        switch (typeof n) {
-          case "function": {
-            n(t);
-            break;
-          }
-          case "object": {
-            n.current = t;
-            break;
-          }
-        }
-    });
-  });
-}
-function ve(e) {
-  const t = reactExports.useRef({ ...e });
-  return K(() => {
-    for (const n in e)
-      t.current[n] = e[n];
-  }, [e]), t.current;
-}
-const Ze = reactExports.createContext(null);
-function Ot2(e, t) {
-  const n = reactExports.useRef({
-    getLayout: () => ({}),
-    setLayout: Rt
-  });
-  reactExports.useImperativeHandle(t, () => n.current, []), K(() => {
-    Object.assign(
-      n.current,
-      Ue({ groupId: e })
-    );
-  });
-}
-function Tt({
-  children: e,
-  className: t,
-  defaultLayout: n,
-  disableCursor: o2,
-  disabled: i8,
-  elementRef: s,
-  groupRef: l2,
-  id: r5,
-  onLayoutChange: a,
-  onLayoutChanged: u,
-  orientation: c = "horizontal",
-  resizeTargetMinimumSize: g2 = {
-    coarse: 20,
-    fine: 10
-  },
-  style: b,
-  ...S
-}) {
-  const m = reactExports.useRef({
-    onLayoutChange: {},
-    onLayoutChanged: {}
-  }), d = ee((z2) => {
-    U(m.current.onLayoutChange, z2) || (m.current.onLayoutChange = z2, a?.(z2));
-  }), f = ee((z2) => {
-    U(m.current.onLayoutChanged, z2) || (m.current.onLayoutChanged = z2, u?.(z2));
-  }), h2 = ye(r5), v2 = reactExports.useRef(null), [x, y] = Dt(), p = reactExports.useRef({
-    lastExpandedPanelSizes: {},
-    layouts: {},
-    panels: [],
-    resizeTargetMinimumSize: g2,
-    separators: []
-  }), w2 = Se(v2, s);
-  Ot2(h2, l2);
-  const C2 = ee(
-    (z2, L2) => {
-      const { interactionState: E, mountedGroups: M3 } = G2();
-      for (const D2 of M3.keys())
-        if (D2.id === z2) {
-          const T = M3.get(D2);
-          if (T) {
-            let N2 = false;
-            switch (E.state) {
-              case "active": {
-                N2 = E.hitRegions.some(
-                  (Z2) => Z2.group === D2
-                );
-                break;
-              }
-            }
-            return {
-              flexGrow: T.layout[L2] ?? 1,
-              pointerEvents: N2 ? "none" : void 0
-            };
-          }
-        }
-      return {
-        flexGrow: n?.[L2] ?? 1
-      };
-    }
-  ), R = ve({
-    defaultLayout: n,
-    disableCursor: o2
-  }), X2 = reactExports.useMemo(
-    () => ({
-      get disableCursor() {
-        return !!R.disableCursor;
-      },
-      getPanelStyles: C2,
-      id: h2,
-      orientation: c,
-      registerPanel: (z2) => {
-        const L2 = p.current;
-        return L2.panels = he(c, [
-          ...L2.panels,
-          z2
-        ]), y(), () => {
-          L2.panels = L2.panels.filter(
-            (E) => E !== z2
-          ), y();
-        };
-      },
-      registerSeparator: (z2) => {
-        const L2 = p.current;
-        return L2.separators = he(c, [
-          ...L2.separators,
-          z2
-        ]), y(), () => {
-          L2.separators = L2.separators.filter(
-            (E) => E !== z2
-          ), y();
-        };
-      },
-      togglePanelDisabled: (z2, L2) => {
-        const M3 = p.current.panels.find(
-          (T) => T.id === z2
-        );
-        M3 && (M3.panelConstraints.disabled = L2);
-        const { mountedGroups: D2 } = G2();
-        for (const T of D2.keys())
-          if (T.id === h2) {
-            const N2 = D2.get(T);
-            N2 && (N2.derivedPanelConstraints = pe(T));
-          }
-      },
-      toggleSeparatorDisabled: (z2, L2) => {
-        const M3 = p.current.separators.find(
-          (D2) => D2.id === z2
-        );
-        M3 && (M3.disabled = L2);
-      }
-    }),
-    [C2, h2, y, c, R]
-  ), V2 = reactExports.useRef(null);
-  return K(() => {
-    const z2 = v2.current;
-    if (z2 === null)
-      return;
-    const L2 = p.current;
-    let E;
-    if (R.defaultLayout !== void 0 && Object.keys(R.defaultLayout).length === L2.panels.length) {
-      E = {};
-      for (const H2 of L2.panels) {
-        const j2 = R.defaultLayout[H2.id];
-        j2 !== void 0 && (E[H2.id] = j2);
-      }
-    }
-    const M3 = {
-      defaultLayout: E,
-      disableCursor: !!R.disableCursor,
-      disabled: !!i8,
-      element: z2,
-      id: h2,
-      inMemoryLastExpandedPanelSizes: p.current.lastExpandedPanelSizes,
-      inMemoryLayouts: p.current.layouts,
-      orientation: c,
-      panels: L2.panels,
-      resizeTargetMinimumSize: L2.resizeTargetMinimumSize,
-      separators: L2.separators
-    };
-    V2.current = M3;
-    const D2 = It(M3), N2 = G2().mountedGroups.get(M3);
-    if (N2) {
-      const { defaultLayoutDeferred: H2, derivedPanelConstraints: j2, layout: ie3 } = N2;
-      !H2 && j2.length > 0 && (d(ie3), f(ie3));
-    }
-    const Z2 = $.addListener(
-      "interactionStateChange",
-      (H2) => {
-        H2.state;
-      }
-    ), Qe2 = $.addListener(
-      "mountedGroupsChange",
-      (H2) => {
-        const j2 = H2.get(M3);
-        if (j2) {
-          const { defaultLayoutDeferred: ie3, derivedPanelConstraints: et2, layout: ce2 } = j2;
-          if (ie3 || et2.length === 0)
-            return;
-          const tt3 = M3.panels.map(({ id: it2 }) => it2).join(",");
-          M3.inMemoryLayouts[tt3] = ce2;
-          const { interactionState: nt2 } = G2(), ot3 = nt2.state !== "active";
-          d(ce2), ot3 && f(ce2);
-        }
-      }
-    );
-    return () => {
-      V2.current = null, D2(), Z2(), Qe2();
-    };
-  }, [
-    i8,
-    h2,
-    f,
-    d,
-    c,
-    x,
-    R
-  ]), reactExports.useEffect(() => {
-    const z2 = V2.current;
-    z2 && (z2.defaultLayout = n, z2.disableCursor = !!o2);
-  }), /* @__PURE__ */ jsxRuntimeExports.jsx(Ze.Provider, { value: X2, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "div",
-    {
-      ...S,
-      className: t,
-      "data-group": true,
-      "data-testid": h2,
-      id: h2,
-      ref: w2,
-      style: {
-        height: "100%",
-        width: "100%",
-        overflow: "hidden",
-        ...b,
-        display: "flex",
-        flexDirection: c === "horizontal" ? "row" : "column",
-        flexWrap: "nowrap",
-        // Inform the browser that the library is handling touch events for this element
-        // but still allow users to scroll content within panels in the non-resizing direction
-        // NOTE This is not an inherited style
-        // See github.com/bvaughn/react-resizable-panels/issues/662
-        touchAction: c === "horizontal" ? "pan-y" : "pan-x"
-      },
-      children: e
-    }
-  ) });
-}
-Tt.displayName = "Group";
-function xe() {
-  const e = reactExports.useContext(Ze);
-  return P(
-    e,
-    "Group Context not found; did you render a Panel or Separator outside of a Group?"
-  ), e;
-}
-function Nt(e, t) {
-  const { id: n } = xe(), o2 = reactExports.useRef({
-    collapse: fe,
-    expand: fe,
-    getSize: () => ({
-      asPercentage: 0,
-      inPixels: 0
-    }),
-    isCollapsed: () => false,
-    resize: fe
-  });
-  reactExports.useImperativeHandle(t, () => o2.current, []), K(() => {
-    Object.assign(
-      o2.current,
-      We2({ groupId: n, panelId: e })
-    );
-  });
-}
-function _t({
-  children: e,
-  className: t,
-  collapsedSize: n = "0%",
-  collapsible: o2 = false,
-  defaultSize: i8,
-  disabled: s,
-  elementRef: l2,
-  id: r5,
-  maxSize: a = "100%",
-  minSize: u = "0%",
-  onResize: c,
-  panelRef: g2,
-  style: b,
-  ...S
-}) {
-  const m = !!r5, d = ye(r5), f = ve({
-    disabled: s
-  }), h2 = reactExports.useRef(null), v2 = Se(h2, l2), {
-    getPanelStyles: x,
-    id: y,
-    orientation: p,
-    registerPanel: w2,
-    togglePanelDisabled: C2
-  } = xe(), R = c !== null, X2 = ee(
-    (z2, L2, E) => {
-      c?.(z2, r5, E);
-    }
-  );
-  K(() => {
-    const z2 = h2.current;
-    if (z2 !== null) {
-      const L2 = {
-        element: z2,
-        id: d,
-        idIsStable: m,
-        mutableValues: {
-          expandToSize: void 0,
-          prevSize: void 0
-        },
-        onResize: R ? X2 : void 0,
-        panelConstraints: {
-          collapsedSize: n,
-          collapsible: o2,
-          defaultSize: i8,
-          disabled: f.disabled,
-          maxSize: a,
-          minSize: u
-        }
-      };
-      return w2(L2);
-    }
-  }, [
-    n,
-    o2,
-    i8,
-    R,
-    d,
-    m,
-    a,
-    u,
-    X2,
-    w2,
-    f
-  ]), reactExports.useEffect(() => {
-    C2(d, !!s);
-  }, [s, d, C2]), Nt(d, g2);
-  const V2 = reactExports.useSyncExternalStore(
-    (z2) => ($.addListener("mountedGroupsChange", z2), () => {
-      $.removeListener("mountedGroupsChange", z2);
-    }),
-    // useSyncExternalStore does not support a custom equality check
-    // stringify avoids re-rendering when the style value hasn't changed
-    () => JSON.stringify(x(y, d)),
-    () => JSON.stringify(x(y, d))
-  );
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "div",
-    {
-      ...S,
-      "aria-disabled": s || void 0,
-      "data-panel": true,
-      "data-testid": d,
-      id: d,
-      ref: v2,
-      style: {
-        ...Ft2,
-        display: "flex",
-        flexBasis: 0,
-        flexShrink: 1,
-        // Prevent Panel content from interfering with panel size
-        overflow: "hidden",
-        ...JSON.parse(V2)
-      },
-      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "div",
-        {
-          className: t,
-          style: {
-            maxHeight: "100%",
-            maxWidth: "100%",
-            flexGrow: 1,
-            ...b,
-            // Inform the browser that the library is handling touch events for this element
-            // but still allow users to scroll content within panels in the non-resizing direction
-            // NOTE This is not an inherited style
-            // See github.com/bvaughn/react-resizable-panels/issues/662
-            touchAction: p === "horizontal" ? "pan-y" : "pan-x"
-          },
-          children: e
-        }
-      )
-    }
-  );
-}
-_t.displayName = "Panel";
-const Ft2 = {
-  minHeight: 0,
-  maxHeight: "100%",
-  height: "auto",
-  minWidth: 0,
-  maxWidth: "100%",
-  width: "auto",
-  border: "none",
-  borderWidth: 0,
-  padding: 0,
-  margin: 0
-};
-function $t({
-  layout: e,
-  panelConstraints: t,
-  panelId: n,
-  panelIndex: o2
-}) {
-  let i8, s;
-  const l2 = e[n], r5 = t.find(
-    (a) => a.panelId === n
-  );
-  if (r5) {
-    const a = r5.maxSize, u = r5.collapsible ? r5.collapsedSize : r5.minSize, c = [o2, o2 + 1];
-    s = B2({
-      layout: oe({
-        delta: u - l2,
-        initialLayout: e,
-        panelConstraints: t,
-        pivotIndices: c,
-        prevLayout: e
-      }),
-      panelConstraints: t
-    })[n], i8 = B2({
-      layout: oe({
-        delta: a - l2,
-        initialLayout: e,
-        panelConstraints: t,
-        pivotIndices: c,
-        prevLayout: e
-      }),
-      panelConstraints: t
-    })[n];
-  }
-  return {
-    valueControls: n,
-    valueMax: i8,
-    valueMin: s,
-    valueNow: l2
-  };
-}
-function Ht2({
-  children: e,
-  className: t,
-  disabled: n,
-  elementRef: o2,
-  id: i8,
-  style: s,
-  ...l2
-}) {
-  const r5 = ye(i8), a = ve({
-    disabled: n
-  }), [u, c] = reactExports.useState({}), [g2, b] = reactExports.useState("inactive"), S = reactExports.useRef(null), m = Se(S, o2), {
-    disableCursor: d,
-    id: f,
-    orientation: h2,
-    registerSeparator: v2,
-    toggleSeparatorDisabled: x
-  } = xe(), y = h2 === "horizontal" ? "vertical" : "horizontal";
-  K(() => {
-    const w2 = S.current;
-    if (w2 !== null) {
-      const C2 = {
-        disabled: a.disabled,
-        element: w2,
-        id: r5
-      }, R = v2(C2), X2 = $.addListener(
-        "interactionStateChange",
-        (z2) => {
-          b(
-            z2.state !== "inactive" && z2.hitRegions.some(
-              (L2) => L2.separator === C2
-            ) ? z2.state : "inactive"
-          );
-        }
-      ), V2 = $.addListener(
-        "mountedGroupsChange",
-        (z2) => {
-          z2.forEach(
-            ({ derivedPanelConstraints: L2, layout: E, separatorToPanels: M3 }, D2) => {
-              if (D2.id === f) {
-                const T = M3.get(C2);
-                if (T) {
-                  const N2 = T[0], Z2 = D2.panels.indexOf(N2);
-                  c(
-                    $t({
-                      layout: E,
-                      panelConstraints: L2,
-                      panelId: N2.id,
-                      panelIndex: Z2
-                    })
-                  );
-                }
-              }
-            }
-          );
-        }
-      );
-      return () => {
-        X2(), V2(), R();
-      };
-    }
-  }, [f, r5, v2, a]), reactExports.useEffect(() => {
-    x(r5, !!n);
-  }, [n, r5, x]);
-  let p;
-  return n && !d && (p = "not-allowed"), /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "div",
-    {
-      ...l2,
-      "aria-controls": u.valueControls,
-      "aria-disabled": n || void 0,
-      "aria-orientation": y,
-      "aria-valuemax": u.valueMax,
-      "aria-valuemin": u.valueMin,
-      "aria-valuenow": u.valueNow,
-      children: e,
-      className: t,
-      "data-separator": n ? "disabled" : g2,
-      "data-testid": r5,
-      id: r5,
-      ref: m,
-      role: "separator",
-      style: {
-        flexBasis: "auto",
-        cursor: p,
-        ...s,
-        flexGrow: 0,
-        flexShrink: 0,
-        // Inform the browser that the library is handling touch events for this element
-        // See github.com/bvaughn/react-resizable-panels/issues/662
-        touchAction: "none"
-      },
-      tabIndex: n ? void 0 : 0
-    }
-  );
-}
-Ht2.displayName = "Separator";
-const PANE_TYPE_CONFIGS = {
-  terminal: {
-    label: "Terminal",
-    icon: Terminal,
-    colorClass: "text-accent",
-    bgActiveClass: "bg-accent/[0.13]",
-    borderActiveClass: "border-accent/[0.27]",
-    paneBorderClass: "border-accent/50"
-  },
-  "file-manager": {
-    label: "Files",
-    icon: FolderOpen,
-    colorClass: "text-warning",
-    bgActiveClass: "bg-warning/[0.13]",
-    borderActiveClass: "border-warning/[0.27]",
-    paneBorderClass: "border-warning/50"
-  },
-  editor: {
-    label: "Editor",
-    icon: FileCode,
-    colorClass: "text-info",
-    bgActiveClass: "bg-info/[0.13]",
-    borderActiveClass: "border-info/[0.27]",
-    paneBorderClass: "border-info/50"
-  }
-};
-const paneTypes = Object.keys(PANE_TYPE_CONFIGS);
-const MIME_TYPE$1 = "application/x-terma-pane";
-function PaneHeader({ tabId, paneId, paneType }) {
-  const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
-  const Icon2 = config.icon;
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-    "div",
-    {
-      className: "flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2 active:cursor-grabbing",
-      draggable: true,
-      onDragStart: (e) => {
-        e.dataTransfer.setData(MIME_TYPE$1, JSON.stringify({ paneId, tabId }));
-        e.dataTransfer.effectAllowed = "move";
-      },
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2.5", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { size: 16, className: `${config.colorClass} opacity-90` }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-0.5", children: paneTypes.map((pt2) => {
-            const ptConfig = PANE_TYPE_CONFIGS[pt2];
-            const isActive = pt2 === paneType;
-            return /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                onClick: (e) => {
-                  e.stopPropagation();
-                  if (!isActive) useTabStore.getState().setPaneType(tabId, paneId, pt2);
-                },
-                className: `cursor-pointer rounded-sm border border-transparent bg-transparent px-2.5 py-0.5 text-xs transition-all ${isActive ? `${ptConfig.bgActiveClass} ${ptConfig.borderActiveClass} ${ptConfig.colorClass}` : "text-fg-muted"}`,
-                children: ptConfig.label
-              },
-              pt2
-            );
-          }) })
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-1.5", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            IconButton,
-            {
-              icon: Columns2,
-              onClick: (e) => {
-                e.stopPropagation();
-                useTabStore.getState().splitPane(tabId, paneId, "vertical");
-              },
-              title: "Split vertical"
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            IconButton,
-            {
-              icon: Rows2,
-              onClick: (e) => {
-                e.stopPropagation();
-                useTabStore.getState().splitPane(tabId, paneId, "horizontal");
-              },
-              title: "Split horizontal"
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            IconButton,
-            {
-              icon: X$1,
-              onClick: (e) => {
-                e.stopPropagation();
-                useTabStore.getState().closePane(tabId, paneId);
-              },
-              title: "Close pane"
-            }
-          )
-        ] })
       ]
     }
   );
@@ -35408,6 +33401,14 @@ const motion = /* @__PURE__ */ createMotionProxy(featureBundle, createDomVisualE
 function Kbd({ children }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "rounded bg-base px-1.5 py-0.5 text-[10px] text-fg-muted", children });
 }
+const COLOR_BG_CLASSES = {
+  red: "bg-tab-red",
+  orange: "bg-tab-orange",
+  yellow: "bg-tab-yellow",
+  green: "bg-tab-green",
+  blue: "bg-tab-blue",
+  purple: "bg-tab-purple"
+};
 function ContextMenu({ position, entries, onClose }) {
   const menuRef = reactExports.useRef(null);
   const clampPosition = reactExports.useCallback(
@@ -35461,7 +33462,18 @@ function ContextMenu({ position, entries, onClose }) {
       className: "fixed z-50 min-w-[180px] rounded-md border border-border bg-elevated py-1 shadow-xl",
       style: { left: position.x, top: position.y },
       children: entries.map(
-        (entry, i8) => entry.type === "separator" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }, i8) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        (entry, i8) => entry.type === "separator" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }, i8) : entry.type === "colors" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-between px-3 py-2.5", children: entry.colors.map((c) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            title: c.label,
+            onClick: () => {
+              entry.onSelect(entry.activeColor === c.id ? null : c.id);
+              onClose();
+            },
+            className: `h-5 w-5 rounded-full ${COLOR_BG_CLASSES[c.id] ?? ""} ${entry.activeColor === c.id ? "ring-2 ring-fg ring-offset-1 ring-offset-elevated" : ""}`
+          },
+          c.id
+        )) }, i8) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "button",
           {
             disabled: entry.disabled,
@@ -35480,6 +33492,2207 @@ function ContextMenu({ position, entries, onClose }) {
       )
     }
   ) });
+}
+const DRAG_FORMAT = "application/x-terma-tab";
+const TAB_COLORS = [
+  { id: "red", label: "Red" },
+  { id: "orange", label: "Orange" },
+  { id: "yellow", label: "Yellow" },
+  { id: "green", label: "Green" },
+  { id: "blue", label: "Blue" },
+  { id: "purple", label: "Purple" }
+];
+function TabBar() {
+  const { tabOrder, tabs, activeTabId, createTab, closeTab, setActiveTab, setTitle, setTabColor, reorderTabs } = useTabStore();
+  const [dragIndex, setDragIndex] = reactExports.useState(null);
+  const [dropTarget, setDropTarget] = reactExports.useState(null);
+  const [contextMenu, setContextMenu] = reactExports.useState(null);
+  const [editingTabId, setEditingTabId] = reactExports.useState(null);
+  const dragCounters = reactExports.useRef(/* @__PURE__ */ new Map());
+  const handleDragStart = reactExports.useCallback((e, index) => {
+    setDragIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData(DRAG_FORMAT, String(index));
+  }, []);
+  const handleDragOver = reactExports.useCallback((e, index) => {
+    if (dragIndex === null || dragIndex === index) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mid = rect.left + rect.width / 2;
+    const side = e.clientX < mid ? "left" : "right";
+    setDropTarget(
+      (prev) => prev?.index === index && prev.side === side ? prev : { index, side }
+    );
+  }, [dragIndex]);
+  const handleDrop = reactExports.useCallback((e, index) => {
+    e.preventDefault();
+    const from = dragIndex;
+    if (from === null || from === index) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mid = rect.left + rect.width / 2;
+    let to = e.clientX < mid ? index : index + 1;
+    if (from < to) to--;
+    if (from !== to) reorderTabs(from, to);
+    setDragIndex(null);
+    setDropTarget(null);
+    dragCounters.current.clear();
+  }, [dragIndex, reorderTabs]);
+  const handleDragEnd = reactExports.useCallback(() => {
+    setDragIndex(null);
+    setDropTarget(null);
+    dragCounters.current.clear();
+  }, []);
+  const handleContextMenu = reactExports.useCallback((e, tabId) => {
+    e.preventDefault();
+    setContextMenu({ position: { x: e.clientX, y: e.clientY }, tabId });
+  }, []);
+  const contextMenuEntries = contextMenu ? [
+    {
+      type: "colors",
+      colors: TAB_COLORS,
+      activeColor: tabs[contextMenu.tabId]?.color ?? null,
+      onSelect: (colorId) => setTabColor(contextMenu.tabId, colorId)
+    },
+    { type: "separator" },
+    {
+      type: "item",
+      label: "Rename",
+      onAction: () => setEditingTabId(contextMenu.tabId)
+    },
+    {
+      type: "item",
+      label: "Close",
+      disabled: tabOrder.length <= 1,
+      onAction: () => closeTab(contextMenu.tabId)
+    }
+  ] : [];
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "no-drag-region flex shrink-0 items-center gap-0.5 overflow-x-auto border-b border-border px-3", children: [
+    tabOrder.map((id2, index) => {
+      const tab = tabs[id2];
+      if (!tab) return null;
+      const isForceEditing = editingTabId === id2;
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        TabItem,
+        {
+          title: tab.title,
+          isActive: id2 === activeTabId,
+          canClose: tabOrder.length > 1,
+          color: tab.color,
+          forceEdit: isForceEditing,
+          onClick: () => setActiveTab(id2),
+          onClose: () => closeTab(id2),
+          onRename: (newTitle) => setTitle(id2, newTitle),
+          onEditEnd: isForceEditing ? () => setEditingTabId(null) : void 0,
+          onContextMenu: (e) => handleContextMenu(e, id2),
+          onDragStart: (e) => handleDragStart(e, index),
+          onDragOver: (e) => handleDragOver(e, index),
+          onDrop: (e) => handleDrop(e, index),
+          onDragEnd: handleDragEnd,
+          dropSide: dropTarget?.index === index ? dropTarget.side : null
+        },
+        id2
+      );
+    }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        onClick: () => createTab(),
+        className: "ml-1.5 cursor-pointer rounded-sm border border-dashed border-border bg-transparent px-3.5 py-1.5 text-lg leading-none text-fg-muted hover:border-border-hover hover:text-fg-secondary",
+        children: "+"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ContextMenu,
+      {
+        position: contextMenu?.position ?? null,
+        entries: contextMenuEntries,
+        onClose: () => setContextMenu(null)
+      }
+    )
+  ] });
+}
+function lt(e, t) {
+  const n = getComputedStyle(e), o2 = parseFloat(n.fontSize);
+  return t * o2;
+}
+function ut(e, t) {
+  const n = getComputedStyle(e.ownerDocument.body), o2 = parseFloat(n.fontSize);
+  return t * o2;
+}
+function ct(e) {
+  return e / 100 * window.innerHeight;
+}
+function ft(e) {
+  return e / 100 * window.innerWidth;
+}
+function dt2(e) {
+  switch (typeof e) {
+    case "number":
+      return [e, "px"];
+    case "string": {
+      const t = parseFloat(e);
+      return e.endsWith("%") ? [t, "%"] : e.endsWith("px") ? [t, "px"] : e.endsWith("rem") ? [t, "rem"] : e.endsWith("em") ? [t, "em"] : e.endsWith("vh") ? [t, "vh"] : e.endsWith("vw") ? [t, "vw"] : [t, "%"];
+    }
+  }
+}
+function re({
+  groupSize: e,
+  panelElement: t,
+  styleProp: n
+}) {
+  let o2;
+  const [i8, s] = dt2(n);
+  switch (s) {
+    case "%": {
+      o2 = i8 / 100 * e;
+      break;
+    }
+    case "px": {
+      o2 = i8;
+      break;
+    }
+    case "rem": {
+      o2 = ut(t, i8);
+      break;
+    }
+    case "em": {
+      o2 = lt(t, i8);
+      break;
+    }
+    case "vh": {
+      o2 = ct(i8);
+      break;
+    }
+    case "vw": {
+      o2 = ft(i8);
+      break;
+    }
+  }
+  return o2;
+}
+function _2(e) {
+  return parseFloat(e.toFixed(3));
+}
+function J({
+  group: e
+}) {
+  const { orientation: t, panels: n } = e;
+  return n.reduce((o2, i8) => (o2 += t === "horizontal" ? i8.element.offsetWidth : i8.element.offsetHeight, o2), 0);
+}
+function pe(e) {
+  const { panels: t } = e, n = J({ group: e });
+  return n === 0 ? t.map((o2) => ({
+    collapsedSize: 0,
+    collapsible: o2.panelConstraints.collapsible === true,
+    defaultSize: void 0,
+    disabled: o2.panelConstraints.disabled,
+    minSize: 0,
+    maxSize: 100,
+    panelId: o2.id
+  })) : t.map((o2) => {
+    const { element: i8, panelConstraints: s } = o2;
+    let l2 = 0;
+    if (s.collapsedSize !== void 0) {
+      const c = re({
+        groupSize: n,
+        panelElement: i8,
+        styleProp: s.collapsedSize
+      });
+      l2 = _2(c / n * 100);
+    }
+    let r5;
+    if (s.defaultSize !== void 0) {
+      const c = re({
+        groupSize: n,
+        panelElement: i8,
+        styleProp: s.defaultSize
+      });
+      r5 = _2(c / n * 100);
+    }
+    let a = 0;
+    if (s.minSize !== void 0) {
+      const c = re({
+        groupSize: n,
+        panelElement: i8,
+        styleProp: s.minSize
+      });
+      a = _2(c / n * 100);
+    }
+    let u = 100;
+    if (s.maxSize !== void 0) {
+      const c = re({
+        groupSize: n,
+        panelElement: i8,
+        styleProp: s.maxSize
+      });
+      u = _2(c / n * 100);
+    }
+    return {
+      collapsedSize: l2,
+      collapsible: s.collapsible === true,
+      defaultSize: r5,
+      disabled: s.disabled,
+      minSize: a,
+      maxSize: u,
+      panelId: o2.id
+    };
+  });
+}
+function P(e, t = "Assertion error") {
+  if (!e)
+    throw Error(t);
+}
+function he(e, t) {
+  return Array.from(t).sort(
+    e === "horizontal" ? pt : ht
+  );
+}
+function pt(e, t) {
+  const n = e.element.offsetLeft - t.element.offsetLeft;
+  return n !== 0 ? n : e.element.offsetWidth - t.element.offsetWidth;
+}
+function ht(e, t) {
+  const n = e.element.offsetTop - t.element.offsetTop;
+  return n !== 0 ? n : e.element.offsetHeight - t.element.offsetHeight;
+}
+function $e(e) {
+  return e !== null && typeof e == "object" && "nodeType" in e && e.nodeType === Node.ELEMENT_NODE;
+}
+function He(e, t) {
+  return {
+    x: e.x >= t.left && e.x <= t.right ? 0 : Math.min(
+      Math.abs(e.x - t.left),
+      Math.abs(e.x - t.right)
+    ),
+    y: e.y >= t.top && e.y <= t.bottom ? 0 : Math.min(
+      Math.abs(e.y - t.top),
+      Math.abs(e.y - t.bottom)
+    )
+  };
+}
+function mt({
+  orientation: e,
+  rects: t,
+  targetRect: n
+}) {
+  const o2 = {
+    x: n.x + n.width / 2,
+    y: n.y + n.height / 2
+  };
+  let i8, s = Number.MAX_VALUE;
+  for (const l2 of t) {
+    const { x: r5, y: a } = He(o2, l2), u = e === "horizontal" ? r5 : a;
+    u < s && (s = u, i8 = l2);
+  }
+  return P(i8, "No rect found"), i8;
+}
+let se2;
+function gt() {
+  return se2 === void 0 && (typeof matchMedia == "function" ? se2 = !!matchMedia("(pointer:coarse)").matches : se2 = false), se2;
+}
+function Ve(e) {
+  const { element: t, orientation: n, panels: o2, separators: i8 } = e, s = he(
+    n,
+    Array.from(t.children).filter($e).map((m) => ({ element: m }))
+  ).map(({ element: m }) => m), l2 = [];
+  let r5 = false, a = false, u = -1, c = -1, g2 = 0, b, S = [];
+  {
+    let m = -1;
+    for (const d of s)
+      d.hasAttribute("data-panel") && (m++, d.ariaDisabled === null && (g2++, u === -1 && (u = m), c = m));
+  }
+  if (g2 > 1) {
+    let m = -1;
+    for (const d of s)
+      if (d.hasAttribute("data-panel")) {
+        m++;
+        const f = o2.find(
+          (h2) => h2.element === d
+        );
+        if (f) {
+          if (b) {
+            const h2 = b.element.getBoundingClientRect(), v2 = d.getBoundingClientRect();
+            let x;
+            if (a) {
+              const y = n === "horizontal" ? new DOMRect(
+                h2.right,
+                h2.top,
+                0,
+                h2.height
+              ) : new DOMRect(
+                h2.left,
+                h2.bottom,
+                h2.width,
+                0
+              ), p = n === "horizontal" ? new DOMRect(v2.left, v2.top, 0, v2.height) : new DOMRect(v2.left, v2.top, v2.width, 0);
+              switch (S.length) {
+                case 0: {
+                  x = [
+                    y,
+                    p
+                  ];
+                  break;
+                }
+                case 1: {
+                  const w2 = S[0], C2 = mt({
+                    orientation: n,
+                    rects: [h2, v2],
+                    targetRect: w2.element.getBoundingClientRect()
+                  });
+                  x = [
+                    w2,
+                    C2 === h2 ? p : y
+                  ];
+                  break;
+                }
+                default: {
+                  x = S;
+                  break;
+                }
+              }
+            } else
+              S.length ? x = S : x = [
+                n === "horizontal" ? new DOMRect(
+                  h2.right,
+                  v2.top,
+                  v2.left - h2.right,
+                  v2.height
+                ) : new DOMRect(
+                  v2.left,
+                  h2.bottom,
+                  v2.width,
+                  v2.top - h2.bottom
+                )
+              ];
+            for (const y of x) {
+              let p = "width" in y ? y : y.element.getBoundingClientRect();
+              const w2 = gt() ? e.resizeTargetMinimumSize.coarse : e.resizeTargetMinimumSize.fine;
+              if (p.width < w2) {
+                const R = w2 - p.width;
+                p = new DOMRect(
+                  p.x - R / 2,
+                  p.y,
+                  p.width + R,
+                  p.height
+                );
+              }
+              if (p.height < w2) {
+                const R = w2 - p.height;
+                p = new DOMRect(
+                  p.x,
+                  p.y - R / 2,
+                  p.width,
+                  p.height + R
+                );
+              }
+              const C2 = m <= u || m > c;
+              !r5 && !C2 && l2.push({
+                group: e,
+                groupSize: J({ group: e }),
+                panels: [b, f],
+                separator: "width" in y ? void 0 : y,
+                rect: p
+              }), r5 = false;
+            }
+          }
+          a = false, b = f, S = [];
+        }
+      } else if (d.hasAttribute("data-separator")) {
+        d.ariaDisabled !== null && (r5 = true);
+        const f = i8.find(
+          (h2) => h2.element === d
+        );
+        f ? S.push(f) : (b = void 0, S = []);
+      } else
+        a = true;
+  }
+  return l2;
+}
+class yt {
+  #e = {};
+  addListener(t, n) {
+    const o2 = this.#e[t];
+    return o2 === void 0 ? this.#e[t] = [n] : o2.includes(n) || o2.push(n), () => {
+      this.removeListener(t, n);
+    };
+  }
+  emit(t, n) {
+    const o2 = this.#e[t];
+    if (o2 !== void 0)
+      if (o2.length === 1)
+        o2[0].call(null, n);
+      else {
+        let i8 = false, s = null;
+        const l2 = Array.from(o2);
+        for (let r5 = 0; r5 < l2.length; r5++) {
+          const a = l2[r5];
+          try {
+            a.call(null, n);
+          } catch (u) {
+            s === null && (i8 = true, s = u);
+          }
+        }
+        if (i8)
+          throw s;
+      }
+  }
+  removeAllListeners() {
+    this.#e = {};
+  }
+  removeListener(t, n) {
+    const o2 = this.#e[t];
+    if (o2 !== void 0) {
+      const i8 = o2.indexOf(n);
+      i8 >= 0 && o2.splice(i8, 1);
+    }
+  }
+}
+function k(e, t, n = 0) {
+  return Math.abs(_2(e) - _2(t)) <= n;
+}
+let A = {
+  cursorFlags: 0,
+  interactionState: {
+    state: "inactive"
+  },
+  mountedGroups: /* @__PURE__ */ new Map()
+};
+const $ = new yt();
+function G2() {
+  return A;
+}
+function I(e) {
+  const t = typeof e == "function" ? e(A) : e;
+  if (A === t)
+    return A;
+  const n = A;
+  return A = {
+    ...A,
+    ...t
+  }, t.cursorFlags !== void 0 && $.emit("cursorFlagsChange", A.cursorFlags), t.interactionState !== void 0 && $.emit("interactionStateChange", A.interactionState), t.mountedGroups !== void 0 && (A.mountedGroups.forEach((o2, i8) => {
+    o2.derivedPanelConstraints.forEach((s) => {
+      if (s.collapsible) {
+        const { layout: l2 } = n.mountedGroups.get(i8) ?? {};
+        if (l2) {
+          const r5 = k(
+            s.collapsedSize,
+            o2.layout[s.panelId]
+          ), a = k(
+            s.collapsedSize,
+            l2[s.panelId]
+          );
+          r5 && !a && (i8.inMemoryLastExpandedPanelSizes[s.panelId] = l2[s.panelId]);
+        }
+      }
+    });
+  }), $.emit("mountedGroupsChange", A.mountedGroups)), A;
+}
+function St(e, t, n) {
+  let o2, i8 = {
+    x: 1 / 0,
+    y: 1 / 0
+  };
+  for (const s of t) {
+    const l2 = He(n, s.rect);
+    switch (e) {
+      case "horizontal": {
+        l2.x <= i8.x && (o2 = s, i8 = l2);
+        break;
+      }
+      case "vertical": {
+        l2.y <= i8.y && (o2 = s, i8 = l2);
+        break;
+      }
+    }
+  }
+  return o2 ? {
+    distance: i8,
+    hitRegion: o2
+  } : void 0;
+}
+function vt(e) {
+  return e !== null && typeof e == "object" && "nodeType" in e && e.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+}
+function xt2(e, t) {
+  if (e === t) throw new Error("Cannot compare node with itself");
+  const n = {
+    a: we(e),
+    b: we(t)
+  };
+  let o2;
+  for (; n.a.at(-1) === n.b.at(-1); )
+    o2 = n.a.pop(), n.b.pop();
+  P(
+    o2,
+    "Stacking order can only be calculated for elements with a common ancestor"
+  );
+  const i8 = {
+    a: be2(ze(n.a)),
+    b: be2(ze(n.b))
+  };
+  if (i8.a === i8.b) {
+    const s = o2.childNodes, l2 = {
+      a: n.a.at(-1),
+      b: n.b.at(-1)
+    };
+    let r5 = s.length;
+    for (; r5--; ) {
+      const a = s[r5];
+      if (a === l2.a) return 1;
+      if (a === l2.b) return -1;
+    }
+  }
+  return Math.sign(i8.a - i8.b);
+}
+const zt2 = /\b(?:position|zIndex|opacity|transform|webkitTransform|mixBlendMode|filter|webkitFilter|isolation)\b/;
+function bt(e) {
+  const t = getComputedStyle(je(e) ?? e).display;
+  return t === "flex" || t === "inline-flex";
+}
+function wt(e) {
+  const t = getComputedStyle(e);
+  return !!(t.position === "fixed" || t.zIndex !== "auto" && (t.position !== "static" || bt(e)) || +t.opacity < 1 || "transform" in t && t.transform !== "none" || "webkitTransform" in t && t.webkitTransform !== "none" || "mixBlendMode" in t && t.mixBlendMode !== "normal" || "filter" in t && t.filter !== "none" || "webkitFilter" in t && t.webkitFilter !== "none" || "isolation" in t && t.isolation === "isolate" || zt2.test(t.willChange) || t.webkitOverflowScrolling === "touch");
+}
+function ze(e) {
+  let t = e.length;
+  for (; t--; ) {
+    const n = e[t];
+    if (P(n, "Missing node"), wt(n)) return n;
+  }
+  return null;
+}
+function be2(e) {
+  return e && Number(getComputedStyle(e).zIndex) || 0;
+}
+function we(e) {
+  const t = [];
+  for (; e; )
+    t.push(e), e = je(e);
+  return t;
+}
+function je(e) {
+  const { parentNode: t } = e;
+  return vt(t) ? t.host : t;
+}
+function Lt(e, t) {
+  return e.x < t.x + t.width && e.x + e.width > t.x && e.y < t.y + t.height && e.y + e.height > t.y;
+}
+function Pt({
+  groupElement: e,
+  hitRegion: t,
+  pointerEventTarget: n
+}) {
+  if (!$e(n) || n.contains(e) || e.contains(n))
+    return true;
+  if (xt2(n, e) > 0) {
+    let o2 = n;
+    for (; o2; ) {
+      if (o2.contains(e))
+        return true;
+      if (Lt(o2.getBoundingClientRect(), t))
+        return false;
+      o2 = o2.parentElement;
+    }
+  }
+  return true;
+}
+function me(e, t) {
+  const n = [];
+  return t.forEach((o2, i8) => {
+    if (i8.disabled)
+      return;
+    const s = Ve(i8), l2 = St(i8.orientation, s, {
+      x: e.clientX,
+      y: e.clientY
+    });
+    l2 && l2.distance.x <= 0 && l2.distance.y <= 0 && Pt({
+      groupElement: i8.element,
+      hitRegion: l2.hitRegion.rect,
+      pointerEventTarget: e.target
+    }) && n.push(l2.hitRegion);
+  }), n;
+}
+function Ct(e, t) {
+  if (e.length !== t.length)
+    return false;
+  for (let n = 0; n < e.length; n++)
+    if (e[n] != t[n])
+      return false;
+  return true;
+}
+function F(e, t) {
+  return k(e, t) ? 0 : e > t ? 1 : -1;
+}
+function Y({
+  overrideDisabledPanels: e,
+  panelConstraints: t,
+  prevSize: n,
+  size: o2
+}) {
+  const {
+    collapsedSize: i8 = 0,
+    collapsible: s,
+    disabled: l2,
+    maxSize: r5 = 100,
+    minSize: a = 0
+  } = t;
+  if (l2 && !e)
+    return n;
+  if (F(o2, a) < 0)
+    if (s) {
+      const u = (i8 + a) / 2;
+      F(o2, u) < 0 ? o2 = i8 : o2 = a;
+    } else
+      o2 = a;
+  return o2 = Math.min(r5, o2), o2 = _2(o2), o2;
+}
+function oe({
+  delta: e,
+  initialLayout: t,
+  panelConstraints: n,
+  pivotIndices: o2,
+  prevLayout: i8,
+  trigger: s
+}) {
+  if (k(e, 0))
+    return t;
+  const l2 = s === "imperative-api", r5 = Object.values(t), a = Object.values(i8), u = [...r5], [c, g2] = o2;
+  P(c != null, "Invalid first pivot index"), P(g2 != null, "Invalid second pivot index");
+  let b = 0;
+  switch (s) {
+    case "keyboard": {
+      {
+        const d = e < 0 ? g2 : c, f = n[d];
+        P(
+          f,
+          `Panel constraints not found for index ${d}`
+        );
+        const {
+          collapsedSize: h2 = 0,
+          collapsible: v2,
+          minSize: x = 0
+        } = f;
+        if (v2) {
+          const y = r5[d];
+          if (P(
+            y != null,
+            `Previous layout not found for panel index ${d}`
+          ), k(y, h2)) {
+            const p = x - y;
+            F(p, Math.abs(e)) > 0 && (e = e < 0 ? 0 - p : p);
+          }
+        }
+      }
+      {
+        const d = e < 0 ? c : g2, f = n[d];
+        P(
+          f,
+          `No panel constraints found for index ${d}`
+        );
+        const {
+          collapsedSize: h2 = 0,
+          collapsible: v2,
+          minSize: x = 0
+        } = f;
+        if (v2) {
+          const y = r5[d];
+          if (P(
+            y != null,
+            `Previous layout not found for panel index ${d}`
+          ), k(y, x)) {
+            const p = y - h2;
+            F(p, Math.abs(e)) > 0 && (e = e < 0 ? 0 - p : p);
+          }
+        }
+      }
+      break;
+    }
+    default: {
+      const d = e < 0 ? g2 : c, f = n[d];
+      P(
+        f,
+        `Panel constraints not found for index ${d}`
+      );
+      const h2 = r5[d], { collapsible: v2, collapsedSize: x, minSize: y } = f;
+      if (v2 && F(h2, y) < 0)
+        if (e > 0) {
+          const p = y - x, w2 = p / 2, C2 = h2 + e;
+          F(C2, y) < 0 && (e = F(e, w2) <= 0 ? 0 : p);
+        } else {
+          const p = y - x, w2 = 100 - p / 2, C2 = h2 - e;
+          F(C2, y) < 0 && (e = F(100 + e, w2) > 0 ? 0 : -p);
+        }
+      break;
+    }
+  }
+  {
+    const d = e < 0 ? 1 : -1;
+    let f = e < 0 ? g2 : c, h2 = 0;
+    for (; ; ) {
+      const x = r5[f];
+      P(
+        x != null,
+        `Previous layout not found for panel index ${f}`
+      );
+      const p = Y({
+        overrideDisabledPanels: l2,
+        panelConstraints: n[f],
+        prevSize: x,
+        size: 100
+      }) - x;
+      if (h2 += p, f += d, f < 0 || f >= n.length)
+        break;
+    }
+    const v2 = Math.min(Math.abs(e), Math.abs(h2));
+    e = e < 0 ? 0 - v2 : v2;
+  }
+  {
+    let f = e < 0 ? c : g2;
+    for (; f >= 0 && f < n.length; ) {
+      const h2 = Math.abs(e) - Math.abs(b), v2 = r5[f];
+      P(
+        v2 != null,
+        `Previous layout not found for panel index ${f}`
+      );
+      const x = v2 - h2, y = Y({
+        overrideDisabledPanels: l2,
+        panelConstraints: n[f],
+        prevSize: v2,
+        size: x
+      });
+      if (!k(v2, y) && (b += v2 - y, u[f] = y, b.toFixed(3).localeCompare(Math.abs(e).toFixed(3), void 0, {
+        numeric: true
+      }) >= 0))
+        break;
+      e < 0 ? f-- : f++;
+    }
+  }
+  if (Ct(a, u))
+    return i8;
+  {
+    const d = e < 0 ? g2 : c, f = r5[d];
+    P(
+      f != null,
+      `Previous layout not found for panel index ${d}`
+    );
+    const h2 = f + b, v2 = Y({
+      overrideDisabledPanels: l2,
+      panelConstraints: n[d],
+      prevSize: f,
+      size: h2
+    });
+    if (u[d] = v2, !k(v2, h2)) {
+      let x = h2 - v2, p = e < 0 ? g2 : c;
+      for (; p >= 0 && p < n.length; ) {
+        const w2 = u[p];
+        P(
+          w2 != null,
+          `Previous layout not found for panel index ${p}`
+        );
+        const C2 = w2 + x, R = Y({
+          overrideDisabledPanels: l2,
+          panelConstraints: n[p],
+          prevSize: w2,
+          size: C2
+        });
+        if (k(w2, R) || (x -= R - w2, u[p] = R), k(x, 0))
+          break;
+        e > 0 ? p-- : p++;
+      }
+    }
+  }
+  const S = Object.values(u).reduce(
+    (d, f) => f + d,
+    0
+  );
+  if (!k(S, 100, 0.1))
+    return i8;
+  const m = Object.keys(i8);
+  return u.reduce((d, f, h2) => (d[m[h2]] = f, d), {});
+}
+function U(e, t) {
+  if (Object.keys(e).length !== Object.keys(t).length)
+    return false;
+  for (const n in e)
+    if (t[n] === void 0 || F(e[n], t[n]) !== 0)
+      return false;
+  return true;
+}
+function B2({
+  layout: e,
+  panelConstraints: t
+}) {
+  const n = Object.values(e), o2 = [...n], i8 = o2.reduce(
+    (r5, a) => r5 + a,
+    0
+  );
+  if (o2.length !== t.length)
+    throw Error(
+      `Invalid ${t.length} panel layout: ${o2.map((r5) => `${r5}%`).join(", ")}`
+    );
+  if (!k(i8, 100) && o2.length > 0)
+    for (let r5 = 0; r5 < t.length; r5++) {
+      const a = o2[r5];
+      P(a != null, `No layout data found for index ${r5}`);
+      const u = 100 / i8 * a;
+      o2[r5] = u;
+    }
+  let s = 0;
+  for (let r5 = 0; r5 < t.length; r5++) {
+    const a = n[r5];
+    P(a != null, `No layout data found for index ${r5}`);
+    const u = o2[r5];
+    P(u != null, `No layout data found for index ${r5}`);
+    const c = Y({
+      overrideDisabledPanels: true,
+      panelConstraints: t[r5],
+      prevSize: a,
+      size: u
+    });
+    u != c && (s += u - c, o2[r5] = c);
+  }
+  if (!k(s, 0))
+    for (let r5 = 0; r5 < t.length; r5++) {
+      const a = o2[r5];
+      P(a != null, `No layout data found for index ${r5}`);
+      const u = a + s, c = Y({
+        overrideDisabledPanels: true,
+        panelConstraints: t[r5],
+        prevSize: a,
+        size: u
+      });
+      if (a !== c && (s -= c - a, o2[r5] = c, k(s, 0)))
+        break;
+    }
+  const l2 = Object.keys(e);
+  return o2.reduce((r5, a, u) => (r5[l2[u]] = a, r5), {});
+}
+function We2({
+  groupId: e,
+  panelId: t
+}) {
+  const n = () => {
+    const { mountedGroups: r5 } = G2();
+    for (const [
+      a,
+      {
+        defaultLayoutDeferred: u,
+        derivedPanelConstraints: c,
+        layout: g2,
+        separatorToPanels: b
+      }
+    ] of r5)
+      if (a.id === e)
+        return {
+          defaultLayoutDeferred: u,
+          derivedPanelConstraints: c,
+          group: a,
+          layout: g2,
+          separatorToPanels: b
+        };
+    throw Error(`Group ${e} not found`);
+  }, o2 = () => {
+    const r5 = n().derivedPanelConstraints.find(
+      (a) => a.panelId === t
+    );
+    if (r5 !== void 0)
+      return r5;
+    throw Error(`Panel constraints not found for Panel ${t}`);
+  }, i8 = () => {
+    const r5 = n().group.panels.find((a) => a.id === t);
+    if (r5 !== void 0)
+      return r5;
+    throw Error(`Layout not found for Panel ${t}`);
+  }, s = () => {
+    const r5 = n().layout[t];
+    if (r5 !== void 0)
+      return r5;
+    throw Error(`Layout not found for Panel ${t}`);
+  }, l2 = (r5) => {
+    const a = s();
+    if (r5 === a)
+      return;
+    const {
+      defaultLayoutDeferred: u,
+      derivedPanelConstraints: c,
+      group: g2,
+      layout: b,
+      separatorToPanels: S
+    } = n(), m = g2.panels.findIndex((v2) => v2.id === t), d = m === g2.panels.length - 1, f = oe({
+      delta: d ? a - r5 : r5 - a,
+      initialLayout: b,
+      panelConstraints: c,
+      pivotIndices: d ? [m - 1, m] : [m, m + 1],
+      prevLayout: b,
+      trigger: "imperative-api"
+    }), h2 = B2({
+      layout: f,
+      panelConstraints: c
+    });
+    U(b, h2) || I((v2) => ({
+      mountedGroups: new Map(v2.mountedGroups).set(g2, {
+        defaultLayoutDeferred: u,
+        derivedPanelConstraints: c,
+        layout: h2,
+        separatorToPanels: S
+      })
+    }));
+  };
+  return {
+    collapse: () => {
+      const { collapsible: r5, collapsedSize: a } = o2(), { mutableValues: u } = i8(), c = s();
+      r5 && c !== a && (u.expandToSize = c, l2(a));
+    },
+    expand: () => {
+      const { collapsible: r5, collapsedSize: a, minSize: u } = o2(), { mutableValues: c } = i8(), g2 = s();
+      if (r5 && g2 === a) {
+        let b = c.expandToSize ?? u;
+        b === 0 && (b = 1), l2(b);
+      }
+    },
+    getSize: () => {
+      const { group: r5 } = n(), a = s(), { element: u } = i8(), c = r5.orientation === "horizontal" ? u.offsetWidth : u.offsetHeight;
+      return {
+        asPercentage: a,
+        inPixels: c
+      };
+    },
+    isCollapsed: () => {
+      const { collapsible: r5, collapsedSize: a } = o2(), u = s();
+      return r5 && k(a, u);
+    },
+    resize: (r5) => {
+      if (s() !== r5) {
+        let u;
+        switch (typeof r5) {
+          case "number": {
+            const { group: c } = n(), g2 = J({ group: c });
+            u = _2(r5 / g2 * 100);
+            break;
+          }
+          case "string": {
+            u = parseFloat(r5);
+            break;
+          }
+        }
+        l2(u);
+      }
+    }
+  };
+}
+function Le(e) {
+  if (e.defaultPrevented)
+    return;
+  const { mountedGroups: t } = G2();
+  me(e, t).forEach((o2) => {
+    if (o2.separator) {
+      const i8 = o2.panels.find(
+        (s) => s.panelConstraints.defaultSize !== void 0
+      );
+      if (i8) {
+        const s = i8.panelConstraints.defaultSize, l2 = We2({
+          groupId: o2.group.id,
+          panelId: i8.id
+        });
+        l2 && s !== void 0 && (l2.resize(s), e.preventDefault());
+      }
+    }
+  });
+}
+function le(e) {
+  const { mountedGroups: t } = G2();
+  for (const [n] of t)
+    if (n.separators.some(
+      (o2) => o2.element === e
+    ))
+      return n;
+  throw Error("Could not find parent Group for separator element");
+}
+function Ue({
+  groupId: e
+}) {
+  const t = () => {
+    const { mountedGroups: n } = G2();
+    for (const [o2, i8] of n)
+      if (o2.id === e)
+        return { group: o2, ...i8 };
+    throw Error(`Could not find Group with id "${e}"`);
+  };
+  return {
+    getLayout() {
+      const { defaultLayoutDeferred: n, layout: o2 } = t();
+      return n ? {} : o2;
+    },
+    setLayout(n) {
+      const {
+        defaultLayoutDeferred: o2,
+        derivedPanelConstraints: i8,
+        group: s,
+        layout: l2,
+        separatorToPanels: r5
+      } = t(), a = B2({
+        layout: n,
+        panelConstraints: i8
+      });
+      return o2 ? l2 : (U(l2, a) || I((u) => ({
+        mountedGroups: new Map(u.mountedGroups).set(s, {
+          defaultLayoutDeferred: o2,
+          derivedPanelConstraints: i8,
+          layout: a,
+          separatorToPanels: r5
+        })
+      })), a);
+    }
+  };
+}
+function Be(e) {
+  const { mountedGroups: t } = G2(), n = t.get(e);
+  return P(n, `Mounted Group ${e.id} not found`), n;
+}
+function W(e, t) {
+  const n = le(e), o2 = Be(n), i8 = n.separators.find(
+    (g2) => g2.element === e
+  );
+  P(i8, "Matching separator not found");
+  const s = o2.separatorToPanels.get(i8);
+  P(s, "Matching panels not found");
+  const l2 = s.map((g2) => n.panels.indexOf(g2)), a = Ue({ groupId: n.id }).getLayout(), u = oe({
+    delta: t,
+    initialLayout: a,
+    panelConstraints: o2.derivedPanelConstraints,
+    pivotIndices: l2,
+    prevLayout: a,
+    trigger: "keyboard"
+  }), c = B2({
+    layout: u,
+    panelConstraints: o2.derivedPanelConstraints
+  });
+  U(a, c) || I((g2) => ({
+    mountedGroups: new Map(g2.mountedGroups).set(n, {
+      defaultLayoutDeferred: o2.defaultLayoutDeferred,
+      derivedPanelConstraints: o2.derivedPanelConstraints,
+      layout: c,
+      separatorToPanels: o2.separatorToPanels
+    })
+  }));
+}
+function Pe(e) {
+  if (e.defaultPrevented)
+    return;
+  const t = e.currentTarget, n = le(t);
+  if (!n.disabled)
+    switch (e.key) {
+      case "ArrowDown": {
+        e.preventDefault(), n.orientation === "vertical" && W(t, 5);
+        break;
+      }
+      case "ArrowLeft": {
+        e.preventDefault(), n.orientation === "horizontal" && W(t, -5);
+        break;
+      }
+      case "ArrowRight": {
+        e.preventDefault(), n.orientation === "horizontal" && W(t, 5);
+        break;
+      }
+      case "ArrowUp": {
+        e.preventDefault(), n.orientation === "vertical" && W(t, -5);
+        break;
+      }
+      case "End": {
+        e.preventDefault(), W(t, 100);
+        break;
+      }
+      case "Enter": {
+        e.preventDefault();
+        const o2 = le(t), { derivedPanelConstraints: i8, layout: s, separatorToPanels: l2 } = Be(o2), r5 = o2.separators.find(
+          (g2) => g2.element === t
+        );
+        P(r5, "Matching separator not found");
+        const a = l2.get(r5);
+        P(a, "Matching panels not found");
+        const u = a[0], c = i8.find(
+          (g2) => g2.panelId === u.id
+        );
+        if (P(c, "Panel metadata not found"), c.collapsible) {
+          const g2 = s[u.id], b = c.collapsedSize === g2 ? o2.inMemoryLastExpandedPanelSizes[u.id] ?? c.minSize : c.collapsedSize;
+          W(t, b - g2);
+        }
+        break;
+      }
+      case "F6": {
+        e.preventDefault();
+        const i8 = le(t).separators.map(
+          (a) => a.element
+        ), s = Array.from(i8).findIndex(
+          (a) => a === e.currentTarget
+        );
+        P(s !== null, "Index not found");
+        const l2 = e.shiftKey ? s > 0 ? s - 1 : i8.length - 1 : s + 1 < i8.length ? s + 1 : 0;
+        i8[l2].focus();
+        break;
+      }
+      case "Home": {
+        e.preventDefault(), W(t, -100);
+        break;
+      }
+    }
+}
+function Ce(e) {
+  if (e.defaultPrevented)
+    return;
+  if (e.pointerType === "mouse" && e.button > 0)
+    return;
+  const { mountedGroups: t } = G2(), n = me(e, t), o2 = /* @__PURE__ */ new Map();
+  let i8 = false;
+  n.forEach((s) => {
+    s.separator && (i8 || (i8 = true, s.separator.element.focus()));
+    const l2 = t.get(s.group);
+    l2 && o2.set(s.group, l2.layout);
+  }), I({
+    interactionState: {
+      hitRegions: n,
+      initialLayoutMap: o2,
+      pointerDownAtPoint: { x: e.clientX, y: e.clientY },
+      state: "active"
+    }
+  }), n.length && e.preventDefault();
+}
+const Rt = (e) => e, fe = () => {
+}, Ke2 = 1, Xe = 2, qe = 4, Ye2 = 8, Re = 3, Me = 12;
+let ae;
+function Ee() {
+  return ae === void 0 && (ae = false, typeof window < "u" && (window.navigator.userAgent.includes("Chrome") || window.navigator.userAgent.includes("Firefox")) && (ae = true)), ae;
+}
+function Mt({
+  cursorFlags: e,
+  groups: t,
+  state: n
+}) {
+  let o2 = 0, i8 = 0;
+  switch (n) {
+    case "active":
+    case "hover":
+      t.forEach((s) => {
+        if (!s.disableCursor)
+          switch (s.orientation) {
+            case "horizontal": {
+              o2++;
+              break;
+            }
+            case "vertical": {
+              i8++;
+              break;
+            }
+          }
+      });
+  }
+  if (!(o2 === 0 && i8 === 0)) {
+    switch (n) {
+      case "active": {
+        if (e && Ee()) {
+          const s = (e & Ke2) !== 0, l2 = (e & Xe) !== 0, r5 = (e & qe) !== 0, a = (e & Ye2) !== 0;
+          if (s)
+            return r5 ? "se-resize" : a ? "ne-resize" : "e-resize";
+          if (l2)
+            return r5 ? "sw-resize" : a ? "nw-resize" : "w-resize";
+          if (r5)
+            return "s-resize";
+          if (a)
+            return "n-resize";
+        }
+        break;
+      }
+    }
+    return Ee() ? o2 > 0 && i8 > 0 ? "move" : o2 > 0 ? "ew-resize" : "ns-resize" : o2 > 0 && i8 > 0 ? "grab" : o2 > 0 ? "col-resize" : "row-resize";
+  }
+}
+const ke = /* @__PURE__ */ new WeakMap();
+function ge(e) {
+  if (e.defaultView === null || e.defaultView === void 0)
+    return;
+  let { prevStyle: t, styleSheet: n } = ke.get(e) ?? {};
+  n === void 0 && (n = new e.defaultView.CSSStyleSheet(), e.adoptedStyleSheets && e.adoptedStyleSheets.push(n));
+  const { cursorFlags: o2, interactionState: i8 } = G2();
+  switch (i8.state) {
+    case "active":
+    case "hover": {
+      const s = Mt({
+        cursorFlags: o2,
+        groups: i8.hitRegions.map((r5) => r5.group),
+        state: i8.state
+      }), l2 = `*, *:hover {cursor: ${s} !important; }`;
+      if (t === l2)
+        return;
+      t = l2, s ? n.cssRules.length === 0 ? n.insertRule(l2) : n.replaceSync(l2) : n.cssRules.length === 1 && n.deleteRule(0);
+      break;
+    }
+    case "inactive": {
+      t = void 0, n.cssRules.length === 1 && n.deleteRule(0);
+      break;
+    }
+  }
+  ke.set(e, {
+    prevStyle: t,
+    styleSheet: n
+  });
+}
+function Je({
+  document: e,
+  event: t,
+  hitRegions: n,
+  initialLayoutMap: o2,
+  mountedGroups: i8,
+  pointerDownAtPoint: s,
+  prevCursorFlags: l2
+}) {
+  let r5 = 0;
+  const a = new Map(i8);
+  n.forEach((c) => {
+    const { group: g2, groupSize: b } = c, { disableCursor: S, orientation: m, panels: d } = g2;
+    let f = 0;
+    s ? m === "horizontal" ? f = (t.clientX - s.x) / b * 100 : f = (t.clientY - s.y) / b * 100 : m === "horizontal" ? f = t.clientX < 0 ? -100 : 100 : f = t.clientY < 0 ? -100 : 100;
+    const h2 = o2.get(g2), {
+      defaultLayoutDeferred: v2,
+      derivedPanelConstraints: x,
+      layout: y,
+      separatorToPanels: p
+    } = i8.get(g2) ?? { defaultLayoutDeferred: false };
+    if (x && h2 && y && p) {
+      const w2 = oe({
+        delta: f,
+        initialLayout: h2,
+        panelConstraints: x,
+        pivotIndices: c.panels.map((C2) => d.indexOf(C2)),
+        prevLayout: y,
+        trigger: "mouse-or-touch"
+      });
+      if (U(w2, y)) {
+        if (f !== 0 && !S)
+          switch (m) {
+            case "horizontal": {
+              r5 |= f < 0 ? Ke2 : Xe;
+              break;
+            }
+            case "vertical": {
+              r5 |= f < 0 ? qe : Ye2;
+              break;
+            }
+          }
+      } else
+        a.set(c.group, {
+          defaultLayoutDeferred: v2,
+          derivedPanelConstraints: x,
+          layout: w2,
+          separatorToPanels: p
+        });
+    }
+  });
+  let u = 0;
+  t.movementX === 0 ? u |= l2 & Re : u |= r5 & Re, t.movementY === 0 ? u |= l2 & Me : u |= r5 & Me, I({
+    cursorFlags: u,
+    mountedGroups: a
+  }), ge(e);
+}
+function Ge2(e) {
+  const { cursorFlags: t, interactionState: n, mountedGroups: o2 } = G2();
+  switch (n.state) {
+    case "active":
+      Je({
+        document: e.currentTarget,
+        event: e,
+        hitRegions: n.hitRegions,
+        initialLayoutMap: n.initialLayoutMap,
+        mountedGroups: o2,
+        prevCursorFlags: t
+      });
+  }
+}
+function Ie(e) {
+  if (e.defaultPrevented)
+    return;
+  const { cursorFlags: t, interactionState: n, mountedGroups: o2 } = G2();
+  switch (n.state) {
+    case "active": {
+      if (
+        // Skip this check for "pointerleave" events, else Firefox triggers a false positive (see #514)
+        e.buttons === 0
+      ) {
+        I(
+          (i8) => i8.interactionState.state === "inactive" ? i8 : {
+            cursorFlags: 0,
+            interactionState: { state: "inactive" }
+          }
+        ), I((i8) => ({
+          mountedGroups: new Map(i8.mountedGroups)
+        }));
+        return;
+      }
+      Je({
+        document: e.currentTarget,
+        event: e,
+        hitRegions: n.hitRegions,
+        initialLayoutMap: n.initialLayoutMap,
+        mountedGroups: o2,
+        pointerDownAtPoint: n.pointerDownAtPoint,
+        prevCursorFlags: t
+      });
+      break;
+    }
+    default: {
+      const i8 = me(e, o2);
+      i8.length === 0 ? n.state !== "inactive" && I({
+        interactionState: {
+          state: "inactive"
+        }
+      }) : I({
+        interactionState: {
+          hitRegions: i8,
+          state: "hover"
+        }
+      }), ge(e.currentTarget);
+      break;
+    }
+  }
+}
+function De2(e) {
+  if (e.relatedTarget instanceof HTMLIFrameElement) {
+    const { interactionState: t } = G2();
+    switch (t.state) {
+      case "hover":
+        I({
+          interactionState: {
+            state: "inactive"
+          }
+        });
+    }
+  }
+}
+function Oe(e) {
+  if (e.defaultPrevented)
+    return;
+  if (e.pointerType === "mouse" && e.button > 0)
+    return;
+  const { interactionState: t } = G2();
+  switch (t.state) {
+    case "active":
+      I({
+        cursorFlags: 0,
+        interactionState: {
+          state: "inactive"
+        }
+      }), t.hitRegions.length > 0 && (ge(e.currentTarget), I((n) => ({
+        mountedGroups: new Map(n.mountedGroups)
+      })), e.preventDefault());
+  }
+}
+function Te(e) {
+  let t = 0, n = 0;
+  const o2 = {};
+  for (const s of e)
+    if (s.defaultSize !== void 0) {
+      t++;
+      const l2 = _2(s.defaultSize);
+      n += l2, o2[s.panelId] = l2;
+    } else
+      o2[s.panelId] = void 0;
+  const i8 = e.length - t;
+  if (i8 !== 0) {
+    const s = _2((100 - n) / i8);
+    for (const l2 of e)
+      l2.defaultSize === void 0 && (o2[l2.panelId] = s);
+  }
+  return o2;
+}
+function Et(e, t, n) {
+  if (!n[0])
+    return;
+  const i8 = e.panels.find((u) => u.element === t);
+  if (!i8 || !i8.onResize)
+    return;
+  const s = J({ group: e }), l2 = e.orientation === "horizontal" ? i8.element.offsetWidth : i8.element.offsetHeight, r5 = i8.mutableValues.prevSize, a = {
+    asPercentage: _2(l2 / s * 100),
+    inPixels: l2
+  };
+  i8.mutableValues.prevSize = a, i8.onResize(a, i8.id, r5);
+}
+function kt(e, t) {
+  if (Object.keys(e).length !== Object.keys(t).length)
+    return false;
+  for (const o2 in e)
+    if (e[o2] !== t[o2])
+      return false;
+  return true;
+}
+function Gt(e, t) {
+  const n = e.map((i8) => i8.id), o2 = Object.keys(t);
+  if (n.length !== o2.length)
+    return false;
+  for (const i8 of n)
+    if (!o2.includes(i8))
+      return false;
+  return true;
+}
+const q = /* @__PURE__ */ new Map();
+function It(e) {
+  let t = true;
+  P(
+    e.element.ownerDocument.defaultView,
+    "Cannot register an unmounted Group"
+  );
+  const n = e.element.ownerDocument.defaultView.ResizeObserver, o2 = /* @__PURE__ */ new Set(), i8 = /* @__PURE__ */ new Set(), s = new n((m) => {
+    for (const d of m) {
+      const { borderBoxSize: f, target: h2 } = d;
+      if (h2 === e.element) {
+        if (t) {
+          if (J({ group: e }) === 0)
+            return;
+          I((x) => {
+            const y = x.mountedGroups.get(e);
+            if (y) {
+              const p = pe(e), w2 = y.defaultLayoutDeferred ? Te(p) : y.layout, C2 = B2({
+                layout: w2,
+                panelConstraints: p
+              });
+              return !y.defaultLayoutDeferred && U(w2, C2) && kt(
+                y.derivedPanelConstraints,
+                p
+              ) ? x : {
+                mountedGroups: new Map(x.mountedGroups).set(e, {
+                  defaultLayoutDeferred: false,
+                  derivedPanelConstraints: p,
+                  layout: C2,
+                  separatorToPanels: y.separatorToPanels
+                })
+              };
+            }
+            return x;
+          });
+        }
+      } else
+        Et(e, h2, f);
+    }
+  });
+  s.observe(e.element), e.panels.forEach((m) => {
+    P(
+      !o2.has(m.id),
+      `Panel ids must be unique; id "${m.id}" was used more than once`
+    ), o2.add(m.id), m.onResize && s.observe(m.element);
+  });
+  const l2 = J({ group: e }), r5 = pe(e), a = e.panels.map(({ id: m }) => m).join(",");
+  let u = e.defaultLayout;
+  u && (Gt(e.panels, u) || (u = void 0));
+  const c = e.inMemoryLayouts[a] ?? u ?? Te(r5), g2 = B2({
+    layout: c,
+    panelConstraints: r5
+  }), b = Ve(e), S = e.element.ownerDocument;
+  return I((m) => {
+    const d = /* @__PURE__ */ new Map();
+    return q.set(
+      S,
+      (q.get(S) ?? 0) + 1
+    ), b.forEach((f) => {
+      f.separator && d.set(f.separator, f.panels);
+    }), {
+      mountedGroups: new Map(m.mountedGroups).set(e, {
+        defaultLayoutDeferred: l2 === 0,
+        derivedPanelConstraints: r5,
+        layout: g2,
+        separatorToPanels: d
+      })
+    };
+  }), e.separators.forEach((m) => {
+    P(
+      !i8.has(m.id),
+      `Separator ids must be unique; id "${m.id}" was used more than once`
+    ), i8.add(m.id), m.element.addEventListener("keydown", Pe);
+  }), q.get(S) === 1 && (S.addEventListener("dblclick", Le, true), S.addEventListener("pointerdown", Ce, true), S.addEventListener("pointerleave", Ge2), S.addEventListener("pointermove", Ie), S.addEventListener("pointerout", De2), S.addEventListener("pointerup", Oe, true)), function() {
+    t = false, q.set(
+      S,
+      Math.max(0, (q.get(S) ?? 0) - 1)
+    ), I((d) => {
+      const f = new Map(d.mountedGroups);
+      return f.delete(e), { mountedGroups: f };
+    }), e.separators.forEach((d) => {
+      d.element.removeEventListener("keydown", Pe);
+    }), q.get(S) || (S.removeEventListener(
+      "dblclick",
+      Le,
+      true
+    ), S.removeEventListener(
+      "pointerdown",
+      Ce,
+      true
+    ), S.removeEventListener("pointerleave", Ge2), S.removeEventListener("pointermove", Ie), S.removeEventListener("pointerout", De2), S.removeEventListener("pointerup", Oe, true)), s.disconnect();
+  };
+}
+function Dt() {
+  const [e, t] = reactExports.useState({}), n = reactExports.useCallback(() => t({}), []);
+  return [e, n];
+}
+function ye(e) {
+  const t = reactExports.useId();
+  return `${e ?? t}`;
+}
+const K = typeof window < "u" ? reactExports.useLayoutEffect : reactExports.useEffect;
+function ee(e) {
+  const t = reactExports.useRef(e);
+  return K(() => {
+    t.current = e;
+  }, [e]), reactExports.useCallback(
+    (...n) => t.current?.(...n),
+    [t]
+  );
+}
+function Se(...e) {
+  return ee((t) => {
+    e.forEach((n) => {
+      if (n)
+        switch (typeof n) {
+          case "function": {
+            n(t);
+            break;
+          }
+          case "object": {
+            n.current = t;
+            break;
+          }
+        }
+    });
+  });
+}
+function ve(e) {
+  const t = reactExports.useRef({ ...e });
+  return K(() => {
+    for (const n in e)
+      t.current[n] = e[n];
+  }, [e]), t.current;
+}
+const Ze = reactExports.createContext(null);
+function Ot2(e, t) {
+  const n = reactExports.useRef({
+    getLayout: () => ({}),
+    setLayout: Rt
+  });
+  reactExports.useImperativeHandle(t, () => n.current, []), K(() => {
+    Object.assign(
+      n.current,
+      Ue({ groupId: e })
+    );
+  });
+}
+function Tt({
+  children: e,
+  className: t,
+  defaultLayout: n,
+  disableCursor: o2,
+  disabled: i8,
+  elementRef: s,
+  groupRef: l2,
+  id: r5,
+  onLayoutChange: a,
+  onLayoutChanged: u,
+  orientation: c = "horizontal",
+  resizeTargetMinimumSize: g2 = {
+    coarse: 20,
+    fine: 10
+  },
+  style: b,
+  ...S
+}) {
+  const m = reactExports.useRef({
+    onLayoutChange: {},
+    onLayoutChanged: {}
+  }), d = ee((z2) => {
+    U(m.current.onLayoutChange, z2) || (m.current.onLayoutChange = z2, a?.(z2));
+  }), f = ee((z2) => {
+    U(m.current.onLayoutChanged, z2) || (m.current.onLayoutChanged = z2, u?.(z2));
+  }), h2 = ye(r5), v2 = reactExports.useRef(null), [x, y] = Dt(), p = reactExports.useRef({
+    lastExpandedPanelSizes: {},
+    layouts: {},
+    panels: [],
+    resizeTargetMinimumSize: g2,
+    separators: []
+  }), w2 = Se(v2, s);
+  Ot2(h2, l2);
+  const C2 = ee(
+    (z2, L2) => {
+      const { interactionState: E, mountedGroups: M3 } = G2();
+      for (const D2 of M3.keys())
+        if (D2.id === z2) {
+          const T = M3.get(D2);
+          if (T) {
+            let N2 = false;
+            switch (E.state) {
+              case "active": {
+                N2 = E.hitRegions.some(
+                  (Z2) => Z2.group === D2
+                );
+                break;
+              }
+            }
+            return {
+              flexGrow: T.layout[L2] ?? 1,
+              pointerEvents: N2 ? "none" : void 0
+            };
+          }
+        }
+      return {
+        flexGrow: n?.[L2] ?? 1
+      };
+    }
+  ), R = ve({
+    defaultLayout: n,
+    disableCursor: o2
+  }), X2 = reactExports.useMemo(
+    () => ({
+      get disableCursor() {
+        return !!R.disableCursor;
+      },
+      getPanelStyles: C2,
+      id: h2,
+      orientation: c,
+      registerPanel: (z2) => {
+        const L2 = p.current;
+        return L2.panels = he(c, [
+          ...L2.panels,
+          z2
+        ]), y(), () => {
+          L2.panels = L2.panels.filter(
+            (E) => E !== z2
+          ), y();
+        };
+      },
+      registerSeparator: (z2) => {
+        const L2 = p.current;
+        return L2.separators = he(c, [
+          ...L2.separators,
+          z2
+        ]), y(), () => {
+          L2.separators = L2.separators.filter(
+            (E) => E !== z2
+          ), y();
+        };
+      },
+      togglePanelDisabled: (z2, L2) => {
+        const M3 = p.current.panels.find(
+          (T) => T.id === z2
+        );
+        M3 && (M3.panelConstraints.disabled = L2);
+        const { mountedGroups: D2 } = G2();
+        for (const T of D2.keys())
+          if (T.id === h2) {
+            const N2 = D2.get(T);
+            N2 && (N2.derivedPanelConstraints = pe(T));
+          }
+      },
+      toggleSeparatorDisabled: (z2, L2) => {
+        const M3 = p.current.separators.find(
+          (D2) => D2.id === z2
+        );
+        M3 && (M3.disabled = L2);
+      }
+    }),
+    [C2, h2, y, c, R]
+  ), V2 = reactExports.useRef(null);
+  return K(() => {
+    const z2 = v2.current;
+    if (z2 === null)
+      return;
+    const L2 = p.current;
+    let E;
+    if (R.defaultLayout !== void 0 && Object.keys(R.defaultLayout).length === L2.panels.length) {
+      E = {};
+      for (const H2 of L2.panels) {
+        const j2 = R.defaultLayout[H2.id];
+        j2 !== void 0 && (E[H2.id] = j2);
+      }
+    }
+    const M3 = {
+      defaultLayout: E,
+      disableCursor: !!R.disableCursor,
+      disabled: !!i8,
+      element: z2,
+      id: h2,
+      inMemoryLastExpandedPanelSizes: p.current.lastExpandedPanelSizes,
+      inMemoryLayouts: p.current.layouts,
+      orientation: c,
+      panels: L2.panels,
+      resizeTargetMinimumSize: L2.resizeTargetMinimumSize,
+      separators: L2.separators
+    };
+    V2.current = M3;
+    const D2 = It(M3), N2 = G2().mountedGroups.get(M3);
+    if (N2) {
+      const { defaultLayoutDeferred: H2, derivedPanelConstraints: j2, layout: ie3 } = N2;
+      !H2 && j2.length > 0 && (d(ie3), f(ie3));
+    }
+    const Z2 = $.addListener(
+      "interactionStateChange",
+      (H2) => {
+        H2.state;
+      }
+    ), Qe2 = $.addListener(
+      "mountedGroupsChange",
+      (H2) => {
+        const j2 = H2.get(M3);
+        if (j2) {
+          const { defaultLayoutDeferred: ie3, derivedPanelConstraints: et2, layout: ce2 } = j2;
+          if (ie3 || et2.length === 0)
+            return;
+          const tt3 = M3.panels.map(({ id: it2 }) => it2).join(",");
+          M3.inMemoryLayouts[tt3] = ce2;
+          const { interactionState: nt2 } = G2(), ot3 = nt2.state !== "active";
+          d(ce2), ot3 && f(ce2);
+        }
+      }
+    );
+    return () => {
+      V2.current = null, D2(), Z2(), Qe2();
+    };
+  }, [
+    i8,
+    h2,
+    f,
+    d,
+    c,
+    x,
+    R
+  ]), reactExports.useEffect(() => {
+    const z2 = V2.current;
+    z2 && (z2.defaultLayout = n, z2.disableCursor = !!o2);
+  }), /* @__PURE__ */ jsxRuntimeExports.jsx(Ze.Provider, { value: X2, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      ...S,
+      className: t,
+      "data-group": true,
+      "data-testid": h2,
+      id: h2,
+      ref: w2,
+      style: {
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+        ...b,
+        display: "flex",
+        flexDirection: c === "horizontal" ? "row" : "column",
+        flexWrap: "nowrap",
+        // Inform the browser that the library is handling touch events for this element
+        // but still allow users to scroll content within panels in the non-resizing direction
+        // NOTE This is not an inherited style
+        // See github.com/bvaughn/react-resizable-panels/issues/662
+        touchAction: c === "horizontal" ? "pan-y" : "pan-x"
+      },
+      children: e
+    }
+  ) });
+}
+Tt.displayName = "Group";
+function xe() {
+  const e = reactExports.useContext(Ze);
+  return P(
+    e,
+    "Group Context not found; did you render a Panel or Separator outside of a Group?"
+  ), e;
+}
+function Nt(e, t) {
+  const { id: n } = xe(), o2 = reactExports.useRef({
+    collapse: fe,
+    expand: fe,
+    getSize: () => ({
+      asPercentage: 0,
+      inPixels: 0
+    }),
+    isCollapsed: () => false,
+    resize: fe
+  });
+  reactExports.useImperativeHandle(t, () => o2.current, []), K(() => {
+    Object.assign(
+      o2.current,
+      We2({ groupId: n, panelId: e })
+    );
+  });
+}
+function _t({
+  children: e,
+  className: t,
+  collapsedSize: n = "0%",
+  collapsible: o2 = false,
+  defaultSize: i8,
+  disabled: s,
+  elementRef: l2,
+  id: r5,
+  maxSize: a = "100%",
+  minSize: u = "0%",
+  onResize: c,
+  panelRef: g2,
+  style: b,
+  ...S
+}) {
+  const m = !!r5, d = ye(r5), f = ve({
+    disabled: s
+  }), h2 = reactExports.useRef(null), v2 = Se(h2, l2), {
+    getPanelStyles: x,
+    id: y,
+    orientation: p,
+    registerPanel: w2,
+    togglePanelDisabled: C2
+  } = xe(), R = c !== null, X2 = ee(
+    (z2, L2, E) => {
+      c?.(z2, r5, E);
+    }
+  );
+  K(() => {
+    const z2 = h2.current;
+    if (z2 !== null) {
+      const L2 = {
+        element: z2,
+        id: d,
+        idIsStable: m,
+        mutableValues: {
+          expandToSize: void 0,
+          prevSize: void 0
+        },
+        onResize: R ? X2 : void 0,
+        panelConstraints: {
+          collapsedSize: n,
+          collapsible: o2,
+          defaultSize: i8,
+          disabled: f.disabled,
+          maxSize: a,
+          minSize: u
+        }
+      };
+      return w2(L2);
+    }
+  }, [
+    n,
+    o2,
+    i8,
+    R,
+    d,
+    m,
+    a,
+    u,
+    X2,
+    w2,
+    f
+  ]), reactExports.useEffect(() => {
+    C2(d, !!s);
+  }, [s, d, C2]), Nt(d, g2);
+  const V2 = reactExports.useSyncExternalStore(
+    (z2) => ($.addListener("mountedGroupsChange", z2), () => {
+      $.removeListener("mountedGroupsChange", z2);
+    }),
+    // useSyncExternalStore does not support a custom equality check
+    // stringify avoids re-rendering when the style value hasn't changed
+    () => JSON.stringify(x(y, d)),
+    () => JSON.stringify(x(y, d))
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      ...S,
+      "aria-disabled": s || void 0,
+      "data-panel": true,
+      "data-testid": d,
+      id: d,
+      ref: v2,
+      style: {
+        ...Ft2,
+        display: "flex",
+        flexBasis: 0,
+        flexShrink: 1,
+        // Prevent Panel content from interfering with panel size
+        overflow: "hidden",
+        ...JSON.parse(V2)
+      },
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: t,
+          style: {
+            maxHeight: "100%",
+            maxWidth: "100%",
+            flexGrow: 1,
+            ...b,
+            // Inform the browser that the library is handling touch events for this element
+            // but still allow users to scroll content within panels in the non-resizing direction
+            // NOTE This is not an inherited style
+            // See github.com/bvaughn/react-resizable-panels/issues/662
+            touchAction: p === "horizontal" ? "pan-y" : "pan-x"
+          },
+          children: e
+        }
+      )
+    }
+  );
+}
+_t.displayName = "Panel";
+const Ft2 = {
+  minHeight: 0,
+  maxHeight: "100%",
+  height: "auto",
+  minWidth: 0,
+  maxWidth: "100%",
+  width: "auto",
+  border: "none",
+  borderWidth: 0,
+  padding: 0,
+  margin: 0
+};
+function $t({
+  layout: e,
+  panelConstraints: t,
+  panelId: n,
+  panelIndex: o2
+}) {
+  let i8, s;
+  const l2 = e[n], r5 = t.find(
+    (a) => a.panelId === n
+  );
+  if (r5) {
+    const a = r5.maxSize, u = r5.collapsible ? r5.collapsedSize : r5.minSize, c = [o2, o2 + 1];
+    s = B2({
+      layout: oe({
+        delta: u - l2,
+        initialLayout: e,
+        panelConstraints: t,
+        pivotIndices: c,
+        prevLayout: e
+      }),
+      panelConstraints: t
+    })[n], i8 = B2({
+      layout: oe({
+        delta: a - l2,
+        initialLayout: e,
+        panelConstraints: t,
+        pivotIndices: c,
+        prevLayout: e
+      }),
+      panelConstraints: t
+    })[n];
+  }
+  return {
+    valueControls: n,
+    valueMax: i8,
+    valueMin: s,
+    valueNow: l2
+  };
+}
+function Ht2({
+  children: e,
+  className: t,
+  disabled: n,
+  elementRef: o2,
+  id: i8,
+  style: s,
+  ...l2
+}) {
+  const r5 = ye(i8), a = ve({
+    disabled: n
+  }), [u, c] = reactExports.useState({}), [g2, b] = reactExports.useState("inactive"), S = reactExports.useRef(null), m = Se(S, o2), {
+    disableCursor: d,
+    id: f,
+    orientation: h2,
+    registerSeparator: v2,
+    toggleSeparatorDisabled: x
+  } = xe(), y = h2 === "horizontal" ? "vertical" : "horizontal";
+  K(() => {
+    const w2 = S.current;
+    if (w2 !== null) {
+      const C2 = {
+        disabled: a.disabled,
+        element: w2,
+        id: r5
+      }, R = v2(C2), X2 = $.addListener(
+        "interactionStateChange",
+        (z2) => {
+          b(
+            z2.state !== "inactive" && z2.hitRegions.some(
+              (L2) => L2.separator === C2
+            ) ? z2.state : "inactive"
+          );
+        }
+      ), V2 = $.addListener(
+        "mountedGroupsChange",
+        (z2) => {
+          z2.forEach(
+            ({ derivedPanelConstraints: L2, layout: E, separatorToPanels: M3 }, D2) => {
+              if (D2.id === f) {
+                const T = M3.get(C2);
+                if (T) {
+                  const N2 = T[0], Z2 = D2.panels.indexOf(N2);
+                  c(
+                    $t({
+                      layout: E,
+                      panelConstraints: L2,
+                      panelId: N2.id,
+                      panelIndex: Z2
+                    })
+                  );
+                }
+              }
+            }
+          );
+        }
+      );
+      return () => {
+        X2(), V2(), R();
+      };
+    }
+  }, [f, r5, v2, a]), reactExports.useEffect(() => {
+    x(r5, !!n);
+  }, [n, r5, x]);
+  let p;
+  return n && !d && (p = "not-allowed"), /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      ...l2,
+      "aria-controls": u.valueControls,
+      "aria-disabled": n || void 0,
+      "aria-orientation": y,
+      "aria-valuemax": u.valueMax,
+      "aria-valuemin": u.valueMin,
+      "aria-valuenow": u.valueNow,
+      children: e,
+      className: t,
+      "data-separator": n ? "disabled" : g2,
+      "data-testid": r5,
+      id: r5,
+      ref: m,
+      role: "separator",
+      style: {
+        flexBasis: "auto",
+        cursor: p,
+        ...s,
+        flexGrow: 0,
+        flexShrink: 0,
+        // Inform the browser that the library is handling touch events for this element
+        // See github.com/bvaughn/react-resizable-panels/issues/662
+        touchAction: "none"
+      },
+      tabIndex: n ? void 0 : 0
+    }
+  );
+}
+Ht2.displayName = "Separator";
+const PANE_TYPE_CONFIGS = {
+  terminal: {
+    label: "Terminal",
+    icon: Terminal,
+    colorClass: "text-accent",
+    bgActiveClass: "bg-accent/[0.13]",
+    borderActiveClass: "border-accent/[0.27]",
+    paneBorderClass: "border-accent/50"
+  },
+  "file-manager": {
+    label: "Files",
+    icon: FolderOpen,
+    colorClass: "text-warning",
+    bgActiveClass: "bg-warning/[0.13]",
+    borderActiveClass: "border-warning/[0.27]",
+    paneBorderClass: "border-warning/50"
+  }
+  // editor: {
+  //   label: 'Editor',
+  //   icon: FileCode,
+  //   colorClass: 'text-info',
+  //   bgActiveClass: 'bg-info/[0.13]',
+  //   borderActiveClass: 'border-info/[0.27]',
+  //   paneBorderClass: 'border-info/50'
+  // }
+};
+const paneTypes = Object.keys(PANE_TYPE_CONFIGS);
+const MIME_TYPE$1 = "application/x-terma-pane";
+function PaneHeader({ tabId, paneId, paneType }) {
+  const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
+  const Icon2 = config.icon;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      className: "flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-elevated px-3.5 py-2 active:cursor-grabbing",
+      draggable: true,
+      onDragStart: (e) => {
+        e.dataTransfer.setData(MIME_TYPE$1, JSON.stringify({ paneId, tabId }));
+        e.dataTransfer.effectAllowed = "move";
+      },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { size: 16, className: `${config.colorClass} opacity-90` }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-0.5", children: paneTypes.map((pt2) => {
+            const ptConfig = PANE_TYPE_CONFIGS[pt2];
+            const isActive = pt2 === paneType;
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                onClick: (e) => {
+                  e.stopPropagation();
+                  if (!isActive) useTabStore.getState().setPaneType(tabId, paneId, pt2);
+                },
+                className: `cursor-pointer rounded-sm border border-transparent bg-transparent px-2.5 py-0.5 text-xs transition-all ${isActive ? `${ptConfig.bgActiveClass} ${ptConfig.borderActiveClass} ${ptConfig.colorClass}` : "text-fg-muted"}`,
+                children: ptConfig.label
+              },
+              pt2
+            );
+          }) })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            IconButton,
+            {
+              icon: Columns2,
+              onClick: (e) => {
+                e.stopPropagation();
+                useTabStore.getState().splitPane(tabId, paneId, "vertical");
+              },
+              title: "Split vertical"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            IconButton,
+            {
+              icon: Rows2,
+              onClick: (e) => {
+                e.stopPropagation();
+                useTabStore.getState().splitPane(tabId, paneId, "horizontal");
+              },
+              title: "Split horizontal"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            IconButton,
+            {
+              icon: X$1,
+              onClick: (e) => {
+                e.stopPropagation();
+                useTabStore.getState().closePane(tabId, paneId);
+              },
+              title: "Close pane"
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+const MIME_FILES = "application/x-terma-files";
+function relativePath(from, to) {
+  const fromParts = from.split("/").filter(Boolean);
+  const toParts = to.split("/").filter(Boolean);
+  let i8 = 0;
+  while (i8 < fromParts.length && i8 < toParts.length && fromParts[i8] === toParts[i8]) i8++;
+  const ups = fromParts.length - i8;
+  const rest = toParts.slice(i8);
+  const rel = [...Array(ups).fill(".."), ...rest].join("/");
+  if (!rel) return ".";
+  if (!rel.startsWith(".")) return "./" + rel;
+  return rel;
+}
+function shellEscape(s) {
+  if (/^[a-zA-Z0-9._\-/=@:]+$/.test(s)) return s;
+  return "'" + s.replace(/'/g, "'\\''") + "'";
 }
 const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, active, cwd }) {
   const containerRef = reactExports.useRef(null);
@@ -35546,6 +35759,43 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, a
       window.api.pty.write(ptyId, text);
     }
   }, [paneId]);
+  const [dragOver, setDragOver] = reactExports.useState(false);
+  const handleDragOver = reactExports.useCallback((e) => {
+    if (e.dataTransfer.types.includes(MIME_FILES) || e.dataTransfer.types.includes("Files")) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      setDragOver(true);
+    }
+  }, []);
+  const handleDragLeave = reactExports.useCallback((e) => {
+    const container = e.currentTarget;
+    const related = e.relatedTarget;
+    if (!related || !container.contains(related)) {
+      setDragOver(false);
+    }
+  }, []);
+  const handleFileDrop = reactExports.useCallback(
+    async (e) => {
+      e.preventDefault();
+      setDragOver(false);
+      const ptyId = getPtyId(paneId);
+      if (!ptyId) return;
+      let paths = [];
+      const raw = e.dataTransfer.getData(MIME_FILES);
+      if (raw) {
+        paths = JSON.parse(raw);
+      }
+      if (paths.length === 0 && e.dataTransfer.files.length > 0) {
+        paths = Array.from(e.dataTransfer.files).map((f) => f.path);
+      }
+      if (paths.length === 0) return;
+      const cwd2 = await window.api.pty.getCwd(ptyId);
+      if (!cwd2) return;
+      const escaped = paths.map((p) => shellEscape(relativePath(cwd2, p))).join(" ");
+      window.api.pty.write(ptyId, escaped);
+    },
+    [paneId]
+  );
   const handleOpenExternal = reactExports.useCallback(async () => {
     const ptyId = getPtyId(paneId);
     if (!ptyId) return;
@@ -35595,7 +35845,10 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, a
       {
         ref: containerRef,
         onContextMenu: handleContextMenu,
-        className: "h-full w-full px-2 py-1"
+        onDragOver: handleDragOver,
+        onDragLeave: handleDragLeave,
+        onDrop: handleFileDrop,
+        className: `h-full w-full px-2 py-1 ${dragOver ? "ring-2 ring-inset ring-accent" : ""}`
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -39877,7 +40130,8 @@ function FileItem({
   style,
   onClick,
   onDoubleClick,
-  onContextMenu
+  onContextMenu,
+  onDragStart
 }) {
   const indent = Math.round(fontSize * 0.6);
   const iconSize = Math.round(fontSize * 1.15);
@@ -39893,9 +40147,11 @@ function FileItem({
         paddingLeft: depth * indent,
         ...style
       },
+      draggable: name !== "..",
       onClick,
       onDoubleClick,
       onContextMenu,
+      onDragStart,
       children: [
         depth > 0 && Array.from({ length: depth }, (_3, i8) => /* @__PURE__ */ jsxRuntimeExports.jsx(
           "span",
@@ -39951,7 +40207,8 @@ function FileTree({
   expandedDirs,
   onToggleDir,
   onNavigateUp,
-  onNavigateToDir
+  onNavigateToDir,
+  refreshToken
 }) {
   const [entries, setEntries] = reactExports.useState([]);
   const [selected, setSelected] = reactExports.useState(/* @__PURE__ */ new Set());
@@ -40002,7 +40259,7 @@ function FileTree({
   }, [loadDir, rootPath]);
   reactExports.useEffect(() => {
     loadTree();
-  }, [loadTree]);
+  }, [loadTree, refreshToken]);
   reactExports.useEffect(() => {
     window.api.fs.watch(rootPath);
     const unsub = window.api.fs.onFsEvent(() => loadTree());
@@ -40034,9 +40291,7 @@ function FileTree({
       } else {
         setSelected(/* @__PURE__ */ new Set([entry.path]));
         anchorPath.current = entry.path;
-        if (entry.name === ".." && onNavigateUp) {
-          onNavigateUp();
-        } else if (entry.isDirectory) {
+        if (entry.isDirectory && entry.name !== "..") {
           if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
           clickTimerRef.current = setTimeout(() => {
             clickTimerRef.current = null;
@@ -40053,9 +40308,11 @@ function FileTree({
         clearTimeout(clickTimerRef.current);
         clickTimerRef.current = null;
       }
-      if (entry.isDirectory && entry.name !== "..") {
+      if (entry.name === "..") {
+        onNavigateUp?.();
+      } else if (entry.isDirectory) {
         onNavigateToDir?.(entry.path);
-      } else if (!entry.isDirectory) {
+      } else {
         const match = fileAssociations.find((a) => matchesGlob(entry.name, a.pattern));
         if (match) {
           window.api.shell.openWith(match.command, entry.path);
@@ -40071,12 +40328,13 @@ function FileTree({
     if (items.length > 0) setClipboard(items);
   }, [entries, selected]);
   const handlePaste = reactExports.useCallback(
-    async (targetPath, targetIsDirectory) => {
-      if (clipboard.length === 0) return;
+    async (targetPath, targetIsDirectory, systemPaths) => {
+      const sources = systemPaths && systemPaths.length > 0 ? systemPaths.map((p) => ({ path: p })) : clipboard.map((item) => ({ path: item.path }));
+      if (sources.length === 0) return;
       const destDir = targetIsDirectory ? targetPath : parentDir(targetPath);
       let ok = 0;
       let fail = 0;
-      for (const item of clipboard) {
+      for (const item of sources) {
         try {
           await window.api.fs.copy(item.path, destDir);
           ok++;
@@ -40088,7 +40346,7 @@ function FileTree({
       if (ok > 0) {
         addToast(
           "success",
-          ok === 1 ? `Copied "${baseName(clipboard[0].path)}"` : `Copied ${ok} items`
+          ok === 1 ? `Copied "${baseName(sources[0].path)}"` : `Copied ${ok} items`
         );
       }
       if (fail > 0) {
@@ -40122,20 +40380,40 @@ function FileTree({
       addToast("error", fail === 1 ? "Delete failed" : `Failed to delete ${fail} items`);
     }
   }, [selected, loadTree, addToast]);
+  const handleDragStart = reactExports.useCallback(
+    (e, entry) => {
+      if (entry.name === "..") {
+        e.preventDefault();
+        return;
+      }
+      const paths = selected.has(entry.path) && selected.size > 1 ? entries.filter((en2) => selected.has(en2.path)).map((en2) => en2.path) : [entry.path];
+      e.dataTransfer.setData("application/x-terma-files", JSON.stringify(paths));
+      e.dataTransfer.effectAllowed = "copyMove";
+    },
+    [entries, selected]
+  );
   reactExports.useEffect(() => {
     const container = parentRef.current;
     if (!container) return;
-    const handleKeyDown = (e) => {
+    const handleKeyDown = async (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.code === "KeyV") {
+        e.preventDefault();
+        const targetPath = anchorPath.current ? entries.find((en2) => en2.path === anchorPath.current) : null;
+        const destPath = targetPath?.isDirectory ? targetPath.path : rootPath;
+        if (clipboard.length === 0) {
+          const systemPaths = await window.api.clipboard.readFilePaths();
+          if (systemPaths.length > 0) {
+            handlePaste(destPath, true, systemPaths);
+          }
+        } else if (targetPath) {
+          handlePaste(targetPath.path, targetPath.isDirectory);
+        }
+        return;
+      }
       if (selected.size === 0) return;
-      if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+      if ((e.ctrlKey || e.metaKey) && e.code === "KeyC") {
         e.preventDefault();
         handleCopy();
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "v") {
-        e.preventDefault();
-        if (anchorPath.current) {
-          const entry = entries.find((en2) => en2.path === anchorPath.current);
-          if (entry) handlePaste(entry.path, entry.isDirectory);
-        }
       } else if (e.key === "Delete") {
         e.preventDefault();
         handleDelete();
@@ -40143,7 +40421,7 @@ function FileTree({
     };
     container.addEventListener("keydown", handleKeyDown);
     return () => container.removeEventListener("keydown", handleKeyDown);
-  }, [selected, entries, handleCopy, handlePaste, handleDelete]);
+  }, [selected, entries, clipboard, rootPath, handleCopy, handlePaste, handleDelete]);
   const virtualizer = useVirtualizer({
     count: entries.length,
     getScrollElement: () => parentRef.current,
@@ -40161,8 +40439,16 @@ function FileTree({
       type: "item",
       label: clipboard.length > 1 ? `Paste ${clipboard.length} items` : "Paste",
       shortcut: "Ctrl+V",
-      disabled: clipboard.length === 0,
-      onAction: () => handlePaste(contextMenu.path, contextMenu.isDirectory)
+      onAction: async () => {
+        if (clipboard.length === 0) {
+          const systemPaths = await window.api.clipboard.readFilePaths();
+          if (systemPaths.length > 0) {
+            handlePaste(contextMenu.path, contextMenu.isDirectory, systemPaths);
+          }
+        } else {
+          handlePaste(contextMenu.path, contextMenu.isDirectory);
+        }
+      }
     },
     { type: "separator" },
     {
@@ -40199,6 +40485,7 @@ function FileTree({
               },
               onClick: (e) => handleItemClick(e, entry, virtualItem.index),
               onDoubleClick: () => handleItemDoubleClick(entry),
+              onDragStart: (e) => handleDragStart(e, entry),
               onContextMenu: (e) => {
                 e.preventDefault();
                 if (!selected.has(entry.path)) {
@@ -40237,6 +40524,7 @@ function FileManagerPane({ tabId, paneId, cwd }) {
   const addToast = useToastStore((s) => s.addToast);
   const [pathInput, setPathInput] = reactExports.useState("");
   const [isEditing, setIsEditing] = reactExports.useState(false);
+  const [refreshToken, setRefreshToken] = reactExports.useState(0);
   const inputRef = reactExports.useRef(null);
   reactExports.useEffect(() => {
     initPane(paneId, cwd ?? void 0);
@@ -40251,7 +40539,15 @@ function FileManagerPane({ tabId, paneId, cwd }) {
     async (path) => {
       const trimmed = path.trim();
       if (!trimmed) return;
-      const normalized = trimmed === "/" ? "/" : trimmed.replace(/\/+$/, "");
+      const resolved = trimmed.startsWith("/") ? trimmed : (pane?.rootPath ?? "/") + "/" + trimmed;
+      const parts = resolved.split("/").filter(Boolean);
+      const stack = [];
+      for (const p of parts) {
+        if (p === ".") continue;
+        else if (p === "..") stack.pop();
+        else stack.push(p);
+      }
+      const normalized = "/" + stack.join("/");
       try {
         const items = await window.api.fs.readDir(normalized);
         if (items !== void 0) {
@@ -40264,7 +40560,7 @@ function FileManagerPane({ tabId, paneId, cwd }) {
         addToast("error", `Directory not found: ${normalized}`);
       }
     },
-    [paneId, tabId, setRootPath, updatePaneCwd, addToast]
+    [paneId, tabId, pane?.rootPath, setRootPath, updatePaneCwd, addToast]
   );
   const handleKeyDown = reactExports.useCallback(
     (e) => {
@@ -40294,24 +40590,34 @@ function FileManagerPane({ tabId, paneId, cwd }) {
   }, [pane?.rootPath, paneId, tabId, setRootPath, updatePaneCwd]);
   if (!pane) return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full w-full" });
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-full w-full flex-col", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex shrink-0 items-center border-b border-border", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "input",
-      {
-        ref: inputRef,
-        type: "text",
-        value: pathInput,
-        onChange: (e) => setPathInput(e.target.value),
-        onFocus: () => setIsEditing(true),
-        onBlur: () => {
-          setIsEditing(false);
-          setPathInput(pane.rootPath);
-        },
-        onKeyDown: handleKeyDown,
-        spellCheck: false,
-        className: "min-w-0 flex-1 bg-transparent px-3 py-1.5 text-[12px] text-fg outline-none placeholder:text-fg-muted",
-        placeholder: "/"
-      }
-    ) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center border-b border-border", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "input",
+        {
+          ref: inputRef,
+          type: "text",
+          value: pathInput,
+          onChange: (e) => setPathInput(e.target.value),
+          onFocus: () => setIsEditing(true),
+          onBlur: () => {
+            setIsEditing(false);
+            setPathInput(pane.rootPath);
+          },
+          onKeyDown: handleKeyDown,
+          spellCheck: false,
+          className: "min-w-0 flex-1 bg-transparent px-3 py-2 text-md text-fg outline-none placeholder:text-fg-muted",
+          placeholder: "/"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        IconButton,
+        {
+          icon: RefreshCw,
+          onClick: () => setRefreshToken((n) => n + 1),
+          title: "Refresh"
+        }
+      )
+    ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative flex-1", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
       FileTree,
       {
@@ -40319,58 +40625,12 @@ function FileManagerPane({ tabId, paneId, cwd }) {
         expandedDirs: pane.expandedDirs,
         onToggleDir: (path) => toggleDir(paneId, path),
         onNavigateUp: handleNavigateUp,
-        onNavigateToDir: handleNavigateToDir
+        onNavigateToDir: handleNavigateToDir,
+        refreshToken
       }
     ) }) })
   ] });
 }
-const EditorPane = reactExports.memo(function EditorPane2({ tabId, paneId, active, cwd }) {
-  const containerRef = reactExports.useRef(null);
-  const setPaneTerminal = useTabStore((s) => s.setPaneTerminal);
-  reactExports.useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    attach(paneId, container, { cwd, command: "vim", args: ["."] }).then((ptyId) => {
-      if (ptyId) {
-        setPaneTerminal(tabId, paneId, ptyId);
-      }
-    });
-    return () => {
-      detach(paneId);
-    };
-  }, [paneId]);
-  reactExports.useEffect(() => {
-    if (active) {
-      focus(paneId);
-    }
-  }, [active, paneId]);
-  const updatePaneCwd = useTabStore((s) => s.updatePaneCwd);
-  const lastCwdRef = reactExports.useRef(null);
-  reactExports.useEffect(() => {
-    const poll = async () => {
-      const ptyId = getPtyId(paneId);
-      if (!ptyId) return;
-      try {
-        const current = await window.api.pty.getCwd(ptyId);
-        if (current && current !== lastCwdRef.current) {
-          lastCwdRef.current = current;
-          updatePaneCwd(tabId, paneId, current);
-        }
-      } catch {
-      }
-    };
-    poll();
-    const interval = setInterval(poll, 2e3);
-    return () => clearInterval(interval);
-  }, [paneId, tabId, updatePaneCwd]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "div",
-    {
-      ref: containerRef,
-      className: "h-full w-full px-2 py-1"
-    }
-  );
-});
 class ErrorBoundary extends reactExports.Component {
   constructor(props) {
     super(props);
@@ -40407,9 +40667,9 @@ const PaneContent = reactExports.memo(function PaneContent2({ paneType, tabId, p
     case "file-manager":
       content = /* @__PURE__ */ jsxRuntimeExports.jsx(FileManagerPane, { tabId, paneId, cwd });
       break;
-    case "editor":
-      content = /* @__PURE__ */ jsxRuntimeExports.jsx(EditorPane, { tabId, paneId, active: isActive, cwd });
-      break;
+    // case 'editor':
+    //   content = <EditorPane tabId={tabId} paneId={paneId} active={isActive} cwd={cwd} />
+    //   break
     case "terminal":
     default:
       content = /* @__PURE__ */ jsxRuntimeExports.jsx(TerminalPane, { tabId, paneId, active: isActive, cwd });
@@ -40459,7 +40719,10 @@ const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isAct
       onDrop: handleDrop,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(PaneHeader, { tabId, paneId: node.id, paneType }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative flex-1", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PaneContent, { paneType, tabId, paneId: node.id, isActive, cwd: node.cwd }) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex-1", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PaneContent, { paneType, tabId, paneId: node.id, isActive, cwd: node.cwd }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/5 to-transparent" })
+        ] }),
         isDragOver && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-accent bg-accent/10" })
       ]
     }
@@ -40491,7 +40754,7 @@ const SplitPane = reactExports.memo(function SplitPane2({ node, tabId, isTabActi
     Tt,
     {
       orientation,
-      onLayout: (sizes) => updateLayoutRatios(tabId, node.id, sizes),
+      onLayoutChanged: (sizes) => updateLayoutRatios(tabId, node.id, sizes),
       children: node.children.map((child, i8) => /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPaneEntry, { index: i8, total: node.children.length, children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane2, { node: child, tabId, isTabActive }) }, child.id))
     }
   );
@@ -41048,13 +41311,18 @@ const TabContent = reactExports.memo(function TabContent2({
 }) {
   const tab = useTabStore((s) => s.tabs[tabId]);
   if (!tab) return null;
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `h-full w-full ${isActive ? "block" : "hidden"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane, { node: tab.layoutTree, tabId, isTabActive: isActive }) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `absolute inset-0 ${isActive ? "" : "invisible pointer-events-none"}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane, { node: tab.layoutTree, tabId, isTabActive: isActive }) });
 });
 function App() {
   const tabOrder = useTabStore((s) => s.tabOrder);
   const activeTabId = useTabStore((s) => s.activeTabId);
   const settingsOpen = useSettingsStore((s) => s.settingsOpen);
   const activeTheme = useSettingsStore((s) => s.getActiveTheme());
+  const [maximized, setMaximized] = reactExports.useState(false);
+  reactExports.useEffect(() => {
+    window.api.window.isMaximized().then(setMaximized);
+    return window.api.window.onMaximizedChange(setMaximized);
+  }, []);
   reactExports.useEffect(() => {
     applyThemeToDOM(activeTheme);
   }, [activeTheme]);
@@ -41098,7 +41366,7 @@ function App() {
     };
   }, []);
   const handleKeyDown = reactExports.useCallback((e) => {
-    const { ctrlKey, shiftKey, key } = e;
+    const { ctrlKey, shiftKey, code, key } = e;
     const state = useTabStore.getState();
     const settingsState = useSettingsStore.getState();
     if (ctrlKey && !shiftKey) {
@@ -41119,40 +41387,35 @@ function App() {
       }
     }
     if (ctrlKey && shiftKey) {
-      if (key === "<" || key === ",") {
+      if (key === "<" || key === "," || code === "Comma") {
         e.preventDefault();
         settingsState.toggleSettings();
         return;
       }
-      switch (key) {
-        case "T":
-        case "t":
+      switch (code) {
+        case "KeyT":
           e.preventDefault();
           state.createTab();
           break;
-        case "W":
-        case "w":
+        case "KeyW":
           e.preventDefault();
           if (state.activeTabId) state.closeTab(state.activeTabId);
           break;
-        case "D":
-        case "d":
+        case "KeyD":
           e.preventDefault();
           if (state.activeTabId) {
             const tab = state.tabs[state.activeTabId];
             if (tab) state.splitPane(state.activeTabId, tab.activePaneId, "vertical");
           }
           break;
-        case "E":
-        case "e":
+        case "KeyE":
           e.preventDefault();
           if (state.activeTabId) {
             const tab = state.tabs[state.activeTabId];
             if (tab) state.splitPane(state.activeTabId, tab.activePaneId, "horizontal");
           }
           break;
-        case "B":
-        case "b":
+        case "KeyB":
           e.preventDefault();
           if (state.activeTabId) {
             const tab = state.tabs[state.activeTabId];
@@ -41179,10 +41442,10 @@ function App() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-screen w-screen flex-col overflow-hidden bg-base", children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex h-screen w-screen flex-col overflow-hidden bg-base ${maximized ? "" : "border-2 border-border shadow-2xl"}`, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(TitleBar, {}),
     /* @__PURE__ */ jsxRuntimeExports.jsx(TabBar, {}),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 overflow-hidden p-2", children: tabOrder.map((tabId) => /* @__PURE__ */ jsxRuntimeExports.jsx(TabContent, { tabId, isActive: tabId === activeTabId }, tabId)) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 overflow-hidden p-2", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative h-full", children: tabOrder.map((tabId) => /* @__PURE__ */ jsxRuntimeExports.jsx(TabContent, { tabId, isActive: tabId === activeTabId }, tabId)) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBar, {}),
     /* @__PURE__ */ jsxRuntimeExports.jsx(ToastContainer, {}),
     settingsOpen && /* @__PURE__ */ jsxRuntimeExports.jsx(SettingsPanel, {})
