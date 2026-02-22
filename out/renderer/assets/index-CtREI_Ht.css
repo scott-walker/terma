@@ -1380,14 +1380,8 @@
     background-color: var(--color-backdrop);
   }
 
-  .bg-base, .bg-base\/15 {
+  .bg-base {
     background-color: var(--color-base);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-base\/15 {
-      background-color: color-mix(in oklab, var(--color-base) 15%, transparent);
-    }
   }
 
   .bg-border {
@@ -1416,7 +1410,7 @@
     background-color: var(--color-overlay-subtle);
   }
 
-  .bg-pane-active-agent\/\[0\.13\] {
+  .bg-pane-active-agent, .bg-pane-active-agent\/\[0\.13\] {
     background-color: var(--color-pane-active-agent);
   }
 
@@ -1426,7 +1420,7 @@
     }
   }
 
-  .bg-pane-active-files\/\[0\.13\] {
+  .bg-pane-active-files, .bg-pane-active-files\/\[0\.13\] {
     background-color: var(--color-pane-active-files);
   }
 
@@ -1436,7 +1430,7 @@
     }
   }
 
-  .bg-pane-active-terminal\/\[0\.13\] {
+  .bg-pane-active-terminal, .bg-pane-active-terminal\/\[0\.13\] {
     background-color: var(--color-pane-active-terminal);
   }
 
@@ -1778,6 +1772,10 @@
     text-decoration-line: underline;
   }
 
+  .opacity-0 {
+    opacity: 0;
+  }
+
   .opacity-30 {
     opacity: .3;
   }
@@ -1895,6 +1893,12 @@
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
 
+  .transition-opacity {
+    transition-property: opacity;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+
   .transition-transform {
     transition-property: transform, translate, scale, rotate;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
@@ -1909,6 +1913,11 @@
   .duration-200 {
     --tw-duration: .2s;
     transition-duration: .2s;
+  }
+
+  .duration-1000 {
+    --tw-duration: 1s;
+    transition-duration: 1s;
   }
 
   .duration-\[120ms\] {

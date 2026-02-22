@@ -28,6 +28,7 @@ interface FsApi {
   stat(filePath: string): Promise<FileEntry>
   rename(oldPath: string, newPath: string): Promise<void>
   delete(filePath: string): Promise<void>
+  restore(originalPaths: string[]): Promise<{ ok: number; fail: number }>
   copy(srcPath: string, destDir: string): Promise<void>
   onCopyProgress(cb: (progress: { done: number; total: number }) => void): () => void
   watch(dirPath: string): void
@@ -73,6 +74,7 @@ interface ShellApi {
 
 interface ClipboardApi {
   readFilePaths(): Promise<string[]>
+  saveImage(destDir: string): Promise<string | null>
 }
 
 interface WindowApi {

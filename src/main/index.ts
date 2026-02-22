@@ -1,6 +1,7 @@
 import { app, BrowserWindow, clipboard, ipcMain, shell } from 'electron'
 import { spawn } from 'child_process'
 import { join } from 'path'
+import { writeFile, access } from 'fs/promises'
 import { PtyManager } from './pty/pty-manager'
 import { FsService } from './file-system/fs-service'
 import { FsWatcher } from './file-system/fs-watcher'
@@ -75,6 +76,36 @@ app.whenReady().then(() => {
         .map((uri) => decodeURIComponent(new URL(uri.trim()).pathname))
     }
     return []
+  })
+
+  ipcMain.handle('clipboard:saveImage', async (_event, destDir: string) => {
+    const img = clipboard.readImage()
+    if (img.isEmpty()) return null
+    const png = img.toPNG()
+    const now = new Date()
+    const ts = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, '0'),
+      String(now.getDate()).padStart(2, '0'),
+      '_',
+      String(now.getHours()).padStart(2, '0'),
+      String(now.getMinutes()).padStart(2, '0'),
+      String(now.getSeconds()).padStart(2, '0')
+    ].join('')
+    const baseName = `image_${ts}`
+    let filePath = join(destDir, `${baseName}.png`)
+    let counter = 0
+    while (true) {
+      try {
+        await access(filePath)
+        counter++
+        filePath = join(destDir, `${baseName} (${counter}).png`)
+      } catch {
+        break
+      }
+    }
+    await writeFile(filePath, png)
+    return filePath
   })
 
   ipcMain.handle('shell:openPath', (_event, path: string) => shell.openPath(path))

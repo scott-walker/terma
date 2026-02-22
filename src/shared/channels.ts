@@ -13,6 +13,7 @@ export const FS_CHANNELS = {
   STAT: 'fs:stat',
   RENAME: 'fs:rename',
   DELETE: 'fs:delete',
+  RESTORE: 'fs:restore',
   COPY: 'fs:copy',
   COPY_PROGRESS: 'fs:copyProgress',
   WATCH: 'fs:watch',
@@ -38,9 +39,11 @@ export const SHELL_CHANNELS = {
 } as const
 
 export const CLIPBOARD_CHANNELS = {
-  READ_FILE_PATHS: 'clipboard:readFilePaths'
+  READ_FILE_PATHS: 'clipboard:readFilePaths',
+  SAVE_IMAGE: 'clipboard:saveImage'
 } as const
 
 export const WHISPER_CHANNELS = {
   TRANSCRIBE: 'whisper:transcribe'
 } as const
+

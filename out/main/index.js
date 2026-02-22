@@ -2,18 +2,19 @@
 const electron = require("electron");
 const child_process = require("child_process");
 const path = require("path");
+const promises = require("fs/promises");
 const pty = require("node-pty");
 const fs = require("fs");
-const promises = require("fs/promises");
 const chokidar = require("chokidar");
 const nanoid = require("nanoid");
+const os = require("os");
 const process$1 = require("node:process");
 const path$1 = require("node:path");
 const node_util = require("node:util");
 const fs$1 = require("node:fs");
 const crypto = require("node:crypto");
 const assert = require("node:assert");
-const os = require("node:os");
+const os$1 = require("node:os");
 require("node:events");
 require("node:stream");
 function _interopNamespaceDefault(e) {
@@ -47,6 +48,7 @@ const FS_CHANNELS = {
   STAT: "fs:stat",
   RENAME: "fs:rename",
   DELETE: "fs:delete",
+  RESTORE: "fs:restore",
   COPY: "fs:copy",
   COPY_PROGRESS: "fs:copyProgress",
   WATCH: "fs:watch",
@@ -66,9 +68,19 @@ const SESSION_CHANNELS = {
 const WHISPER_CHANNELS = {
   TRANSCRIBE: "whisper:transcribe"
 };
-function switchToEnglishLayout() {
-  child_process.exec("gsettings set org.gnome.desktop.input-sources current 0", () => {
-  });
+const INPUT_CHANNELS = {
+  SWITCH_LAYOUT: "input:switchLayout"
+};
+const LAYOUTS = ["us", "ru"];
+let switchTimer = null;
+function switchInputLayout(index) {
+  const layout = LAYOUTS[index];
+  if (!layout) return;
+  if (switchTimer) clearTimeout(switchTimer);
+  switchTimer = setTimeout(() => {
+    child_process.execFile("setxkbmap", ["-display", ":0", "-layout", layout], () => {
+    });
+  }, 50);
 }
 class PtyManager {
   sessions = /* @__PURE__ */ new Map();
@@ -84,7 +96,7 @@ class PtyManager {
       env: process.env
     });
     this.sessions.set(id2, term);
-    switchToEnglishLayout();
+    switchInputLayout(0);
     term.onData((data) => {
       if (!win.isDestroyed()) {
         win.webContents.send(PTY_CHANNELS.DATA, id2, data);
@@ -266,6 +278,54 @@ class FsWatcher {
     this.watchers.clear();
   }
 }
+async function restoreFromTrash(originalPaths) {
+  const trashBase = path.join(os.homedir(), ".local/share/Trash");
+  const infoDir = path.join(trashBase, "info");
+  const filesDir = path.join(trashBase, "files");
+  let infoFiles;
+  try {
+    infoFiles = (await promises.readdir(infoDir)).filter((f) => f.endsWith(".trashinfo"));
+  } catch {
+    return { ok: 0, fail: originalPaths.length };
+  }
+  const trashMap = /* @__PURE__ */ new Map();
+  for (const infoFile of infoFiles) {
+    try {
+      const content = await promises.readFile(path.join(infoDir, infoFile), "utf-8");
+      const pathMatch = content.match(/Path=(.+)/);
+      if (!pathMatch) continue;
+      const trashedPath = decodeURIComponent(pathMatch[1].trim());
+      if (!originalPaths.includes(trashedPath)) continue;
+      const dateMatch = content.match(/DeletionDate=(.+)/);
+      const date = dateMatch ? new Date(dateMatch[1].trim()).getTime() : 0;
+      const trashName = infoFile.replace(/\.trashinfo$/, "");
+      const existing = trashMap.get(trashedPath);
+      if (!existing || date > existing.date) {
+        trashMap.set(trashedPath, { trashName, date });
+      }
+    } catch {
+    }
+  }
+  let ok = 0;
+  let fail = 0;
+  for (const originalPath of originalPaths) {
+    const entry = trashMap.get(originalPath);
+    if (!entry) {
+      fail++;
+      continue;
+    }
+    try {
+      const trashedFilePath = path.join(filesDir, entry.trashName);
+      await promises.mkdir(path.dirname(originalPath), { recursive: true });
+      await promises.rename(trashedFilePath, originalPath);
+      await promises.rm(path.join(infoDir, `${entry.trashName}.trashinfo`));
+      ok++;
+    } catch {
+      fail++;
+    }
+  }
+  return { ok, fail };
+}
 function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2) {
   electron.ipcMain.handle(PTY_CHANNELS.CREATE, (event, opts) => {
     const id2 = nanoid.nanoid();
@@ -296,8 +356,14 @@ function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2) {
     return fsService2.rename(oldPath, newPath);
   });
   electron.ipcMain.handle(FS_CHANNELS.DELETE, (_event, filePath) => {
-    return fsService2.delete(filePath);
+    return electron.shell.trashItem(filePath);
   });
+  electron.ipcMain.handle(
+    FS_CHANNELS.RESTORE,
+    (_event, originalPaths) => {
+      return restoreFromTrash(originalPaths);
+    }
+  );
   electron.ipcMain.handle(FS_CHANNELS.COPY, (event, srcPath, destDir) => {
     const win = electron.BrowserWindow.fromWebContents(event.sender);
     return fsService2.copy(srcPath, destDir, (done, total) => {
@@ -310,6 +376,9 @@ function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2) {
   });
   electron.ipcMain.on(FS_CHANNELS.UNWATCH, (_event, dirPath) => {
     fsWatcher2.unwatch(dirPath);
+  });
+  electron.ipcMain.on(INPUT_CHANNELS.SWITCH_LAYOUT, (_event, index) => {
+    switchInputLayout(index);
   });
 }
 const isObject = (value) => {
@@ -571,8 +640,8 @@ function hasProperty(object, path2) {
   }
   return true;
 }
-const homedir = os.homedir();
-const tmpdir = os.tmpdir();
+const homedir = os$1.homedir();
+const tmpdir = os$1.tmpdir();
 const { env } = process$1;
 const macos = (name) => {
   const library = path$1.join(homedir, "Library");
@@ -11175,6 +11244,35 @@ electron.app.whenReady().then(() => {
       return raw.split(/\r?\n/).filter((line) => line.startsWith("file://")).map((uri2) => decodeURIComponent(new URL(uri2.trim()).pathname));
     }
     return [];
+  });
+  electron.ipcMain.handle("clipboard:saveImage", async (_event, destDir) => {
+    const img = electron.clipboard.readImage();
+    if (img.isEmpty()) return null;
+    const png = img.toPNG();
+    const now = /* @__PURE__ */ new Date();
+    const ts = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, "0"),
+      String(now.getDate()).padStart(2, "0"),
+      "_",
+      String(now.getHours()).padStart(2, "0"),
+      String(now.getMinutes()).padStart(2, "0"),
+      String(now.getSeconds()).padStart(2, "0")
+    ].join("");
+    const baseName = `image_${ts}`;
+    let filePath = path.join(destDir, `${baseName}.png`);
+    let counter = 0;
+    while (true) {
+      try {
+        await promises.access(filePath);
+        counter++;
+        filePath = path.join(destDir, `${baseName} (${counter}).png`);
+      } catch {
+        break;
+      }
+    }
+    await promises.writeFile(filePath, png);
+    return filePath;
   });
   electron.ipcMain.handle("shell:openPath", (_event, path2) => electron.shell.openPath(path2));
   electron.ipcMain.handle("shell:openWith", (_event, command, filePath) => {

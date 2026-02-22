@@ -15,6 +15,7 @@ const FS_CHANNELS = {
   STAT: "fs:stat",
   RENAME: "fs:rename",
   DELETE: "fs:delete",
+  RESTORE: "fs:restore",
   COPY: "fs:copy",
   COPY_PROGRESS: "fs:copyProgress",
   WATCH: "fs:watch",
@@ -36,10 +37,14 @@ const SHELL_CHANNELS = {
   OPEN_WITH: "shell:openWith"
 };
 const CLIPBOARD_CHANNELS = {
-  READ_FILE_PATHS: "clipboard:readFilePaths"
+  READ_FILE_PATHS: "clipboard:readFilePaths",
+  SAVE_IMAGE: "clipboard:saveImage"
 };
 const WHISPER_CHANNELS = {
   TRANSCRIBE: "whisper:transcribe"
+};
+const INPUT_CHANNELS = {
+  SWITCH_LAYOUT: "input:switchLayout"
 };
 const ptyApi = {
   create: (opts) => electron.ipcRenderer.invoke(PTY_CHANNELS.CREATE, opts),
@@ -73,6 +78,7 @@ const fsApi = {
   stat: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.STAT, filePath),
   rename: (oldPath, newPath) => electron.ipcRenderer.invoke(FS_CHANNELS.RENAME, oldPath, newPath),
   delete: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.DELETE, filePath),
+  restore: (originalPaths) => electron.ipcRenderer.invoke(FS_CHANNELS.RESTORE, originalPaths),
   copy: (srcPath, destDir) => electron.ipcRenderer.invoke(FS_CHANNELS.COPY, srcPath, destDir),
   onCopyProgress: (cb) => {
     const listener = (_event, progress) => {
@@ -117,7 +123,8 @@ const shellApi = {
   homePath: os.homedir()
 };
 const clipboardApi = {
-  readFilePaths: () => electron.ipcRenderer.invoke(CLIPBOARD_CHANNELS.READ_FILE_PATHS)
+  readFilePaths: () => electron.ipcRenderer.invoke(CLIPBOARD_CHANNELS.READ_FILE_PATHS),
+  saveImage: (destDir) => electron.ipcRenderer.invoke(CLIPBOARD_CHANNELS.SAVE_IMAGE, destDir)
 };
 const windowApi = {
   minimize: () => electron.ipcRenderer.send("window:minimize"),
@@ -135,6 +142,11 @@ const windowApi = {
 const whisperApi = {
   transcribe: (audioBuffer) => electron.ipcRenderer.invoke(WHISPER_CHANNELS.TRANSCRIBE, audioBuffer)
 };
+const inputApi = {
+  switchLayout: (index) => {
+    electron.ipcRenderer.send(INPUT_CHANNELS.SWITCH_LAYOUT, index);
+  }
+};
 electron.contextBridge.exposeInMainWorld("api", {
   pty: ptyApi,
   fs: fsApi,
@@ -143,5 +155,6 @@ electron.contextBridge.exposeInMainWorld("api", {
   shell: shellApi,
   clipboard: clipboardApi,
   window: windowApi,
-  whisper: whisperApi
+  whisper: whisperApi,
+  input: inputApi
 });

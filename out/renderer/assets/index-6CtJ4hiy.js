@@ -25166,7 +25166,18 @@ function createTerminalEntry(paneId, ptyId) {
   wrapperDiv.style.height = "100%";
   terminal.open(wrapperDiv);
   try {
-    terminal.loadAddon(new xr());
+    const webgl = new xr();
+    webgl.onContextLoss(() => {
+      try {
+        webgl.dispose();
+      } catch {
+      }
+      try {
+        terminal.loadAddon(new addonCanvasExports.CanvasAddon());
+      } catch {
+      }
+    });
+    terminal.loadAddon(webgl);
   } catch {
     try {
       terminal.loadAddon(new addonCanvasExports.CanvasAddon());
@@ -35721,7 +35732,8 @@ const PANE_TYPE_CONFIGS = {
     colorClass: "text-pane-active-terminal",
     bgActiveClass: "bg-pane-active-terminal/[0.13]",
     borderActiveClass: "border-pane-active-terminal/[0.27]",
-    paneBorderClass: "border-pane-active-terminal/50"
+    paneBorderClass: "border-pane-active-terminal/50",
+    resizeOverlayBg: "bg-pane-active-terminal"
   },
   "file-manager": {
     label: "Files",
@@ -35729,7 +35741,8 @@ const PANE_TYPE_CONFIGS = {
     colorClass: "text-pane-active-files",
     bgActiveClass: "bg-pane-active-files/[0.13]",
     borderActiveClass: "border-pane-active-files/[0.27]",
-    paneBorderClass: "border-pane-active-files/50"
+    paneBorderClass: "border-pane-active-files/50",
+    resizeOverlayBg: "bg-pane-active-files"
   },
   agent: {
     label: "Agent",
@@ -35737,7 +35750,8 @@ const PANE_TYPE_CONFIGS = {
     colorClass: "text-pane-active-agent",
     bgActiveClass: "bg-pane-active-agent/[0.13]",
     borderActiveClass: "border-pane-active-agent/[0.27]",
-    paneBorderClass: "border-pane-active-agent/50"
+    paneBorderClass: "border-pane-active-agent/50",
+    resizeOverlayBg: "bg-pane-active-agent"
   }
   // editor: {
   //   label: 'Editor',
@@ -40911,7 +40925,15 @@ const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isAct
   const paneType = node.paneType ?? "terminal";
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
   const isResizing = reactExports.useSyncExternalStore(subscribeResizing, getResizing);
+  const [overlayState, setOverlayState] = reactExports.useState("hidden");
   const [isDragOver, setIsDragOver] = reactExports.useState(false);
+  reactExports.useEffect(() => {
+    if (isResizing) {
+      setOverlayState("active");
+    } else {
+      setOverlayState((prev) => prev === "active" ? "fading" : prev);
+    }
+  }, [isResizing]);
   const handleDragOver = reactExports.useCallback((e) => {
     if (e.dataTransfer.types.includes(MIME_TYPE)) {
       e.preventDefault();
@@ -40952,7 +40974,13 @@ const PaneWrapper = reactExports.memo(function PaneWrapper2({ node, tabId, isAct
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex-1", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx(PaneContent, { paneType, tabId, paneId: node.id, isActive, cwd: node.cwd }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/5 to-transparent" }),
-          isResizing && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 z-10 bg-base/15" })
+          overlayState !== "hidden" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: `absolute inset-0 z-10 ${isActive ? config.resizeOverlayBg : "bg-border"} ${overlayState === "fading" ? "opacity-0 transition-opacity duration-1000" : "opacity-40"}`,
+              onTransitionEnd: () => setOverlayState("hidden")
+            }
+          )
         ] }),
         isDragOver && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-accent bg-accent/10" })
       ]
@@ -41000,28 +41028,28 @@ const SplitPane = reactExports.memo(function SplitPane2({ node, tabId, isTabActi
     );
   }
   const orientation = node.direction === "vertical" ? "horizontal" : "vertical";
+  const handleClass = orientation === "horizontal" ? "h-full w-1.5" : "w-full h-1.5";
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full w-full", onPointerDownCapture: handlePointerDownCapture, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
     Tt,
     {
       orientation,
       onLayoutChanged: handleLayoutChanged,
       resizeTargetMinimumSize: { fine: 0, coarse: 0 },
-      children: node.children.map((child, i8) => /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPaneEntry, { index: i8, total: node.children.length, orientation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane2, { node: child, tabId, isTabActive }) }, child.id))
+      children: node.children.flatMap((child, i8) => {
+        const items = [];
+        if (i8 > 0) {
+          items.push(
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Ht2, { className: "group relative flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `${handleClass} pointer-events-none group-hover:bg-split-handle/30` }) }, `sep-${i8}`)
+          );
+        }
+        items.push(
+          /* @__PURE__ */ jsxRuntimeExports.jsx(_t, { order: i8, min: "10%", default: `${100 / node.children.length}%`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(SplitPane2, { node: child, tabId, isTabActive }) }, child.id)
+        );
+        return items;
+      })
     }
   ) });
 });
-function SplitPaneEntry({
-  children,
-  index,
-  total,
-  orientation
-}) {
-  const handleClass = orientation === "horizontal" ? "h-full w-1.5" : "w-full h-1.5";
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    index > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(Ht2, { className: "group relative flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `${handleClass} pointer-events-none group-hover:bg-split-handle/30` }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(_t, { min: "10%", default: `${100 / total}%`, children })
-  ] });
-}
 function StatusBar() {
   const activeTab = useTabStore((s) => s.activeTabId ? s.tabs[s.activeTabId] : null);
   const paneCount = activeTab ? getAllPaneIds(activeTab.layoutTree).length : 0;

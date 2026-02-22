@@ -79,6 +79,15 @@ function applyThemeToDOM(theme: ThemePreset): void {
   set('--color-directory', blue)
 }
 
+const TAB_COLOR_VARS: Record<string, string> = {
+  red: 'var(--color-tab-red)',
+  orange: 'var(--color-tab-orange)',
+  yellow: 'var(--color-tab-yellow)',
+  green: 'var(--color-tab-green)',
+  blue: 'var(--color-tab-blue)',
+  purple: 'var(--color-tab-purple)'
+}
+
 /** Renders a single tab — memoized so hidden tabs don't re-render on tab switch */
 const TabContent = memo(function TabContent({
   tabId,
@@ -91,7 +100,10 @@ const TabContent = memo(function TabContent({
   if (!tab) return null
 
   return (
-    <div className={`absolute inset-0 ${isActive ? '' : 'invisible pointer-events-none'}`}>
+    <div
+      className={`absolute inset-0 ${isActive ? '' : 'invisible pointer-events-none'}`}
+      style={{ '--color-pane-active': TAB_COLOR_VARS[tab.color ?? 'green'] } as React.CSSProperties}
+    >
       <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
     </div>
   )

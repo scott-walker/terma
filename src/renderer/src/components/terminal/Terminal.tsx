@@ -56,6 +56,7 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
   }, [tmKey])
 
   // Focus/refit when pane becomes active
+  const isAgent = tmKey.endsWith(':agent')
   useEffect(() => {
     if (active) {
       focus(tmKey)
@@ -116,6 +117,12 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
 
   const [dragOver, setDragOver] = useState(false)
 
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes(MIME_FILES) || e.dataTransfer.types.includes('Files')) {
+      useTabStore.getState().setActivePaneId(tabId, paneId)
+    }
+  }, [tabId, paneId])
+
   const handleDragOver = useCallback((e: React.DragEvent) => {
     if (e.dataTransfer.types.includes(MIME_FILES) || e.dataTransfer.types.includes('Files')) {
       e.preventDefault()
@@ -158,8 +165,10 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
       const cwd = await window.api.pty.getCwd(ptyId)
       if (!cwd) return
 
-      const escaped = paths.map((p) => shellEscape(relativePath(cwd, p))).join(' ')
-      window.api.pty.write(ptyId, escaped)
+      const text = isAgent
+        ? paths.map((p) => '@' + relativePath(cwd, p)).join(' ')
+        : paths.map((p) => shellEscape(relativePath(cwd, p))).join(' ')
+      window.api.pty.write(ptyId, text)
     },
     [tmKey]
   )
@@ -215,6 +224,7 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
       <div
         ref={containerRef}
         onContextMenu={handleContextMenu}
+        onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleFileDrop}

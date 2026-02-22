@@ -47,6 +47,8 @@ const fsApi = {
     ipcRenderer.invoke(FS_CHANNELS.RENAME, oldPath, newPath),
   delete: (filePath: string): Promise<void> =>
     ipcRenderer.invoke(FS_CHANNELS.DELETE, filePath),
+  restore: (originalPaths: string[]): Promise<{ ok: number; fail: number }> =>
+    ipcRenderer.invoke(FS_CHANNELS.RESTORE, originalPaths),
   copy: (srcPath: string, destDir: string): Promise<void> =>
     ipcRenderer.invoke(FS_CHANNELS.COPY, srcPath, destDir),
   onCopyProgress: (
@@ -112,7 +114,9 @@ const shellApi = {
 
 const clipboardApi = {
   readFilePaths: (): Promise<string[]> =>
-    ipcRenderer.invoke(CLIPBOARD_CHANNELS.READ_FILE_PATHS)
+    ipcRenderer.invoke(CLIPBOARD_CHANNELS.READ_FILE_PATHS),
+  saveImage: (destDir: string): Promise<string | null> =>
+    ipcRenderer.invoke(CLIPBOARD_CHANNELS.SAVE_IMAGE, destDir)
 }
 
 const windowApi = {

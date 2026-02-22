@@ -21,32 +21,36 @@ interface TerminalEntry {
 const terminals = new Map<string, TerminalEntry>()
 const pendingAttaches = new Map<string, { cancelled: boolean }>()
 let settingsUnsub: (() => void) | null = null
-let resizing = false
+let resizingPaneIds: ReadonlySet<string> = new Set()
 const resizeListeners = new Set<() => void>()
 
 /**
- * Suppress terminal refitting during split-pane resize drags.
- * Call setResizing(true) on drag start, setResizing(false) on drag end.
+ * Mark specific panes as being resized (split-pane drag in progress).
  */
-export function setResizing(value: boolean): void {
-  resizing = value
+export function setResizingPanes(ids: string[]): void {
+  resizingPaneIds = new Set(ids)
   resizeListeners.forEach((fn) => fn())
-  if (!value) {
-    // Drag ended — refit all terminals
-    for (const entry of terminals.values()) {
-      requestAnimationFrame(() => {
-        try {
-          entry.fitAddon.fit()
-        } catch {
-          // ignore
-        }
-      })
-    }
+}
+
+/**
+ * Clear all resizing panes and refit terminals (drag ended).
+ */
+export function clearResizingPanes(): void {
+  resizingPaneIds = new Set()
+  resizeListeners.forEach((fn) => fn())
+  for (const entry of terminals.values()) {
+    requestAnimationFrame(() => {
+      try {
+        entry.fitAddon.fit()
+      } catch {
+        // ignore
+      }
+    })
   }
 }
 
-export function getResizing(): boolean {
-  return resizing
+export function isPaneResizing(paneId: string): boolean {
+  return resizingPaneIds.has(paneId)
 }
 
 export function subscribeResizing(fn: () => void): () => void {
@@ -113,9 +117,18 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
 
   terminal.open(wrapperDiv)
 
-  // Try WebGL, fall back to Canvas
+  // Try WebGL, fall back to Canvas, then DOM renderer
   try {
-    terminal.loadAddon(new WebglAddon())
+    const webgl = new WebglAddon()
+    webgl.onContextLoss(() => {
+      try { webgl.dispose() } catch { /* ignore */ }
+      try {
+        terminal.loadAddon(new CanvasAddon())
+      } catch {
+        // DOM renderer fallback
+      }
+    })
+    terminal.loadAddon(webgl)
   } catch {
     try {
       terminal.loadAddon(new CanvasAddon())
@@ -237,7 +250,7 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
 function setupResizeObserver(entry: TerminalEntry, containerEl: HTMLElement): void {
   entry.resizeObserver?.disconnect()
   const observer = new ResizeObserver(() => {
-    if (resizing) return
+    if (resizingPaneIds.size > 0) return
     requestAnimationFrame(() => {
       try {
         entry.fitAddon.fit()

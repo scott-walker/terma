@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { Columns2, Rows2, X, Mic, Square } from 'lucide-react'
 import type { PaneType } from '@/lib/layout-tree'
-import { PANE_TYPE_CONFIGS } from '@/lib/pane-types'
+import { PANE_TYPE_CONFIGS, PANE_ACTIVE_CLASSES } from '@/lib/pane-types'
 import { useTabStore } from '@/stores/tab-store'
 import { useSettingsStore } from '@/stores/settings-store'
 import { getPtyId } from '@/lib/terminal-manager'
@@ -98,7 +98,7 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
     >
       {/* Left: icon + type tabs */}
       <div className="flex items-center gap-2.5">
-        <Icon size={16} className={`${config.colorClass} opacity-90`} />
+        <Icon size={16} className={`${PANE_ACTIVE_CLASSES.colorClass} opacity-90`} />
 
         {/* Type switcher — colored tabs */}
         <div className="flex gap-0.5">
@@ -114,7 +114,7 @@ export function PaneHeader({ tabId, paneId, paneType }: PaneHeaderProps): JSX.El
                 }}
                 className={`cursor-pointer rounded-sm border border-transparent bg-transparent px-2.5 py-0.5 text-xs transition-all ${
                   isActive
-                    ? `${ptConfig.bgActiveClass} ${ptConfig.borderActiveClass} ${ptConfig.colorClass}`
+                    ? `${PANE_ACTIVE_CLASSES.bgActiveClass} ${PANE_ACTIVE_CLASSES.borderActiveClass} ${PANE_ACTIVE_CLASSES.colorClass}`
                     : 'text-fg-muted'
                 }`}
               >

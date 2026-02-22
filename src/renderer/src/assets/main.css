@@ -65,10 +65,7 @@
   --color-tab-active-bg: var(--color-elevated);
   --color-tab-drop-indicator: var(--color-accent);
   --color-pane-header-bg: var(--color-elevated);
-  --color-pane-active-terminal: var(--color-accent);
-  --color-pane-active-files: var(--color-warning);
-  --color-pane-active-agent: var(--color-info);
-  --color-split-handle: var(--color-accent);
+  --color-pane-active: var(--color-accent);
   --color-popup-bg: var(--color-elevated);
   --color-settings-bg: var(--color-base);
   --color-file-selected: var(--color-warning);

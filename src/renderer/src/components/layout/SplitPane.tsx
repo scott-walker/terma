@@ -1,9 +1,14 @@
 import { memo, useRef, useCallback } from 'react'
 import { Group, Panel, Separator } from 'react-resizable-panels'
-import { LayoutNode } from '@/lib/layout-tree'
+import type { LayoutNode } from '@/lib/layout-tree'
 import { PaneWrapper } from './PaneWrapper'
 import { useTabStore } from '@/stores/tab-store'
-import { setResizing } from '@/lib/terminal-manager'
+import { setResizingPanes, clearResizingPanes } from '@/lib/terminal-manager'
+
+function collectPaneIds(node: LayoutNode): string[] {
+  if (node.type === 'pane') return [node.id]
+  return node.children.flatMap(collectPaneIds)
+}
 
 interface SplitPaneProps {
   node: LayoutNode
@@ -23,20 +28,39 @@ export const SplitPane = memo(function SplitPane({ node, tabId, isTabActive }: S
 
   const handlePointerDownCapture = useCallback((e: React.PointerEvent) => {
     const target = e.target as HTMLElement
-    if (!target.closest('[data-separator]')) return
+    const separator = target.closest('[data-separator]') as HTMLElement
+    if (!separator) return
 
-    setResizing(true)
+    // Only handle separators that are direct children of this Group
+    const groupEl = (e.currentTarget as HTMLElement).firstElementChild
+    if (!groupEl || separator.parentElement !== groupEl) return
+
+    // Find separator index among sibling separators
+    const separators = groupEl.querySelectorAll(':scope > [data-separator]')
+    let sepIndex = -1
+    separators.forEach((el, i) => {
+      if (el === separator) sepIndex = i
+    })
+    if (sepIndex < 0 || node.type === 'pane') return
+
+    const leftChild = node.children[sepIndex]
+    const rightChild = node.children[sepIndex + 1]
+    if (!leftChild || !rightChild) return
+
+    const paneIds = [...collectPaneIds(leftChild), ...collectPaneIds(rightChild)]
+    setResizingPanes(paneIds)
     pendingSizes.current = null
+
     const handleUp = (): void => {
       window.removeEventListener('pointerup', handleUp)
-      setResizing(false)
+      clearResizingPanes()
       if (pendingSizes.current) {
         updateLayoutRatios(tabId, node.id, pendingSizes.current)
         pendingSizes.current = null
       }
     }
     window.addEventListener('pointerup', handleUp)
-  }, [tabId, node.id, updateLayoutRatios])
+  }, [tabId, node, updateLayoutRatios])
 
   if (node.type === 'pane') {
     return (
@@ -56,6 +80,7 @@ export const SplitPane = memo(function SplitPane({ node, tabId, isTabActive }: S
   // Layout tree 'vertical' = vertical divider = panels side by side → orientation 'horizontal'
   // Layout tree 'horizontal' = horizontal divider = panels stacked → orientation 'vertical'
   const orientation = node.direction === 'vertical' ? 'horizontal' : 'vertical'
+  const handleClass = orientation === 'horizontal' ? 'h-full w-1.5' : 'w-full h-1.5'
 
   return (
     <div className="h-full w-full" onPointerDownCapture={handlePointerDownCapture}>
@@ -64,41 +89,23 @@ export const SplitPane = memo(function SplitPane({ node, tabId, isTabActive }: S
         onLayoutChanged={handleLayoutChanged}
         resizeTargetMinimumSize={{ fine: 0, coarse: 0 }}
       >
-        {node.children.map((child, i) => (
-          <SplitPaneEntry key={child.id} index={i} total={node.children.length} orientation={orientation}>
-            <SplitPane node={child} tabId={tabId} isTabActive={isTabActive} />
-          </SplitPaneEntry>
-        ))}
+        {node.children.flatMap((child, i) => {
+          const items: React.ReactNode[] = []
+          if (i > 0) {
+            items.push(
+              <Separator key={`sep-${i}`} className="group relative flex items-center justify-center outline-none">
+                <div className={`${handleClass} pointer-events-none group-hover:bg-pane-active/30`} />
+              </Separator>
+            )
+          }
+          items.push(
+            <Panel key={child.id} order={i} min="10%" default={`${100 / node.children.length}%`}>
+              <SplitPane node={child} tabId={tabId} isTabActive={isTabActive} />
+            </Panel>
+          )
+          return items
+        })}
       </Group>
     </div>
   )
 })
-
-function SplitPaneEntry({
-  children,
-  index,
-  total,
-  orientation
-}: {
-  children: React.ReactNode
-  index: number
-  total: number
-  orientation: 'horizontal' | 'vertical'
-}): JSX.Element {
-  const handleClass = orientation === 'horizontal'
-    ? 'h-full w-1.5'
-    : 'w-full h-1.5'
-
-  return (
-    <>
-      {index > 0 && (
-        <Separator className="group relative flex items-center justify-center">
-          <div className={`${handleClass} pointer-events-none group-hover:bg-split-handle/30`} />
-        </Separator>
-      )}
-      <Panel min="10%" default={`${100 / total}%`}>
-        {children}
-      </Panel>
-    </>
-  )
-}

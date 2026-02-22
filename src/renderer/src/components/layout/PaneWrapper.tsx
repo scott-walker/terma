@@ -1,8 +1,8 @@
-import { memo, useState, useCallback, useSyncExternalStore } from 'react'
+import { memo, useState, useCallback, useEffect, useSyncExternalStore } from 'react'
 import type { PaneNode } from '@/lib/layout-tree'
-import { PANE_TYPE_CONFIGS } from '@/lib/pane-types'
+import { PANE_TYPE_CONFIGS, PANE_ACTIVE_CLASSES } from '@/lib/pane-types'
 import { useTabStore } from '@/stores/tab-store'
-import { getResizing, subscribeResizing } from '@/lib/terminal-manager'
+import { isPaneResizing, subscribeResizing } from '@/lib/terminal-manager'
 import { PaneHeader } from './PaneHeader'
 import { PaneContent } from './PaneContent'
 
@@ -16,9 +16,20 @@ interface PaneWrapperProps {
 
 export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: PaneWrapperProps): JSX.Element {
   const paneType = node.paneType ?? 'terminal'
-  const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal
-  const isResizing = useSyncExternalStore(subscribeResizing, getResizing)
+  const paneResizing = useSyncExternalStore(
+    subscribeResizing,
+    useCallback(() => isPaneResizing(node.id), [node.id])
+  )
+  const [overlayState, setOverlayState] = useState<'hidden' | 'active' | 'fading'>('hidden')
   const [isDragOver, setIsDragOver] = useState(false)
+
+  useEffect(() => {
+    if (paneResizing) {
+      setOverlayState('active')
+    } else {
+      setOverlayState((prev) => (prev === 'active' ? 'fading' : prev))
+    }
+  }, [paneResizing])
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     if (e.dataTransfer.types.includes(MIME_TYPE)) {
@@ -55,7 +66,7 @@ export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: 
   return (
     <div
       className={`relative flex h-full w-full flex-col overflow-hidden rounded-lg border-2 bg-base transition-[border-color] duration-200 ${
-        isActive ? config.paneBorderClass : 'border-border'
+        isActive ? PANE_ACTIVE_CLASSES.paneBorderClass : 'border-border'
       }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -67,8 +78,15 @@ export const PaneWrapper = memo(function PaneWrapper({ node, tabId, isActive }: 
           <PaneContent paneType={paneType} tabId={tabId} paneId={node.id} isActive={isActive} cwd={node.cwd} />
         </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/5 to-transparent" />
-        {isResizing && (
-          <div className="absolute inset-0 z-10 bg-base/15" />
+        {overlayState !== 'hidden' && (
+          <div
+            className={`absolute inset-0 z-10 bg-base ${
+              overlayState === 'fading'
+                ? 'opacity-0 transition-opacity duration-1000'
+                : 'opacity-80'
+            }`}
+            onTransitionEnd={() => setOverlayState('hidden')}
+          />
         )}
       </div>
       {isDragOver && (

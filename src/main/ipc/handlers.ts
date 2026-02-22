@@ -1,9 +1,72 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain, BrowserWindow, shell } from 'electron'
 import { nanoid } from 'nanoid'
+import { readdir, readFile, rename, rm, mkdir } from 'fs/promises'
+import { join, dirname } from 'path'
+import { homedir } from 'os'
 import { PTY_CHANNELS, FS_CHANNELS } from '../../shared/channels'
 import { PtyManager, PtyCreateOpts } from '../pty/pty-manager'
 import { FsService } from '../file-system/fs-service'
 import { FsWatcher } from '../file-system/fs-watcher'
+
+async function restoreFromTrash(
+  originalPaths: string[]
+): Promise<{ ok: number; fail: number }> {
+  const trashBase = join(homedir(), '.local/share/Trash')
+  const infoDir = join(trashBase, 'info')
+  const filesDir = join(trashBase, 'files')
+
+  let infoFiles: string[]
+  try {
+    infoFiles = (await readdir(infoDir)).filter((f) => f.endsWith('.trashinfo'))
+  } catch {
+    return { ok: 0, fail: originalPaths.length }
+  }
+
+  // Build a map: originalPath → best (most recent) trashinfo entry
+  const trashMap = new Map<string, { trashName: string; date: number }>()
+  for (const infoFile of infoFiles) {
+    try {
+      const content = await readFile(join(infoDir, infoFile), 'utf-8')
+      const pathMatch = content.match(/Path=(.+)/)
+      if (!pathMatch) continue
+      const trashedPath = decodeURIComponent(pathMatch[1].trim())
+      if (!originalPaths.includes(trashedPath)) continue
+
+      const dateMatch = content.match(/DeletionDate=(.+)/)
+      const date = dateMatch ? new Date(dateMatch[1].trim()).getTime() : 0
+      const trashName = infoFile.replace(/\.trashinfo$/, '')
+
+      const existing = trashMap.get(trashedPath)
+      if (!existing || date > existing.date) {
+        trashMap.set(trashedPath, { trashName, date })
+      }
+    } catch {
+      // skip unreadable trashinfo
+    }
+  }
+
+  let ok = 0
+  let fail = 0
+
+  for (const originalPath of originalPaths) {
+    const entry = trashMap.get(originalPath)
+    if (!entry) {
+      fail++
+      continue
+    }
+    try {
+      const trashedFilePath = join(filesDir, entry.trashName)
+      await mkdir(dirname(originalPath), { recursive: true })
+      await rename(trashedFilePath, originalPath)
+      await rm(join(infoDir, `${entry.trashName}.trashinfo`))
+      ok++
+    } catch {
+      fail++
+    }
+  }
+
+  return { ok, fail }
+}
 
 export function registerIpcHandlers(
   ptyManager: PtyManager,
@@ -49,8 +112,15 @@ export function registerIpcHandlers(
   })
 
   ipcMain.handle(FS_CHANNELS.DELETE, (_event, filePath: string) => {
-    return fsService.delete(filePath)
+    return shell.trashItem(filePath)
   })
+
+  ipcMain.handle(
+    FS_CHANNELS.RESTORE,
+    (_event, originalPaths: string[]) => {
+      return restoreFromTrash(originalPaths)
+    }
+  )
 
   ipcMain.handle(FS_CHANNELS.COPY, (event, srcPath: string, destDir: string) => {
     const win = BrowserWindow.fromWebContents(event.sender)

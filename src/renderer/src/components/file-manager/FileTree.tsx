@@ -54,6 +54,7 @@ export function FileTree({
   } | null>(null)
   const parentRef = useRef<HTMLDivElement>(null)
   const anchorPath = useRef<string | null>(null)
+  const undoStack = useRef<string[][]>([])
   const addToast = useToastStore((s) => s.addToast)
   const fontSize = useSettingsStore((s) => s.getEffectiveFontSize())
   const fileAssociations = useSettingsStore((s) => s.settings.fileAssociations)
@@ -217,28 +218,49 @@ export function FileTree({
   const handleDelete = useCallback(async () => {
     const paths = Array.from(selected)
     if (paths.length === 0) return
-    let ok = 0
+    const trashed: string[] = []
     let fail = 0
     for (const p of paths) {
       try {
         await window.api.fs.delete(p)
-        ok++
+        trashed.push(p)
       } catch {
         fail++
       }
     }
+    if (trashed.length > 0) {
+      undoStack.current.push(trashed)
+    }
     setSelected(new Set())
     loadTree()
-    if (ok > 0) {
+    if (trashed.length > 0) {
       addToast(
         'success',
-        ok === 1 ? `Deleted "${baseName(paths[0])}"` : `Deleted ${ok} items`
+        trashed.length === 1
+          ? `Deleted "${baseName(trashed[0])}" — Ctrl+Z to undo`
+          : `Deleted ${trashed.length} items — Ctrl+Z to undo`
       )
     }
     if (fail > 0) {
       addToast('error', fail === 1 ? 'Delete failed' : `Failed to delete ${fail} items`)
     }
   }, [selected, loadTree, addToast])
+
+  const handleRestore = useCallback(async () => {
+    const paths = undoStack.current.pop()
+    if (!paths || paths.length === 0) return
+    const { ok, fail } = await window.api.fs.restore(paths)
+    loadTree()
+    if (ok > 0) {
+      addToast(
+        'success',
+        ok === 1 ? `Restored "${baseName(paths[0])}"` : `Restored ${ok} items`
+      )
+    }
+    if (fail > 0) {
+      addToast('error', fail === 1 ? 'Restore failed' : `Failed to restore ${fail} items`)
+    }
+  }, [loadTree, addToast])
 
   // ── Drag ──
 
@@ -265,6 +287,12 @@ export function FileTree({
     if (!container) return
 
     const handleKeyDown = async (e: KeyboardEvent): Promise<void> => {
+      if ((e.ctrlKey || e.metaKey) && e.code === 'KeyZ') {
+        e.preventDefault()
+        handleRestore()
+        return
+      }
+
       if ((e.ctrlKey || e.metaKey) && e.code === 'KeyV') {
         e.preventDefault()
         const targetPath = anchorPath.current
@@ -275,6 +303,12 @@ export function FileTree({
           const systemPaths = await window.api.clipboard.readFilePaths()
           if (systemPaths.length > 0) {
             handlePaste(destPath, true, systemPaths)
+          } else {
+            const saved = await window.api.clipboard.saveImage(destPath)
+            if (saved) {
+              loadTree()
+              addToast('success', `Saved "${saved.substring(saved.lastIndexOf('/') + 1)}"`)
+            }
           }
         } else if (targetPath) {
           handlePaste(targetPath.path, targetPath.isDirectory)
@@ -295,7 +329,7 @@ export function FileTree({
 
     container.addEventListener('keydown', handleKeyDown)
     return () => container.removeEventListener('keydown', handleKeyDown)
-  }, [selected, entries, clipboard, rootPath, handleCopy, handlePaste, handleDelete])
+  }, [selected, entries, clipboard, rootPath, handleCopy, handlePaste, handleDelete, handleRestore])
 
   // ── Virtualizer ──
 
@@ -325,6 +359,13 @@ export function FileTree({
               const systemPaths = await window.api.clipboard.readFilePaths()
               if (systemPaths.length > 0) {
                 handlePaste(contextMenu.path, contextMenu.isDirectory, systemPaths)
+              } else {
+                const destDir = contextMenu.isDirectory ? contextMenu.path : parentDir(contextMenu.path)
+                const saved = await window.api.clipboard.saveImage(destDir)
+                if (saved) {
+                  loadTree()
+                  addToast('success', `Saved "${baseName(saved)}"`)
+                }
               }
             } else {
               handlePaste(contextMenu.path, contextMenu.isDirectory)
