@@ -27,6 +27,7 @@ export interface IpcInvokeMap {
   'fs:delete': [args: [filePath: string], ret: void]
   'fs:restore': [args: [originalPaths: string[]], ret: { ok: number; fail: number }]
   'fs:copy': [args: [srcPath: string, destDir: string], ret: void]
+  'fs:searchFiles': [args: [rootDir: string, query: string], ret: FileEntry[]]
 
   // Settings
   'settings:get': [args: [], ret: TerminalSettings]
@@ -57,6 +58,9 @@ export interface IpcInvokeMap {
 
   // Translate
   'translate:translate': [args: [text: string], ret: string]
+
+  // TTS (ElevenLabs) — streaming PCM audio
+  'tts:speak': [args: [text: string], ret: { streamId: string; sampleRate: number }]
 
   // System monitor
   'sysmon:metrics': [args: [], ret: SystemMetrics]
@@ -113,6 +117,9 @@ export interface IpcEventMap {
   // Window
   'window:maximized-change': [maximized: boolean]
   'window:confirm-close': []
+
+  // TTS
+  'tts:stream': [streamId: string, event: { type: 'chunk'; data: string } | { type: 'done' } | { type: 'error'; message: string }]
 
   // Log
   'log:onLog': [entry: LogEntry]

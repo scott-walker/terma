@@ -18,6 +18,7 @@ export const FS_CHANNELS = {
   RESTORE: 'fs:restore',
   COPY: 'fs:copy',
   COPY_PROGRESS: 'fs:copyProgress',
+  SEARCH_FILES: 'fs:searchFiles',
   WATCH: 'fs:watch',
   UNWATCH: 'fs:unwatch',
   FS_EVENT: 'fs:event'
@@ -67,6 +68,11 @@ export const LOG_CHANNELS = {
 
 export const TRANSLATE_CHANNELS = {
   TRANSLATE: 'translate:translate'
+} as const
+
+export const TTS_CHANNELS = {
+  SPEAK: 'tts:speak',
+  STREAM: 'tts:stream'
 } as const
 
 export const SYSMON_CHANNELS = {

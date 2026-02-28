@@ -20,6 +20,7 @@ interface FsApi {
   delete(filePath: string): Promise<void>
   restore(originalPaths: string[]): Promise<{ ok: number; fail: number }>
   copy(srcPath: string, destDir: string): Promise<void>
+  searchFiles(rootDir: string, query: string): Promise<FileEntry[]>
   onCopyProgress(cb: (progress: { done: number; total: number }) => void): () => void
   watch(dirPath: string): void
   unwatch(dirPath: string): void
@@ -74,6 +75,13 @@ interface TranslateApi {
   translate(text: string): Promise<string>
 }
 
+type TtsStreamEvent = { type: 'chunk'; data: string } | { type: 'done' } | { type: 'error'; message: string }
+
+interface TtsApi {
+  speak(text: string): Promise<{ streamId: string; sampleRate: number }>
+  onStream(streamId: string, cb: (event: TtsStreamEvent) => void): () => void
+}
+
 interface SysmonApi {
   getMetrics(): Promise<import('@shared/types').SystemMetrics>
 }
@@ -110,6 +118,7 @@ declare global {
       log: LogApi
       ssh: SshApi
       translate: TranslateApi
+      tts: TtsApi
       sysmon: SysmonApi
       selfmon: SelfmonApi
       git: GitApi

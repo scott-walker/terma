@@ -2,8 +2,10 @@ import { useRef, useEffect, useState, useCallback, memo } from 'react'
 import { attach, detach, focus, getTerminal, getPtyId } from '@/lib/terminal-manager'
 import { useTabStore } from '@/stores/tab-store'
 import { useSettingsStore } from '@/stores/settings-store'
+import { useToastStore } from '@/stores/toast-store'
 import { ContextMenu, type MenuEntry } from '@/components/ui/ContextMenu'
 import { TranslationSnippet } from '@/components/ui/TranslationSnippet'
+import { SpeechSnippet } from '@/components/ui/SpeechSnippet'
 import { relativePath, shellEscape } from '@shared/path-utils'
 
 const MIME_FILES = 'application/x-terma-files'
@@ -25,10 +27,17 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
   const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
   const [hasSelection, setHasSelection] = useState(false)
   const hasApiKey = useSettingsStore((s) => !!s.settings.openaiApiKey)
+  const hasElevenlabsKey = useSettingsStore((s) => !!s.settings.elevenlabsApiKey)
   const [translationSnippet, setTranslationSnippet] = useState<{
     position: { x: number; y: number }
     original: string
     translated: string | null
+  } | null>(null)
+  const [speechSnippet, setSpeechSnippet] = useState<{
+    position: { x: number; y: number }
+    text: string
+    streamId: string | null
+    sampleRate: number
   } | null>(null)
 
   useEffect(() => {
@@ -212,6 +221,24 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
     }
   }, [tmKey, menuPosition])
 
+  const handleSpeak = useCallback(async () => {
+    const terminal = getTerminal(tmKey)
+    const selection = terminal?.getSelection()
+    if (!selection) return
+
+    const pos = menuPosition ?? { x: 100, y: 100 }
+    setSpeechSnippet({ position: pos, text: selection, streamId: null, sampleRate: 16000 })
+    setMenuPosition(null)
+
+    try {
+      const { streamId, sampleRate } = await window.api.tts.speak(selection)
+      setSpeechSnippet((prev) => prev ? { ...prev, streamId, sampleRate } : null)
+    } catch (err) {
+      useToastStore.getState().addToast('error', err instanceof Error ? err.message : 'TTS failed')
+      setSpeechSnippet(null)
+    }
+  }, [tmKey, menuPosition])
+
   const menuEntries: MenuEntry[] = [
     {
       type: 'item',
@@ -231,6 +258,12 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
       label: 'Translate',
       disabled: !hasSelection || !hasApiKey,
       onAction: handleTranslate
+    },
+    {
+      type: 'item',
+      label: 'Speak',
+      disabled: !hasSelection || !hasElevenlabsKey,
+      onAction: handleSpeak
     },
     { type: 'separator' },
     {
@@ -268,6 +301,15 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
           original={translationSnippet.original}
           translated={translationSnippet.translated}
           onClose={() => setTranslationSnippet(null)}
+        />
+      )}
+      {speechSnippet && (
+        <SpeechSnippet
+          position={speechSnippet.position}
+          text={speechSnippet.text}
+          streamId={speechSnippet.streamId}
+          sampleRate={speechSnippet.sampleRate}
+          onClose={() => setSpeechSnippet(null)}
         />
       )}
     </>

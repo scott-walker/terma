@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { homedir } from 'os'
-import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS, WINDOW_CHANNELS, LOG_CHANNELS, SSH_CHANNELS, TRANSLATE_CHANNELS, SYSMON_CHANNELS, GIT_CHANNELS, SELFMON_CHANNELS } from '../shared/channels'
+import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS, WINDOW_CHANNELS, LOG_CHANNELS, SSH_CHANNELS, TRANSLATE_CHANNELS, TTS_CHANNELS, SYSMON_CHANNELS, GIT_CHANNELS, SELFMON_CHANNELS } from '../shared/channels'
 import type { TerminalSettings } from '../shared/settings'
 import type { FileEntry, SessionState, LogEntry, SystemMetrics, SelfMetrics } from '../shared/types'
 
@@ -57,6 +57,8 @@ const fsApi = {
     ipcRenderer.invoke(FS_CHANNELS.RESTORE, originalPaths),
   copy: (srcPath: string, destDir: string): Promise<void> =>
     ipcRenderer.invoke(FS_CHANNELS.COPY, srcPath, destDir),
+  searchFiles: (rootDir: string, query: string): Promise<FileEntry[]> =>
+    ipcRenderer.invoke(FS_CHANNELS.SEARCH_FILES, rootDir, query),
   onCopyProgress: (
     cb: (progress: { done: number; total: number }) => void
   ): (() => void) => {
@@ -170,6 +172,26 @@ const translateApi = {
     ipcRenderer.invoke(TRANSLATE_CHANNELS.TRANSLATE, text)
 }
 
+// Per-stream TTS dispatch: single IPC listener, O(1) lookup per event
+type TtsStreamEvent = { type: 'chunk'; data: string } | { type: 'done' } | { type: 'error'; message: string }
+const ttsStreamListeners = new Map<string, (event: TtsStreamEvent) => void>()
+
+ipcRenderer.on(TTS_CHANNELS.STREAM, (_event, streamId: string, data: TtsStreamEvent) => {
+  ttsStreamListeners.get(streamId)?.(data)
+  if (data.type === 'done' || data.type === 'error') {
+    ttsStreamListeners.delete(streamId)
+  }
+})
+
+const ttsApi = {
+  speak: (text: string): Promise<{ streamId: string; sampleRate: number }> =>
+    ipcRenderer.invoke(TTS_CHANNELS.SPEAK, text),
+  onStream: (streamId: string, cb: (event: TtsStreamEvent) => void): (() => void) => {
+    ttsStreamListeners.set(streamId, cb)
+    return () => { ttsStreamListeners.delete(streamId) }
+  }
+}
+
 const sysmonApi = {
   getMetrics: (): Promise<SystemMetrics> =>
     ipcRenderer.invoke(SYSMON_CHANNELS.METRICS)
@@ -214,6 +236,7 @@ contextBridge.exposeInMainWorld('api', {
   log: logApi,
   ssh: sshApi,
   translate: translateApi,
+  tts: ttsApi,
   sysmon: sysmonApi,
   selfmon: selfmonApi,
   git: gitApi
