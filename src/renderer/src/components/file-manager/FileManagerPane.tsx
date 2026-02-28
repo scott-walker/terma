@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
-import { RefreshCw, Loader2 } from 'lucide-react'
+import { RefreshCw, Loader2, Search } from 'lucide-react'
 import { FileTree } from './FileTree'
+import { FileSearchModal } from './FileSearchModal'
 import { IconButton } from '@/components/ui/IconButton'
 import { useFileManagerStore } from '@/stores/file-manager-store'
 import { useSshStore } from '@/stores/ssh-store'
@@ -32,6 +33,7 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
   const [isEditing, setIsEditing] = useState(false)
   const [refreshToken, setRefreshToken] = useState(0)
   const [isLoadingDir, setIsLoadingDir] = useState(false)
+  const [showSearch, setShowSearch] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const isConnected = sshPaneState?.state === 'connected'
@@ -49,6 +51,12 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
       setPathInput(pane.rootPath)
     }
   }, [pane?.rootPath, isEditing])
+
+  useEffect(() => {
+    const handler = (): void => setShowSearch(true)
+    window.addEventListener('terma:file-search', handler)
+    return () => window.removeEventListener('terma:file-search', handler)
+  }, [])
 
   const pendingReads = useRef(0)
 
@@ -239,6 +247,11 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
             <Loader2 size={Math.round(fontSize * 1.15)} strokeWidth={1.8} className="animate-spin text-pane-active" />
           )}
           <IconButton
+            icon={Search}
+            onClick={() => setShowSearch(true)}
+            title="Search files (Ctrl+P)"
+          />
+          <IconButton
             icon={RefreshCw}
             onClick={() => setRefreshToken((n) => n + 1)}
             title="Refresh"
@@ -289,6 +302,21 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
         )}
       </div>
 
+      {showSearch && (
+        <FileSearchModal
+          rootPath={pane.rootPath}
+          onClose={() => setShowSearch(false)}
+          onSelect={(path, isDirectory) => {
+            if (isDirectory) {
+              handleNavigateToDir(path)
+            } else {
+              // Navigate to the file's parent directory
+              const dir = path.substring(0, path.lastIndexOf('/')) || '/'
+              handleNavigateToDir(dir)
+            }
+          }}
+        />
+      )}
     </div>
   )
 }

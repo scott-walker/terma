@@ -163,6 +163,78 @@ export class FsService {
     }
   }
 
+  async searchFiles(
+    rootDir: string,
+    query: string,
+    limit = 100
+  ): Promise<FileEntry[]> {
+    const lowerQuery = query.toLowerCase()
+    const results: FileEntry[] = []
+    const visited = new Set<string>()
+
+    const walk = async (dir: string, depth: number): Promise<void> => {
+      if (depth > MAX_DEPTH || results.length >= limit) return
+
+      const real = await this.safeRealpath(dir)
+      if (real && visited.has(real)) return
+      if (real) visited.add(real)
+
+      let dirents: import('fs').Dirent[]
+      try {
+        dirents = await readdir(dir, { withFileTypes: true })
+      } catch {
+        return
+      }
+
+      for (const entry of dirents) {
+        if (results.length >= limit) return
+
+        const name = entry.name
+        // Skip common heavy/hidden directories
+        if (entry.isDirectory() && (name === 'node_modules' || name === '.git' || name === '.hg' || name === '.svn' || name === '__pycache__' || name === '.DS_Store')) {
+          continue
+        }
+
+        const fullPath = join(dir, name)
+
+        if (entry.isDirectory()) {
+          // Also check if directory name matches
+          if (name.toLowerCase().includes(lowerQuery)) {
+            try {
+              const stats = await stat(fullPath)
+              results.push({
+                name,
+                path: fullPath,
+                isDirectory: true,
+                isSymlink: entry.isSymbolicLink(),
+                size: stats.size,
+                modified: stats.mtimeMs
+              })
+            } catch { /* skip */ }
+          }
+          await walk(fullPath, depth + 1)
+        } else {
+          if (name.toLowerCase().includes(lowerQuery)) {
+            try {
+              const stats = await stat(fullPath)
+              results.push({
+                name,
+                path: fullPath,
+                isDirectory: false,
+                isSymlink: entry.isSymbolicLink(),
+                size: stats.size,
+                modified: stats.mtimeMs
+              })
+            } catch { /* skip */ }
+          }
+        }
+      }
+    }
+
+    await walk(rootDir, 0)
+    return results
+  }
+
   private async safeRealpath(p: string): Promise<string | null> {
     try {
       return await realpath(p)

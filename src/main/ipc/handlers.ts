@@ -110,6 +110,10 @@ export function registerIpcHandlers(
     return platform.restoreFromTrash(originalPaths)
   })
 
+  typedHandle(FS_CHANNELS.SEARCH_FILES, (_event, rootDir: string, query: string) => {
+    return fsService.searchFiles(rootDir, query)
+  })
+
   typedHandle(FS_CHANNELS.COPY, (event, srcPath: string, destDir: string) => {
     const win = BrowserWindow.fromWebContents(event.sender)
     return fsService.copy(srcPath, destDir, (done, total) => {

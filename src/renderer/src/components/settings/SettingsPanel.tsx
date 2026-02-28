@@ -16,7 +16,10 @@ import {
   Eye,
   EyeOff,
   KeyRound,
-  ChevronDown
+  ChevronDown,
+  AudioLines,
+  Code2,
+  Globe
 } from 'lucide-react'
 import type { FileAssociation } from '@shared/settings'
 import { useSettingsStore } from '@/stores/settings-store'
@@ -49,6 +52,26 @@ const TABS: { id: SettingsTab; label: string; icon: typeof Settings2 }[] = [
   { id: 'style', label: 'Style', icon: Paintbrush }
 ]
 
+function IdeSection(): JSX.Element {
+  const { settings, updateSettings } = useSettingsStore()
+
+  return (
+    <Section icon={Code2} title="IDE">
+      <div>
+        <label className="mb-2 block text-xs text-fg-muted">IDE Executable</label>
+        <Input
+          value={settings.idePath}
+          onChange={(v) => updateSettings({ idePath: v })}
+          placeholder="code, cursor, /usr/bin/code"
+        />
+        <p className="mt-2 text-[11px] text-fg-muted">
+          Command or path to IDE executable
+        </p>
+      </div>
+    </Section>
+  )
+}
+
 function OpenAISection(): JSX.Element {
   const { settings, updateSettings } = useSettingsStore()
   const [showKey, setShowKey] = useState(false)
@@ -58,12 +81,11 @@ function OpenAISection(): JSX.Element {
       <div>
         <label className="mb-2 block text-xs text-fg-muted">OpenAI API Key</label>
         <div className="flex items-center gap-2">
-          <input
+          <Input
             type={showKey ? 'text' : 'password'}
             value={settings.openaiApiKey}
-            onChange={(e) => updateSettings({ openaiApiKey: e.target.value })}
+            onChange={(v) => updateSettings({ openaiApiKey: v })}
             placeholder="sk-proj-..."
-            className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-fg/40 focus:bg-surface-hover"
           />
           <button
             onClick={() => setShowKey((v) => !v)}
@@ -86,6 +108,56 @@ function OpenAISection(): JSX.Element {
           ]}
           onChange={(v) => updateSettings({ whisperLanguage: v as 'ru' | 'en' })}
         />
+      </div>
+    </Section>
+  )
+}
+
+function NetworkSection(): JSX.Element {
+  const { settings, updateSettings } = useSettingsStore()
+
+  return (
+    <Section icon={Globe} title="Network">
+      <div>
+        <label className="mb-2 block text-xs text-fg-muted">HTTP Proxy</label>
+        <Input
+          value={settings.httpProxy}
+          onChange={(v) => updateSettings({ httpProxy: v })}
+          placeholder="http://user:pass@host:port"
+        />
+        <p className="mt-2 text-[11px] text-fg-muted">
+          Proxy for API requests (ElevenLabs TTS)
+        </p>
+      </div>
+    </Section>
+  )
+}
+
+function ElevenLabsSection(): JSX.Element {
+  const { settings, updateSettings } = useSettingsStore()
+  const [showKey, setShowKey] = useState(false)
+
+  return (
+    <Section icon={AudioLines} title="ElevenLabs">
+      <div>
+        <label className="mb-2 block text-xs text-fg-muted">ElevenLabs API Key</label>
+        <div className="flex items-center gap-2">
+          <Input
+            type={showKey ? 'text' : 'password'}
+            value={settings.elevenlabsApiKey}
+            onChange={(v) => updateSettings({ elevenlabsApiKey: v })}
+            placeholder="sk_..."
+          />
+          <button
+            onClick={() => setShowKey((v) => !v)}
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-fg-muted transition-colors hover:text-fg"
+          >
+            {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
+        <p className="mt-2 text-[11px] text-fg-muted">
+          Used for text-to-speech.
+        </p>
       </div>
     </Section>
   )
@@ -222,9 +294,9 @@ export function SettingsPanel(): JSX.Element {
                         <Input
                           value={assoc.pattern}
                           placeholder="*.txt"
-                          onChange={(e) => {
+                          onChange={(v) => {
                             const next = [...settings.fileAssociations]
-                            next[i] = { ...next[i], pattern: e.target.value }
+                            next[i] = { ...next[i], pattern: v }
                             updateSettings({ fileAssociations: next })
                           }}
                           className="flex-1"
@@ -232,9 +304,9 @@ export function SettingsPanel(): JSX.Element {
                         <Input
                           value={assoc.command}
                           placeholder="code"
-                          onChange={(e) => {
+                          onChange={(v) => {
                             const next = [...settings.fileAssociations]
-                            next[i] = { ...next[i], command: e.target.value }
+                            next[i] = { ...next[i], command: v }
                             updateSettings({ fileAssociations: next })
                           }}
                           className="flex-1"
@@ -267,6 +339,21 @@ export function SettingsPanel(): JSX.Element {
 
                 {/* OpenAI */}
                 <OpenAISection />
+
+                <Divider />
+
+                {/* ElevenLabs */}
+                <ElevenLabsSection />
+
+                <Divider />
+
+                {/* Network */}
+                <NetworkSection />
+
+                <Divider />
+
+                {/* IDE */}
+                <IdeSection />
 
                 {/* Reset */}
                 <div className="pt-2">

@@ -1,3 +1,4 @@
+import { net } from 'electron'
 import { WHISPER_CHANNELS } from '../../shared/channels'
 import { SettingsService } from '../settings/settings-service'
 import { logger } from '../services/logger-service'
@@ -51,7 +52,7 @@ export function registerWhisperHandlers(): void {
 
     const body = Buffer.concat(parts)
 
-    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    const res = await net.fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${openaiApiKey}`,

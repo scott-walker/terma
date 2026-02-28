@@ -18,7 +18,10 @@ export interface TerminalSettings {
   fileAssociations: FileAssociation[]
   agentCommand: string
   openaiApiKey: string
+  elevenlabsApiKey: string
   whisperLanguage: 'ru' | 'en'
+  httpProxy: string
+  idePath: string
   sshProfiles: SshProfile[]
   agentProfiles: AgentProfile[]
 }
@@ -35,7 +38,10 @@ export const DEFAULT_SETTINGS: TerminalSettings = {
   fileAssociations: [],
   agentCommand: 'claude',
   openaiApiKey: '',
+  elevenlabsApiKey: '',
   whisperLanguage: 'ru',
+  httpProxy: '',
+  idePath: '',
   sshProfiles: [],
   agentProfiles: [{ id: 'default-claude', name: 'Claude', command: 'claude' }]
 }

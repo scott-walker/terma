@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect, memo } from 'react'
-import { Columns2, Rows2, X, ChevronDown, Server, Loader2, Check, Terminal, FolderOpen, FileCode } from 'lucide-react'
+import { Columns2, Rows2, X, ChevronDown, Server, Loader2, Check, Terminal, FolderOpen, FileCode, Code2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { baseName } from '@shared/path-utils'
 import type { PaneType } from '@/lib/layout-tree'
@@ -434,6 +434,7 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal
   const isPreview = previewPaneTypes.has(paneType)
   const hasApiKey = useSettingsStore((s) => !!s.settings.openaiApiKey)
+  const idePath = useSettingsStore((s) => s.settings.idePath)
 
   const sshPaneState = useSshStore((s) => s.panes[paneId])
   const editorMeta = useSshStore((s) => s.editorPanes?.[paneId])
@@ -444,6 +445,7 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
   const isConnecting = sshPaneState?.state === 'connecting'
   const isSshMode = !!sshPaneState
   const showMic = paneType === 'terminal' || paneType === 'agent'
+  const showIde = !!idePath && (paneType === 'terminal' || paneType === 'file-manager')
 
   const resolvedProfileId = sshProfileId || sshPaneState?.profileId
   const connectedProfile = sshProfiles.find((p) => p.id === resolvedProfileId)
@@ -507,6 +509,16 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
             paneType={paneType}
             isSshMode={isSshMode}
             disabled={!hasApiKey}
+          />
+        )}
+        {showIde && !editorMeta && cwd && (
+          <IconButton
+            icon={Code2}
+            onClick={(e) => {
+              e.stopPropagation()
+              window.api.shell.openWith(idePath, cwd)
+            }}
+            title="Open in IDE"
           />
         )}
         {!isPreview && !editorMeta && (

@@ -1,3 +1,4 @@
+import { net } from 'electron'
 import { TRANSLATE_CHANNELS } from '../../shared/channels'
 import { SettingsService } from '../settings/settings-service'
 import { logger } from '../services/logger-service'
@@ -12,7 +13,7 @@ export function registerTranslateHandlers(): void {
 
     logger.info('translate', 'Translation started')
 
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    const res = await net.fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${openaiApiKey}`,

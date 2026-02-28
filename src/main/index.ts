@@ -13,6 +13,7 @@ import { registerWhisperHandlers } from './ipc/whisper-handlers'
 import { registerLogHandlers } from './ipc/log-handlers'
 import { registerSshHandlers } from './ipc/ssh-handlers'
 import { registerTranslateHandlers } from './ipc/translate-handlers'
+import { registerTtsHandlers } from './ipc/tts-handlers'
 import { registerSysmonHandlers } from './ipc/sysmon-handlers'
 import { SshService } from './ssh/ssh-service'
 import { logger } from './services/logger-service'
@@ -79,6 +80,7 @@ app.whenReady().then(() => {
   registerLogHandlers()
   registerSshHandlers(sshService)
   registerTranslateHandlers()
+  registerTtsHandlers()
   registerSysmonHandlers()
 
   logger.info('app', 'App ready')

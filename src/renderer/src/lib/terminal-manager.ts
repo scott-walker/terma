@@ -145,7 +145,7 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
 
   const fitAddon = new FitAddon()
   terminal.loadAddon(fitAddon)
-  terminal.loadAddon(new WebLinksAddon())
+  terminal.loadAddon(new WebLinksAddon((_event, uri) => window.open(uri, '_blank')))
 
   const unicode11 = new Unicode11Addon()
   terminal.loadAddon(unicode11)

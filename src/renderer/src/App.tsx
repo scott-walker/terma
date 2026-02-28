@@ -210,6 +210,13 @@ export default function App(): JSX.Element {
       return
     }
 
+    // File search: Ctrl+P
+    if (mod && !shiftKey && code === 'KeyP') {
+      e.preventDefault()
+      window.dispatchEvent(new CustomEvent('terma:file-search'))
+      return
+    }
+
     // Toggle voice recording: Ctrl+/
     if (mod && !shiftKey && code === 'Slash') {
       e.preventDefault()

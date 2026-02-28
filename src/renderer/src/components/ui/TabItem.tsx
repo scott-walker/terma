@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { X } from 'lucide-react'
 
 const TAB_COLOR_CLASSES: Record<string, { border: string; bg: string }> = {
   red: { border: 'border-tab-red', bg: 'bg-tab-red' },
@@ -107,7 +108,7 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      className={`group relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-colors hover:bg-fg/5 ${borderClass} ${isActive ? 'bg-tab-active-bg' : ''} ${textClass} ${dropSide ? 'bg-tab-drop-indicator/10' : ''} ${dropSide === 'left' ? 'before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-tab-drop-indicator' : ''} ${dropSide === 'right' ? 'after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-tab-drop-indicator' : ''}`}
+      className={`group relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 pl-6 pr-3 py-2.5 text-base transition-colors hover:bg-fg/5 ${borderClass} ${isActive ? 'bg-tab-active-bg' : ''} ${textClass} ${dropSide ? 'bg-tab-drop-indicator/10' : ''} ${dropSide === 'left' ? 'before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-tab-drop-indicator' : ''} ${dropSide === 'right' ? 'after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-tab-drop-indicator' : ''}`}
     >
       <span className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${dotClass}`} />
       <span
@@ -122,6 +123,19 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
       >
         {title}
       </span>
+      {canClose && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onClose()
+          }}
+          className="ml-1 shrink-0 rounded p-0.5 opacity-0 transition-opacity hover:bg-fg/10 group-hover:opacity-100 aria-[current]:opacity-100"
+          aria-current={isActive ? 'true' : undefined}
+          title="Close tab"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      )}
     </div>
   )
 }
