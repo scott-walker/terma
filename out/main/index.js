@@ -16,6 +16,7 @@ const assert = require("node:assert");
 const os$1 = require("node:os");
 require("node:events");
 require("node:stream");
+const undici = require("undici");
 const si = require("systeminformation");
 const ssh2 = require("ssh2");
 const fs$1 = require("fs");
@@ -55,6 +56,7 @@ const FS_CHANNELS = {
   RESTORE: "fs:restore",
   COPY: "fs:copy",
   COPY_PROGRESS: "fs:copyProgress",
+  SEARCH_FILES: "fs:searchFiles",
   WATCH: "fs:watch",
   UNWATCH: "fs:unwatch",
   FS_EVENT: "fs:event"
@@ -96,6 +98,10 @@ const LOG_CHANNELS = {
 };
 const TRANSLATE_CHANNELS = {
   TRANSLATE: "translate:translate"
+};
+const TTS_CHANNELS = {
+  SPEAK: "tts:speak",
+  STREAM: "tts:stream"
 };
 const SYSMON_CHANNELS = {
   METRICS: "sysmon:metrics"
@@ -373,6 +379,65 @@ class FsService {
       }
     }
   }
+  async searchFiles(rootDir, query, limit2 = 100) {
+    const lowerQuery = query.toLowerCase();
+    const results = [];
+    const visited = /* @__PURE__ */ new Set();
+    const walk = async (dir, depth) => {
+      if (depth > MAX_DEPTH || results.length >= limit2) return;
+      const real = await this.safeRealpath(dir);
+      if (real && visited.has(real)) return;
+      if (real) visited.add(real);
+      let dirents;
+      try {
+        dirents = await promises.readdir(dir, { withFileTypes: true });
+      } catch {
+        return;
+      }
+      for (const entry of dirents) {
+        if (results.length >= limit2) return;
+        const name = entry.name;
+        if (entry.isDirectory() && (name === "node_modules" || name === ".git" || name === ".hg" || name === ".svn" || name === "__pycache__" || name === ".DS_Store")) {
+          continue;
+        }
+        const fullPath = path.join(dir, name);
+        if (entry.isDirectory()) {
+          if (name.toLowerCase().includes(lowerQuery)) {
+            try {
+              const stats = await promises.stat(fullPath);
+              results.push({
+                name,
+                path: fullPath,
+                isDirectory: true,
+                isSymlink: entry.isSymbolicLink(),
+                size: stats.size,
+                modified: stats.mtimeMs
+              });
+            } catch {
+            }
+          }
+          await walk(fullPath, depth + 1);
+        } else {
+          if (name.toLowerCase().includes(lowerQuery)) {
+            try {
+              const stats = await promises.stat(fullPath);
+              results.push({
+                name,
+                path: fullPath,
+                isDirectory: false,
+                isSymlink: entry.isSymbolicLink(),
+                size: stats.size,
+                modified: stats.mtimeMs
+              });
+            } catch {
+            }
+          }
+        }
+      }
+    };
+    await walk(rootDir, 0);
+    return results;
+  }
   async safeRealpath(p) {
     try {
       return await promises.realpath(p);
@@ -564,6 +629,9 @@ function registerIpcHandlers(ptyManager2, fsService2, fsWatcher2, platform2) {
   });
   typedHandle(FS_CHANNELS.RESTORE, (_event, originalPaths) => {
     return platform2.restoreFromTrash(originalPaths);
+  });
+  typedHandle(FS_CHANNELS.SEARCH_FILES, (_event, rootDir, query) => {
+    return fsService2.searchFiles(rootDir, query);
   });
   typedHandle(FS_CHANNELS.COPY, (event, srcPath, destDir) => {
     const win = electron.BrowserWindow.fromWebContents(event.sender);
@@ -11277,7 +11345,10 @@ const DEFAULT_SETTINGS = {
   fileAssociations: [],
   agentCommand: "claude",
   openaiApiKey: "",
+  elevenlabsApiKey: "",
   whisperLanguage: "ru",
+  httpProxy: "",
+  idePath: "",
   sshProfiles: [],
   agentProfiles: [{ id: "default-claude", name: "Claude", command: "claude" }]
 };
@@ -11394,7 +11465,7 @@ ${whisperLanguage || "ru"}\r
     parts.push(Buffer.from(`--${boundary}--\r
 `));
     const body = Buffer.concat(parts);
-    const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+    const res = await electron.net.fetch("https://api.openai.com/v1/audio/transcriptions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${openaiApiKey}`,
@@ -11440,7 +11511,7 @@ function registerTranslateHandlers() {
       throw new Error("OpenAI API key is not configured");
     }
     logger.info("translate", "Translation started");
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await electron.net.fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${openaiApiKey}`,
@@ -11466,6 +11537,98 @@ function registerTranslateHandlers() {
     const translated = data.choices[0]?.message?.content?.trim() ?? "";
     logger.info("translate", "Translation complete");
     return translated;
+  });
+}
+const VOICE_ID = "WTn2eCRCpoFAC50VD351";
+const elevenlabs = {
+  sampleRate: 16e3,
+  async *speak(text, apiKey, proxyUrl) {
+    const url = `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}?output_format=pcm_16000`;
+    logger.info("tts", `POST ${url} (${text.length} chars)${proxyUrl ? ` via proxy` : ""}`);
+    const fetchOptions = {
+      method: "POST",
+      headers: {
+        "xi-api-key": apiKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text,
+        model_id: "eleven_flash_v2_5",
+        voice_settings: {
+          stability: 1,
+          similarity_boost: 1,
+          speed: 1
+        },
+        language_code: "ru"
+      })
+    };
+    if (proxyUrl) {
+      fetchOptions.dispatcher = new undici.ProxyAgent(proxyUrl);
+    }
+    const res = await undici.fetch(url, fetchOptions);
+    logger.info("tts", `Response ${res.status} content-type: ${res.headers.get("content-type")}`);
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`ElevenLabs API error ${res.status}: ${errText}`);
+    }
+    if (!res.body) {
+      throw new Error("ElevenLabs returned empty body");
+    }
+    let totalBytes = 0;
+    let leftover = null;
+    for await (const chunk of res.body) {
+      let bytes = chunk instanceof Uint8Array ? chunk : new Uint8Array(chunk);
+      if (leftover) {
+        const merged = new Uint8Array(leftover.byteLength + bytes.byteLength);
+        merged.set(leftover);
+        merged.set(bytes, leftover.byteLength);
+        bytes = merged;
+        leftover = null;
+      }
+      if (bytes.byteLength % 2 !== 0) {
+        leftover = bytes.slice(-1);
+        bytes = bytes.slice(0, -1);
+      }
+      if (bytes.byteLength > 0) {
+        totalBytes += bytes.byteLength;
+        yield bytes;
+      }
+    }
+    logger.info("tts", `Stream complete: ${totalBytes} bytes`);
+  }
+};
+const provider = elevenlabs;
+function registerTtsHandlers() {
+  typedHandle(TTS_CHANNELS.SPEAK, (event, text) => {
+    const { elevenlabsApiKey, httpProxy } = SettingsService.getAll();
+    if (!elevenlabsApiKey) {
+      throw new Error("ElevenLabs API key is not configured");
+    }
+    const streamId = nanoid.nanoid();
+    const win = electron.BrowserWindow.fromWebContents(event.sender);
+    logger.info("tts", `Stream ${streamId} started`);
+    (async () => {
+      try {
+        for await (const chunk of provider.speak(text, elevenlabsApiKey, httpProxy || void 0)) {
+          if (win?.isDestroyed()) break;
+          win?.webContents.send(TTS_CHANNELS.STREAM, streamId, {
+            type: "chunk",
+            data: Buffer.from(chunk).toString("base64")
+          });
+        }
+        if (!win?.isDestroyed()) {
+          win?.webContents.send(TTS_CHANNELS.STREAM, streamId, { type: "done" });
+        }
+        logger.info("tts", `Stream ${streamId} complete`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "TTS stream failed";
+        logger.error("tts", `Stream ${streamId} error`, message);
+        if (!win?.isDestroyed()) {
+          win?.webContents.send(TTS_CHANNELS.STREAM, streamId, { type: "error", message });
+        }
+      }
+    })();
+    return { streamId, sampleRate: provider.sampleRate };
   });
 }
 class SystemMonitorService {
@@ -11873,6 +12036,7 @@ electron.app.whenReady().then(() => {
   registerLogHandlers();
   registerSshHandlers(sshService);
   registerTranslateHandlers();
+  registerTtsHandlers();
   registerSysmonHandlers();
   logger.info("app", "App ready");
   typedHandle(CLIPBOARD_CHANNELS.READ_FILE_PATHS, () => {

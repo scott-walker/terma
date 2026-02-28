@@ -12530,7 +12530,7 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$G = [
+const __iconNode$K = [
   [
     "path",
     {
@@ -12539,8 +12539,17 @@ const __iconNode$G = [
     }
   ]
 ];
-const Activity = createLucideIcon("activity", __iconNode$G);
-const __iconNode$F = [
+const Activity = createLucideIcon("activity", __iconNode$K);
+const __iconNode$J = [
+  ["path", { d: "M2 10v3", key: "1fnikh" }],
+  ["path", { d: "M6 6v11", key: "11sgs0" }],
+  ["path", { d: "M10 3v18", key: "yhl04a" }],
+  ["path", { d: "M14 8v7", key: "3a1oy3" }],
+  ["path", { d: "M18 5v13", key: "123xd1" }],
+  ["path", { d: "M22 10v3", key: "154ddg" }]
+];
+const AudioLines = createLucideIcon("audio-lines", __iconNode$J);
+const __iconNode$I = [
   ["path", { d: "M12 8V4H8", key: "hb8ula" }],
   ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
   ["path", { d: "M2 14h2", key: "vft8re" }],
@@ -12548,33 +12557,39 @@ const __iconNode$F = [
   ["path", { d: "M15 13v2", key: "1xurst" }],
   ["path", { d: "M9 13v2", key: "rq6x2g" }]
 ];
-const Bot = createLucideIcon("bot", __iconNode$F);
-const __iconNode$E = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$E);
-const __iconNode$D = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$D);
-const __iconNode$C = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$C);
-const __iconNode$B = [
+const Bot = createLucideIcon("bot", __iconNode$I);
+const __iconNode$H = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$H);
+const __iconNode$G = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$G);
+const __iconNode$F = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$F);
+const __iconNode$E = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
   ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
 ];
-const CircleAlert = createLucideIcon("circle-alert", __iconNode$B);
-const __iconNode$A = [
+const CircleAlert = createLucideIcon("circle-alert", __iconNode$E);
+const __iconNode$D = [
   ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
   ["path", { d: "M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2", key: "4jdomd" }],
   ["path", { d: "M16 4h2a2 2 0 0 1 2 2v4", key: "3hqy98" }],
   ["path", { d: "M21 14H11", key: "1bme5i" }],
   ["path", { d: "m15 10-4 4 4 4", key: "5dvupr" }]
 ];
-const ClipboardCopy = createLucideIcon("clipboard-copy", __iconNode$A);
-const __iconNode$z = [
+const ClipboardCopy = createLucideIcon("clipboard-copy", __iconNode$D);
+const __iconNode$C = [
+  ["path", { d: "m18 16 4-4-4-4", key: "1inbqp" }],
+  ["path", { d: "m6 8-4 4 4 4", key: "15zrgr" }],
+  ["path", { d: "m14.5 4-5 16", key: "e7oirm" }]
+];
+const CodeXml = createLucideIcon("code-xml", __iconNode$C);
+const __iconNode$B = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M12 3v18", key: "108xh3" }]
 ];
-const Columns2 = createLucideIcon("columns-2", __iconNode$z);
-const __iconNode$y = [
+const Columns2 = createLucideIcon("columns-2", __iconNode$B);
+const __iconNode$A = [
   ["path", { d: "M12 20v2", key: "1lh1kg" }],
   ["path", { d: "M12 2v2", key: "tus03m" }],
   ["path", { d: "M17 20v2", key: "1rnc9c" }],
@@ -12590,8 +12605,8 @@ const __iconNode$y = [
   ["rect", { x: "4", y: "4", width: "16", height: "16", rx: "2", key: "1vbyd7" }],
   ["rect", { x: "8", y: "8", width: "8", height: "8", rx: "1", key: "z9xiuo" }]
 ];
-const Cpu = createLucideIcon("cpu", __iconNode$y);
-const __iconNode$x = [
+const Cpu = createLucideIcon("cpu", __iconNode$A);
+const __iconNode$z = [
   [
     "path",
     {
@@ -12609,8 +12624,8 @@ const __iconNode$x = [
   ],
   ["path", { d: "m2 2 20 20", key: "1ooewy" }]
 ];
-const EyeOff = createLucideIcon("eye-off", __iconNode$x);
-const __iconNode$w = [
+const EyeOff = createLucideIcon("eye-off", __iconNode$z);
+const __iconNode$y = [
   [
     "path",
     {
@@ -12620,8 +12635,8 @@ const __iconNode$w = [
   ],
   ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
 ];
-const Eye = createLucideIcon("eye", __iconNode$w);
-const __iconNode$v = [
+const Eye = createLucideIcon("eye", __iconNode$y);
+const __iconNode$x = [
   [
     "path",
     {
@@ -12633,8 +12648,8 @@ const __iconNode$v = [
   ["path", { d: "m5 16-3 3 3 3", key: "331omg" }],
   ["path", { d: "m9 22 3-3-3-3", key: "lsp7cz" }]
 ];
-const FileCodeCorner = createLucideIcon("file-code-corner", __iconNode$v);
-const __iconNode$u = [
+const FileCodeCorner = createLucideIcon("file-code-corner", __iconNode$x);
+const __iconNode$w = [
   [
     "path",
     {
@@ -12646,8 +12661,8 @@ const __iconNode$u = [
   ["path", { d: "M10 12.5 8 15l2 2.5", key: "1tg20x" }],
   ["path", { d: "m14 12.5 2 2.5-2 2.5", key: "yinavb" }]
 ];
-const FileCode = createLucideIcon("file-code", __iconNode$u);
-const __iconNode$t = [
+const FileCode = createLucideIcon("file-code", __iconNode$w);
+const __iconNode$v = [
   [
     "path",
     {
@@ -12660,8 +12675,8 @@ const __iconNode$t = [
   ["path", { d: "M16 13H8", key: "t4e002" }],
   ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$t);
-const __iconNode$s = [
+const FileText = createLucideIcon("file-text", __iconNode$v);
+const __iconNode$u = [
   [
     "path",
     {
@@ -12670,8 +12685,8 @@ const __iconNode$s = [
     }
   ]
 ];
-const FolderOpen = createLucideIcon("folder-open", __iconNode$s);
-const __iconNode$r = [
+const FolderOpen = createLucideIcon("folder-open", __iconNode$u);
+const __iconNode$t = [
   [
     "path",
     {
@@ -12680,14 +12695,20 @@ const __iconNode$r = [
     }
   ]
 ];
-const Folder = createLucideIcon("folder", __iconNode$r);
-const __iconNode$q = [
+const Folder = createLucideIcon("folder", __iconNode$t);
+const __iconNode$s = [
   ["path", { d: "M15 6a9 9 0 0 0-9 9V3", key: "1cii5b" }],
   ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
   ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }]
 ];
-const GitBranch = createLucideIcon("git-branch", __iconNode$q);
-const __iconNode$p = [
+const GitBranch = createLucideIcon("git-branch", __iconNode$s);
+const __iconNode$r = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20", key: "13o1zl" }],
+  ["path", { d: "M2 12h20", key: "9i4pu4" }]
+];
+const Globe = createLucideIcon("globe", __iconNode$r);
+const __iconNode$q = [
   ["path", { d: "M10 16h.01", key: "1bzywj" }],
   [
     "path",
@@ -12699,14 +12720,14 @@ const __iconNode$p = [
   ["path", { d: "M21.946 12.013H2.054", key: "zqlbp7" }],
   ["path", { d: "M6 16h.01", key: "1pmjb7" }]
 ];
-const HardDrive = createLucideIcon("hard-drive", __iconNode$p);
-const __iconNode$o = [
+const HardDrive = createLucideIcon("hard-drive", __iconNode$q);
+const __iconNode$p = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
   ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
   ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
 ];
-const Image = createLucideIcon("image", __iconNode$o);
-const __iconNode$n = [
+const Image = createLucideIcon("image", __iconNode$p);
+const __iconNode$o = [
   [
     "path",
     {
@@ -12716,10 +12737,10 @@ const __iconNode$n = [
   ],
   ["circle", { cx: "16.5", cy: "7.5", r: ".5", fill: "currentColor", key: "w0ekpg" }]
 ];
-const KeyRound = createLucideIcon("key-round", __iconNode$n);
-const __iconNode$m = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$m);
-const __iconNode$l = [
+const KeyRound = createLucideIcon("key-round", __iconNode$o);
+const __iconNode$n = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$n);
+const __iconNode$m = [
   ["path", { d: "M12 12v-2", key: "fwoke6" }],
   ["path", { d: "M12 18v-2", key: "qj6yno" }],
   ["path", { d: "M16 12v-2", key: "heuere" }],
@@ -12732,22 +12753,22 @@ const __iconNode$l = [
   ["path", { d: "M8 18v-2", key: "qcmpov" }],
   ["rect", { x: "2", y: "6", width: "20", height: "10", rx: "2", key: "1qcswk" }]
 ];
-const MemoryStick = createLucideIcon("memory-stick", __iconNode$l);
-const __iconNode$k = [
+const MemoryStick = createLucideIcon("memory-stick", __iconNode$m);
+const __iconNode$l = [
   ["path", { d: "M12 19v3", key: "npa21l" }],
   ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
   ["rect", { x: "9", y: "2", width: "6", height: "13", rx: "3", key: "s6n7sd" }]
 ];
-const Mic = createLucideIcon("mic", __iconNode$k);
-const __iconNode$j = [["path", { d: "M5 12h14", key: "1ays0h" }]];
-const Minus = createLucideIcon("minus", __iconNode$j);
-const __iconNode$i = [
+const Mic = createLucideIcon("mic", __iconNode$l);
+const __iconNode$k = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+const Minus = createLucideIcon("minus", __iconNode$k);
+const __iconNode$j = [
   ["rect", { width: "20", height: "14", x: "2", y: "3", rx: "2", key: "48i651" }],
   ["line", { x1: "8", x2: "16", y1: "21", y2: "21", key: "1svkeh" }],
   ["line", { x1: "12", x2: "12", y1: "17", y2: "21", key: "vw1qmm" }]
 ];
-const Monitor = createLucideIcon("monitor", __iconNode$i);
-const __iconNode$h = [
+const Monitor = createLucideIcon("monitor", __iconNode$j);
+const __iconNode$i = [
   ["path", { d: "m14.622 17.897-10.68-2.913", key: "vj2p1u" }],
   [
     "path",
@@ -12764,8 +12785,8 @@ const __iconNode$h = [
     }
   ]
 ];
-const Paintbrush = createLucideIcon("paintbrush", __iconNode$h);
-const __iconNode$g = [
+const Paintbrush = createLucideIcon("paintbrush", __iconNode$i);
+const __iconNode$h = [
   [
     "path",
     {
@@ -12778,30 +12799,30 @@ const __iconNode$g = [
   ["circle", { cx: "6.5", cy: "12.5", r: ".5", fill: "currentColor", key: "qy21gx" }],
   ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
 ];
-const Palette = createLucideIcon("palette", __iconNode$g);
-const __iconNode$f = [
+const Palette = createLucideIcon("palette", __iconNode$h);
+const __iconNode$g = [
   ["path", { d: "M5 12h14", key: "1ays0h" }],
   ["path", { d: "M12 5v14", key: "s699le" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$f);
-const __iconNode$e = [
+const Plus = createLucideIcon("plus", __iconNode$g);
+const __iconNode$f = [
   ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
   ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
   ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
   ["path", { d: "M8 16H3v5", key: "1cv678" }]
 ];
-const RefreshCw = createLucideIcon("refresh-cw", __iconNode$e);
-const __iconNode$d = [
+const RefreshCw = createLucideIcon("refresh-cw", __iconNode$f);
+const __iconNode$e = [
   ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
   ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
 ];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$d);
-const __iconNode$c = [
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$e);
+const __iconNode$d = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M3 12h18", key: "1i2n21" }]
 ];
-const Rows2 = createLucideIcon("rows-2", __iconNode$c);
-const __iconNode$b = [
+const Rows2 = createLucideIcon("rows-2", __iconNode$d);
+const __iconNode$c = [
   [
     "path",
     {
@@ -12812,8 +12833,8 @@ const __iconNode$b = [
   ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
   ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
 ];
-const Save = createLucideIcon("save", __iconNode$b);
-const __iconNode$a = [
+const Save = createLucideIcon("save", __iconNode$c);
+const __iconNode$b = [
   ["path", { d: "M15 12h-5", key: "r7krc0" }],
   ["path", { d: "M15 8h-5", key: "1khuty" }],
   ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -12825,7 +12846,12 @@ const __iconNode$a = [
     }
   ]
 ];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$a);
+const ScrollText = createLucideIcon("scroll-text", __iconNode$b);
+const __iconNode$a = [
+  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
+  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+];
+const Search = createLucideIcon("search", __iconNode$a);
 const __iconNode$9 = [
   ["rect", { width: "20", height: "8", x: "2", y: "2", rx: "2", ry: "2", key: "ngkwjq" }],
   ["rect", { width: "20", height: "8", x: "2", y: "14", rx: "2", ry: "2", key: "iecqi9" }],
@@ -13030,7 +13056,10 @@ const DEFAULT_SETTINGS = {
   fileAssociations: [],
   agentCommand: "claude",
   openaiApiKey: "",
+  elevenlabsApiKey: "",
   whisperLanguage: "ru",
+  httpProxy: "",
+  idePath: "",
   sshProfiles: [],
   agentProfiles: [{ id: "default-claude", name: "Claude", command: "claude" }]
 };
@@ -13132,7 +13161,7 @@ function IconButton({
   variant = "ghost",
   size = "sm"
 }) {
-  const iconSize = size === "sm" ? 16 : 18;
+  const iconSize = size === "sm" ? 18 : 20;
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     "button",
     {
@@ -25318,6 +25347,9 @@ var Ke$1 = class Ke {
   dispose() {
   }
 };
+function effectiveLineHeight(fontSize, lineHeight) {
+  return lineHeight + 6 / fontSize;
+}
 const terminals = /* @__PURE__ */ new Map();
 const pendingAttaches = /* @__PURE__ */ new Map();
 let settingsUnsub = null;
@@ -25360,7 +25392,7 @@ function ensureSettingsSubscription() {
       themeColors: theme.colors,
       fontFamily: settings.fontFamily,
       fontSize: effectiveFontSize,
-      lineHeight: settings.lineHeight,
+      lineHeight: effectiveLineHeight(effectiveFontSize, settings.lineHeight),
       cursorBlink: settings.cursorBlink,
       cursorStyle: settings.cursorStyle,
       scrollback: settings.scrollback
@@ -25393,7 +25425,7 @@ function createTerminalEntry(paneId, ptyId) {
   const terminal = new xtermExports.Terminal({
     fontFamily: state.settings.fontFamily,
     fontSize: effectiveFontSize,
-    lineHeight: state.settings.lineHeight,
+    lineHeight: effectiveLineHeight(effectiveFontSize, state.settings.lineHeight),
     cursorBlink: state.settings.cursorBlink,
     cursorStyle: state.settings.cursorStyle,
     theme: theme.colors,
@@ -25402,7 +25434,7 @@ function createTerminalEntry(paneId, ptyId) {
   });
   const fitAddon = new o();
   terminal.loadAddon(fitAddon);
-  terminal.loadAddon(new L());
+  terminal.loadAddon(new L((_event, uri) => window.open(uri, "_blank")));
   const unicode11 = new Ke$1();
   terminal.loadAddon(unicode11);
   terminal.unicode.activeVersion = "11";
@@ -25956,7 +25988,7 @@ function TabItem({ title, isActive, canClose, color: color2, forceEdit, onClick,
       onDragOver,
       onDrop,
       onDragEnd,
-      className: `group relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 px-6 py-2.5 text-base transition-colors hover:bg-fg/5 ${borderClass} ${isActive ? "bg-tab-active-bg" : ""} ${textClass} ${dropSide ? "bg-tab-drop-indicator/10" : ""} ${dropSide === "left" ? "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-tab-drop-indicator" : ""} ${dropSide === "right" ? "after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-tab-drop-indicator" : ""}`,
+      className: `group relative flex select-none items-center gap-2.5 whitespace-nowrap border-b-2 pl-6 pr-3 py-2.5 text-base transition-colors hover:bg-fg/5 ${borderClass} ${isActive ? "bg-tab-active-bg" : ""} ${textClass} ${dropSide ? "bg-tab-drop-indicator/10" : ""} ${dropSide === "left" ? "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-tab-drop-indicator" : ""} ${dropSide === "right" ? "after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-tab-drop-indicator" : ""}`,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `inline-block h-2.5 w-2.5 shrink-0 rounded-full ${dotClass}` }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -25971,6 +26003,19 @@ function TabItem({ title, isActive, canClose, color: color2, forceEdit, onClick,
             spellCheck: false,
             className: editing ? "outline-none" : void 0,
             children: title
+          }
+        ),
+        canClose && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            onClick: (e) => {
+              e.stopPropagation();
+              onClose();
+            },
+            className: "ml-1 shrink-0 rounded p-0.5 opacity-0 transition-opacity hover:bg-fg/10 group-hover:opacity-100 aria-[current]:opacity-100",
+            "aria-current": isActive ? "true" : void 0,
+            title: "Close tab",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(X$1, { className: "h-3.5 w-3.5" })
           }
         )
       ]
@@ -33874,7 +33919,7 @@ function ContextMenu({ position: position2, entries, onClose }) {
       className: "fixed z-50 min-w-[180px] rounded-md border border-border bg-popup-bg py-1 shadow-xl",
       style: { left: position2.x, top: position2.y },
       children: entries.map(
-        (entry, i8) => entry.type === "separator" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }, i8) : entry.type === "colors" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-between px-3 py-2.5", children: entry.colors.map((c) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+        (entry, i8) => entry.type === "separator" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }, i8) : entry.type === "colors" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex gap-2 px-3 py-2.5", children: entry.colors.map((c) => /* @__PURE__ */ jsxRuntimeExports.jsx(
           "button",
           {
             title: c.label,
@@ -33953,7 +33998,7 @@ function ConfirmDialog({
                 {
                   onClick: onConfirm,
                   autoFocus: true,
-                  className: "cursor-pointer rounded-md bg-danger px-3 py-1.5 text-sm text-white transition-colors hover:opacity-90",
+                  className: "cursor-pointer rounded-md bg-fg px-3 py-1.5 text-sm font-semibold text-base transition-colors hover:opacity-90",
                   children: confirmLabel
                 }
               )
@@ -36158,6 +36203,7 @@ function shellEscape(s2) {
 function SshDropdown({
   profiles,
   isConnected,
+  connectedProfileId,
   onConnect,
   onDisconnect,
   onManage,
@@ -36201,33 +36247,39 @@ function SshDropdown({
                 onDisconnect();
                 onClose();
               },
-              className: "flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-danger hover:bg-surface-hover",
+              className: "flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm font-semibold text-fg hover:bg-surface-hover",
               children: "Disconnect"
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" })
         ] }),
-        profiles.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-2 text-sm text-fg-muted", children: "No profiles saved" }) : profiles.map((profile) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            onClick: () => {
-              onConnect(profile.id);
-              onClose();
+        profiles.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-2 text-sm text-fg-muted", children: "No profiles saved" }) : profiles.map((profile) => {
+          const isActive = isConnected && profile.id === connectedProfileId;
+          return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              onClick: () => {
+                onConnect(profile.id);
+                onClose();
+              },
+              className: `flex w-full items-center gap-2.5 px-3 py-1.5 text-left ${isActive ? "" : "hover:bg-surface-hover"}`,
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-1 flex-col", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-sm ${isActive ? "text-pane-active" : "text-fg"}`, children: profile.name }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: `text-xs ${isActive ? "text-pane-active/60" : "text-fg-muted"}`, children: [
+                    profile.username,
+                    "@",
+                    profile.host,
+                    ":",
+                    profile.port
+                  ] })
+                ] }),
+                isActive && /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { size: 14, strokeWidth: 2, className: "shrink-0 text-pane-active" })
+              ]
             },
-            className: "flex w-full flex-col px-3 py-1.5 text-left hover:bg-surface-hover",
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-fg", children: profile.name }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-xs text-fg-muted", children: [
-                profile.username,
-                "@",
-                profile.host,
-                ":",
-                profile.port
-              ] })
-            ]
-          },
-          profile.id
-        )),
+            profile.id
+          );
+        }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "button",
@@ -36291,7 +36343,7 @@ function SshProfilesModal({ onClose }) {
           profiles.map((profile) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "div",
             {
-              className: `mb-2 flex items-center justify-between rounded-md border px-3 py-2 ${editingProfile?.id === profile.id ? "border-accent/40 bg-surface-hover" : "border-border"}`,
+              className: `mb-2 flex items-center justify-between rounded-md border px-3 py-2 ${editingProfile?.id === profile.id ? "border-fg/40 bg-surface-hover" : "border-border"}`,
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs(
                   "button",
@@ -36338,7 +36390,7 @@ function SshProfilesModal({ onClose }) {
                     value: editingProfile.name,
                     onChange: (e) => setEditingProfile({ ...editingProfile, name: e.target.value }),
                     placeholder: "My Server",
-                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   }
                 )
               ] }),
@@ -36351,7 +36403,7 @@ function SshProfilesModal({ onClose }) {
                     value: editingProfile.host,
                     onChange: (e) => setEditingProfile({ ...editingProfile, host: e.target.value }),
                     placeholder: "192.168.1.100",
-                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   }
                 )
               ] }),
@@ -36363,7 +36415,7 @@ function SshProfilesModal({ onClose }) {
                     type: "number",
                     value: editingProfile.port,
                     onChange: (e) => setEditingProfile({ ...editingProfile, port: parseInt(e.target.value) || 22 }),
-                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none focus:border-accent/40"
+                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none focus:border-fg/40"
                   }
                 )
               ] }),
@@ -36376,7 +36428,7 @@ function SshProfilesModal({ onClose }) {
                     value: editingProfile.username,
                     onChange: (e) => setEditingProfile({ ...editingProfile, username: e.target.value }),
                     placeholder: "root",
-                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   }
                 )
               ] }),
@@ -36389,7 +36441,7 @@ function SshProfilesModal({ onClose }) {
                     value: editingProfile.keyPath,
                     onChange: (e) => setEditingProfile({ ...editingProfile, keyPath: e.target.value }),
                     placeholder: "~/.ssh/id_ed25519",
-                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   }
                 )
               ] }),
@@ -36402,7 +36454,7 @@ function SshProfilesModal({ onClose }) {
                     value: editingProfile.defaultPath,
                     onChange: (e) => setEditingProfile({ ...editingProfile, defaultPath: e.target.value }),
                     placeholder: "/home/user",
-                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   }
                 )
               ] })
@@ -36424,7 +36476,7 @@ function SshProfilesModal({ onClose }) {
                 {
                   onClick: handleSave,
                   disabled: !editingProfile.name.trim() || !editingProfile.host.trim() || !editingProfile.username.trim(),
-                  className: "flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-sm text-base transition-colors hover:opacity-90 disabled:opacity-40",
+                  className: "flex items-center gap-1.5 rounded-md bg-fg px-3 py-1.5 text-sm text-base transition-colors hover:opacity-90 disabled:opacity-40",
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(Save, { size: 14, strokeWidth: 1.8 }),
                     "Save"
@@ -36505,11 +36557,11 @@ function AgentDropdown({
                 onSelect(profile.id);
                 onClose();
               },
-              className: "flex w-full items-center gap-2.5 px-3 py-1.5 text-left hover:bg-surface-hover",
+              className: `flex w-full items-center gap-2.5 px-3 py-1.5 text-left ${isActive ? "" : "hover:bg-surface-hover"}`,
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-1 flex-col", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-fg", children: profile.name }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-fg-muted", children: profile.command })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-sm ${isActive ? "text-pane-active" : "text-fg"}`, children: profile.name }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-xs ${isActive ? "text-pane-active/60" : "text-fg-muted"}`, children: profile.command })
                 ] }),
                 isActive && /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { size: 14, strokeWidth: 2, className: "shrink-0 text-pane-active" })
               ]
@@ -36576,7 +36628,7 @@ function AgentProfilesModal({ onClose }) {
           profiles.map((profile) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "div",
             {
-              className: `mb-2 flex items-center justify-between rounded-md border px-3 py-2 ${editingProfile?.id === profile.id ? "border-accent/40 bg-surface-hover" : "border-border"}`,
+              className: `mb-2 flex items-center justify-between rounded-md border px-3 py-2 ${editingProfile?.id === profile.id ? "border-fg/40 bg-surface-hover" : "border-border"}`,
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs(
                   "button",
@@ -36617,7 +36669,7 @@ function AgentProfilesModal({ onClose }) {
                     value: editingProfile.name,
                     onChange: (e) => setEditingProfile({ ...editingProfile, name: e.target.value }),
                     placeholder: "My Agent",
-                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   }
                 )
               ] }),
@@ -36630,7 +36682,7 @@ function AgentProfilesModal({ onClose }) {
                     value: editingProfile.command,
                     onChange: (e) => setEditingProfile({ ...editingProfile, command: e.target.value }),
                     placeholder: "claude",
-                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-accent/40"
+                    className: "rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-fg outline-none placeholder:text-fg-muted focus:border-fg/40"
                   }
                 )
               ] })
@@ -36652,7 +36704,7 @@ function AgentProfilesModal({ onClose }) {
                 {
                   onClick: handleSave,
                   disabled: !editingProfile.name.trim() || !editingProfile.command.trim(),
-                  className: "flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-sm text-base transition-colors hover:opacity-90 disabled:opacity-40",
+                  className: "flex items-center gap-1.5 rounded-md bg-fg px-3 py-1.5 text-sm text-base transition-colors hover:opacity-90 disabled:opacity-40",
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(Save, { size: 14, strokeWidth: 1.8 }),
                     "Save"
@@ -36773,11 +36825,12 @@ const WhisperButton = reactExports.memo(function WhisperButton2({ paneId, paneTy
       title: disabled ? "Set OpenAI API key in Settings" : recording ? "Stop recording" : transcribing ? "Transcribing..." : "Start recording",
       disabled: disabled || transcribing,
       className: `rounded-sm border-none bg-transparent px-1.5 py-1 leading-none transition-colors ${disabled ? "cursor-not-allowed text-fg-muted opacity-30" : recording ? "animate-pulse cursor-pointer text-danger" : transcribing ? "text-warning" : "cursor-pointer text-fg-muted hover:text-fg"}`,
-      children: recording ? /* @__PURE__ */ jsxRuntimeExports.jsx(Square, { size: 14, strokeWidth: 1.8, fill: "currentColor" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Mic, { size: 16, strokeWidth: 1.8 })
+      children: recording ? /* @__PURE__ */ jsxRuntimeExports.jsx(Square, { size: 16, strokeWidth: 1.8, fill: "currentColor" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Mic, { size: 18, strokeWidth: 1.8 })
     }
   );
 });
-function GitBranchDropdown({ cwd: cwd2, onCheckout, onClose }) {
+var reactDomExports = requireReactDom();
+function GitBranchDropdown({ cwd: cwd2, anchorRef, onCheckout, onClose }) {
   const ref = reactExports.useRef(null);
   const inputRef = reactExports.useRef(null);
   const [branches, setBranches] = reactExports.useState([]);
@@ -36785,6 +36838,16 @@ function GitBranchDropdown({ cwd: cwd2, onCheckout, onClose }) {
   const [loading, setLoading] = reactExports.useState(true);
   const [acting, setActing] = reactExports.useState(false);
   const [error, setError] = reactExports.useState(null);
+  const [pos, setPos] = reactExports.useState(null);
+  const [paneActiveColor, setPaneActiveColor] = reactExports.useState(null);
+  reactExports.useEffect(() => {
+    const el = anchorRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setPos({ top: rect.bottom + 4, left: rect.left });
+    const color2 = getComputedStyle(el).getPropertyValue("--color-pane-active").trim();
+    if (color2) setPaneActiveColor(color2);
+  }, [anchorRef]);
   reactExports.useEffect(() => {
     window.api.git.listBranches(cwd2).then((list2) => {
       setBranches(list2);
@@ -36849,101 +36912,107 @@ function GitBranchDropdown({ cwd: cwd2, onCheckout, onClose }) {
       setActing(false);
     }
   }, [cwd2, filter2, onCheckout, onClose]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-    motion.div,
-    {
-      ref,
-      initial: { opacity: 0, scale: 0.95 },
-      animate: { opacity: 1, scale: 1 },
-      exit: { opacity: 0, scale: 0.95 },
-      transition: { duration: 0.1 },
-      className: "absolute left-0 top-full z-50 mt-1 min-w-[260px] rounded-md border border-border bg-popup-bg shadow-xl",
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "border-b border-border px-2 py-1.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "input",
-          {
-            ref: inputRef,
-            type: "text",
-            value: filter2,
-            onChange: (e) => {
-              setFilter(e.target.value);
-              setError(null);
-            },
-            onKeyDown: (e) => {
-              if (e.key === "Enter" && showCreate) {
-                e.preventDefault();
-                handleCreate();
-              }
-            },
-            placeholder: "Filter or create branch...",
-            className: "w-full rounded-sm bg-surface-hover px-2 py-1 text-xs text-fg outline-none placeholder:text-fg-muted/50"
-          }
-        ) }),
-        error && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-1.5 text-xs text-danger", children: error }),
-        loading ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center px-3 py-3", children: /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { size: 16, className: "animate-spin text-fg-muted" }) }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-h-[280px] overflow-y-auto py-1", children: [
-          filteredLocal.map((branch) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
+  if (!pos) return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, {});
+  return reactDomExports.createPortal(
+    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.div,
+      {
+        ref,
+        initial: { opacity: 0, scale: 0.95 },
+        animate: { opacity: 1, scale: 1 },
+        exit: { opacity: 0, scale: 0.95 },
+        transition: { duration: 0.1 },
+        style: { top: pos.top, left: pos.left, ...paneActiveColor ? { "--color-pane-active": paneActiveColor } : {} },
+        className: "fixed z-50 min-w-[260px] rounded-md border border-border bg-popup-bg shadow-xl",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "border-b border-border px-2 py-1.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "input",
             {
-              disabled: acting || branch.current,
-              onClick: (e) => {
-                e.stopPropagation();
-                if (!branch.current) handleCheckout(branch.name);
+              ref: inputRef,
+              type: "text",
+              value: filter2,
+              onChange: (e) => {
+                setFilter(e.target.value);
+                setError(null);
               },
-              className: `flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors ${branch.current ? "text-pane-active" : "text-fg hover:bg-surface-hover"}`,
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex-1 truncate", children: branch.name }),
-                branch.current && /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { size: 14, strokeWidth: 2, className: "shrink-0 text-pane-active" })
-              ]
-            },
-            branch.name
-          )),
-          filteredRemote.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-            filteredLocal.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-fg-muted/60", children: "Remote" }),
-            filteredRemote.map((branch) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+              onKeyDown: (e) => {
+                if (e.key === "Enter" && showCreate) {
+                  e.preventDefault();
+                  handleCreate();
+                }
+              },
+              placeholder: "Filter or create branch...",
+              className: "w-full rounded-sm bg-surface-hover px-2 py-1 text-xs text-fg outline-none placeholder:text-fg-muted/50"
+            }
+          ) }),
+          error && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-1.5 text-xs text-danger", children: error }),
+          loading ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center px-3 py-3", children: /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { size: 16, className: "animate-spin text-fg-muted" }) }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-h-[280px] overflow-y-auto py-1", children: [
+            filteredLocal.map((branch) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "button",
               {
-                disabled: acting,
+                disabled: acting || branch.current,
                 onClick: (e) => {
                   e.stopPropagation();
-                  handleCheckout(branch.name);
+                  if (!branch.current) handleCheckout(branch.name);
                 },
-                className: "flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex-1 truncate", children: branch.name })
+                className: `flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors ${branch.current ? "text-pane-active" : "text-fg hover:bg-surface-hover"}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex-1 truncate", children: branch.name }),
+                  branch.current && /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { size: 14, strokeWidth: 2, className: "shrink-0 text-pane-active" })
+                ]
               },
               branch.name
-            ))
-          ] }),
-          filteredLocal.length === 0 && filteredRemote.length === 0 && !showCreate && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-2 text-sm text-fg-muted", children: "No branches found" }),
-          showCreate && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              "button",
-              {
-                disabled: acting,
-                onClick: (e) => {
-                  e.stopPropagation();
-                  handleCreate();
+            )),
+            filteredRemote.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+              filteredLocal.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-fg-muted/60", children: "Remote" }),
+              filteredRemote.map((branch) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  disabled: acting,
+                  onClick: (e) => {
+                    e.stopPropagation();
+                    handleCheckout(branch.name);
+                  },
+                  className: "flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg",
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex-1 truncate", children: branch.name })
                 },
-                className: "flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-accent transition-colors hover:bg-surface-hover",
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { size: 14, strokeWidth: 2, className: "shrink-0" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "truncate", children: [
-                    "Create & checkout ",
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-medium", children: filter2.trim() })
-                  ] })
-                ]
-              }
-            )
+                branch.name
+              ))
+            ] }),
+            filteredLocal.length === 0 && filteredRemote.length === 0 && !showCreate && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-2 text-sm text-fg-muted", children: "No branches found" }),
+            showCreate && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "my-1 border-t border-border" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  disabled: acting,
+                  onClick: (e) => {
+                    e.stopPropagation();
+                    handleCreate();
+                  },
+                  className: "flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-pane-active transition-colors hover:bg-surface-hover",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { size: 14, strokeWidth: 2, className: "shrink-0" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "truncate", children: [
+                      "Create & checkout ",
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-medium", children: filter2.trim() })
+                    ] })
+                  ]
+                }
+              )
+            ] })
           ] })
-        ] })
-      ]
-    }
-  ) });
+        ]
+      }
+    ) }),
+    document.body
+  );
 }
 const GitInfo = reactExports.memo(function GitInfo2({ cwd: cwd2, isSshMode }) {
   const [gitInfo, setGitInfo] = reactExports.useState(null);
   const [showBranchDropdown, setShowBranchDropdown] = reactExports.useState(false);
+  const branchBtnRef = reactExports.useRef(null);
   const [refreshKey, setRefreshKey] = reactExports.useState(0);
   const refreshGitInfo = reactExports.useCallback(() => setRefreshKey((k2) => k2 + 1), []);
   reactExports.useEffect(() => {
@@ -36962,8 +37031,8 @@ const GitInfo = reactExports.memo(function GitInfo2({ cwd: cwd2, isSshMode }) {
     };
   }, [cwd2, isSshMode, refreshKey]);
   if (!gitInfo) return null;
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 cursor-default items-center gap-1.5 text-xs text-fg-muted", draggable: false, children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(GitBranch, { size: 13, strokeWidth: 1.8, className: "shrink-0 text-fg-muted" }),
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 cursor-default items-center gap-2 text-sm text-fg-muted", draggable: false, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(GitBranch, { size: 15, strokeWidth: 1.8, className: "shrink-0 text-fg-muted" }),
     gitInfo.url ? /* @__PURE__ */ jsxRuntimeExports.jsx(
       "a",
       {
@@ -36979,7 +37048,7 @@ const GitInfo = reactExports.memo(function GitInfo2({ cwd: cwd2, isSshMode }) {
           e.preventDefault();
           e.stopPropagation();
         },
-        className: "cursor-pointer truncate text-fg-muted underline decoration-fg-muted/30 underline-offset-2 transition-colors hover:text-accent hover:decoration-accent/50",
+        className: "cursor-pointer truncate text-fg-muted underline decoration-fg-muted/30 underline-offset-2 transition-colors hover:text-pane-active hover:decoration-pane-active/50",
         children: gitInfo.repo
       }
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate text-fg-muted", children: gitInfo.repo }),
@@ -36988,15 +37057,16 @@ const GitInfo = reactExports.memo(function GitInfo2({ cwd: cwd2, isSshMode }) {
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "button",
         {
+          ref: branchBtnRef,
           onClick: (e) => {
             e.stopPropagation();
             setShowBranchDropdown((v2) => !v2);
           },
           onMouseDown: (e) => e.stopPropagation(),
-          className: "flex cursor-pointer items-center gap-1 truncate rounded-sm px-1 py-0.5 font-medium text-fg transition-colors hover:bg-pane-active/[0.13] hover:text-accent",
+          className: "flex cursor-pointer items-center gap-1 truncate rounded-sm px-1 py-0.5 font-medium text-fg transition-colors hover:bg-pane-active/[0.13] hover:text-pane-active",
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate", children: gitInfo.branch }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 11, strokeWidth: 2, className: "shrink-0 opacity-50" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 13, strokeWidth: 2, className: "shrink-0 opacity-50" })
           ]
         }
       ),
@@ -37004,6 +37074,7 @@ const GitInfo = reactExports.memo(function GitInfo2({ cwd: cwd2, isSshMode }) {
         GitBranchDropdown,
         {
           cwd: cwd2,
+          anchorRef: branchBtnRef,
           onCheckout: refreshGitInfo,
           onClose: () => setShowBranchDropdown(false)
         }
@@ -37184,6 +37255,7 @@ const PaneTypeSelector = reactExports.memo(function PaneTypeSelector2({
   );
   const handleAgentSelect = reactExports.useCallback(
     (profileId) => {
+      if (profileId === useAgentStore.getState().panes[paneId]) return;
       destroy(paneId + ":agent");
       selectAgent(paneId, profileId);
       if (paneType !== "agent") {
@@ -37201,11 +37273,11 @@ const PaneTypeSelector = reactExports.memo(function PaneTypeSelector2({
             e.stopPropagation();
             setShowTypeDropdown((v2) => !v2);
           },
-          className: "flex cursor-pointer items-center gap-2.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-xs transition-colors hover:bg-pane-active/[0.13]",
+          className: "flex cursor-pointer items-center gap-2.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-sm transition-colors hover:bg-pane-active/[0.13]",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(DisplayIcon, { size: 14, strokeWidth: 1.8, className: PANE_ACTIVE_CLASSES.colorClass }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(DisplayIcon, { size: 16, strokeWidth: 1.8, className: PANE_ACTIVE_CLASSES.colorClass }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-fg", children: displayLabel }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 12, strokeWidth: 2, className: "opacity-60" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 13, strokeWidth: 2, className: "opacity-60" })
           ]
         }
       ),
@@ -37232,9 +37304,9 @@ const PaneTypeSelector = reactExports.memo(function PaneTypeSelector2({
                   },
                   className: `flex w-full items-center gap-2.5 px-3 py-1.5 text-left text-sm transition-colors ${isActive ? "text-pane-active" : "text-fg hover:bg-surface-hover"}`,
                   children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(ItemIcon, { size: 14, strokeWidth: 1.8 }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(ItemIcon, { size: 16, strokeWidth: 1.8 }),
                     /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex-1", children: item.label }),
-                    isActive && /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { size: 14, strokeWidth: 2, className: "text-pane-active" })
+                    isActive && /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { size: 16, strokeWidth: 2, className: "text-pane-active" })
                   ]
                 }
               )
@@ -37251,11 +37323,11 @@ const PaneTypeSelector = reactExports.memo(function PaneTypeSelector2({
             e.stopPropagation();
             setShowSshDropdown((v2) => !v2);
           },
-          className: `flex cursor-pointer items-center gap-1 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-xs transition-colors ${isConnecting ? "text-accent" : isConnected ? "text-accent" : "text-fg-muted hover:text-fg"}`,
+          className: `flex cursor-pointer items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-sm transition-colors ${isConnecting ? "text-pane-active" : isConnected ? "text-pane-active" : "text-fg-muted hover:text-fg"}`,
           children: [
-            isConnecting && /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { size: 12, strokeWidth: 2, className: "animate-spin" }),
+            isConnecting && /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { size: 14, strokeWidth: 2, className: "animate-spin" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: sshProfileLabel }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 12, strokeWidth: 2, className: "opacity-60" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 13, strokeWidth: 2, className: "opacity-60" })
           ]
         }
       ),
@@ -37264,6 +37336,7 @@ const PaneTypeSelector = reactExports.memo(function PaneTypeSelector2({
         {
           profiles: sshProfiles,
           isConnected,
+          connectedProfileId: useSshStore.getState().panes[paneId]?.profileId,
           onConnect: handleSshConnect,
           onDisconnect: handleSshDisconnect,
           onManage: () => setShowSshModal(true),
@@ -37279,10 +37352,10 @@ const PaneTypeSelector = reactExports.memo(function PaneTypeSelector2({
             e.stopPropagation();
             setShowAgentDropdown((v2) => !v2);
           },
-          className: `flex cursor-pointer items-center gap-1 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-xs transition-colors ${agentProfile ? "text-accent" : "text-fg-muted hover:text-fg"}`,
+          className: `flex cursor-pointer items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-sm transition-colors ${agentProfile ? "text-pane-active" : "text-fg-muted hover:text-fg"}`,
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: agentLabel }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 12, strokeWidth: 2, className: "opacity-60" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 13, strokeWidth: 2, className: "opacity-60" })
           ]
         }
       ),
@@ -37305,11 +37378,11 @@ const PaneTypeSelector = reactExports.memo(function PaneTypeSelector2({
             e.stopPropagation();
             setShowSubModeDropdown((v2) => !v2);
           },
-          className: "flex cursor-pointer items-center gap-1 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-xs text-fg-muted transition-colors hover:text-fg",
+          className: "flex cursor-pointer items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-2 py-0.5 text-sm text-fg-muted transition-colors hover:text-fg",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(currentSubMode.icon, { size: 12, strokeWidth: 2 }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(currentSubMode.icon, { size: 14, strokeWidth: 2 }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: currentSubMode.label }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 12, strokeWidth: 2, className: "opacity-60" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 13, strokeWidth: 2, className: "opacity-60" })
           ]
         }
       ),
@@ -37332,9 +37405,9 @@ const PaneTypeSelector = reactExports.memo(function PaneTypeSelector2({
                 },
                 className: `flex w-full items-center gap-2.5 px-3 py-1.5 text-left text-sm transition-colors ${isActive ? "text-pane-active" : "text-fg hover:bg-surface-hover"}`,
                 children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(mode.icon, { size: 14, strokeWidth: 1.8 }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(mode.icon, { size: 16, strokeWidth: 1.8 }),
                   /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex-1", children: mode.label }),
-                  isActive && /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { size: 14, strokeWidth: 2, className: "text-pane-active" })
+                  isActive && /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { size: 16, strokeWidth: 2, className: "text-pane-active" })
                 ]
               },
               mode.key
@@ -37351,6 +37424,7 @@ function PaneHeader({ tabId, paneId, paneType, cwd: cwd2, paneRef }) {
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal;
   const isPreview = previewPaneTypes.has(paneType);
   const hasApiKey = useSettingsStore((s2) => !!s2.settings.openaiApiKey);
+  const idePath = useSettingsStore((s2) => s2.settings.idePath);
   const sshPaneState = useSshStore((s2) => s2.panes[paneId]);
   const editorMeta = useSshStore((s2) => s2.editorPanes?.[paneId]);
   const sshProfileId = useFileManagerStore((s2) => s2.panes[paneId]?.sshProfileId);
@@ -37359,13 +37433,14 @@ function PaneHeader({ tabId, paneId, paneType, cwd: cwd2, paneRef }) {
   const isConnecting = sshPaneState?.state === "connecting";
   const isSshMode = !!sshPaneState;
   const showMic = paneType === "terminal" || paneType === "agent";
+  const showIde = !!idePath && (paneType === "terminal" || paneType === "file-manager");
   const resolvedProfileId = sshProfileId || sshPaneState?.profileId;
   const connectedProfile = sshProfiles.find((p) => p.id === resolvedProfileId);
   const sshProfileLabel = isConnecting ? "Connecting..." : isConnected && connectedProfile ? connectedProfile.name : "Connect...";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
-      className: "flex shrink-0 cursor-grab items-center justify-between gap-2.5 border-b border-border bg-pane-header-bg px-3.5 py-2 active:cursor-grabbing",
+      className: "flex shrink-0 cursor-grab items-center justify-between gap-3 border-b border-border bg-pane-header-bg px-3.5 py-2.5 active:cursor-grabbing",
       draggable: true,
       onDragStart: (e) => {
         e.dataTransfer.setData(MIME_TYPE$1, JSON.stringify({ paneId, tabId }));
@@ -37377,12 +37452,12 @@ function PaneHeader({ tabId, paneId, paneType, cwd: cwd2, paneRef }) {
       },
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center gap-1.5", children: editorMeta ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(FileCode, { size: 16, className: `${PANE_ACTIVE_CLASSES.colorClass} opacity-90` }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-1 truncate text-xs text-fg-muted", children: editorMeta.profileName }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate text-xs font-semibold text-fg", children: baseName(editorMeta.filePath) })
+          /* @__PURE__ */ jsxRuntimeExports.jsx(FileCode, { size: 18, className: `${PANE_ACTIVE_CLASSES.colorClass} opacity-90` }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-1 truncate text-sm text-fg-muted", children: editorMeta.profileName }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate text-sm font-semibold text-fg", children: baseName(editorMeta.filePath) })
         ] }) : isPreview ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(config.icon, { size: 16, className: `${PANE_ACTIVE_CLASSES.colorClass} opacity-90` }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-1 truncate text-xs font-semibold text-fg", children: cwd2 ? baseName(cwd2) : "Markdown" })
+          /* @__PURE__ */ jsxRuntimeExports.jsx(config.icon, { size: 18, className: `${PANE_ACTIVE_CLASSES.colorClass} opacity-90` }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-1 truncate text-sm font-semibold text-fg", children: cwd2 ? baseName(cwd2) : "Markdown" })
         ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
           PaneTypeSelector,
           {
@@ -37404,6 +37479,17 @@ function PaneHeader({ tabId, paneId, paneType, cwd: cwd2, paneRef }) {
               paneType,
               isSshMode,
               disabled: !hasApiKey
+            }
+          ),
+          showIde && !editorMeta && cwd2 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            IconButton,
+            {
+              icon: CodeXml,
+              onClick: (e) => {
+                e.stopPropagation();
+                window.api.shell.openWith(idePath, cwd2);
+              },
+              title: "Open in IDE"
             }
           ),
           !isPreview && !editorMeta && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
@@ -37526,6 +37612,226 @@ function TranslationSnippet({ position: position2, original, translated, onClose
     }
   ) });
 }
+function SpeechSnippet({ position: position2, text: text2, streamId, sampleRate, onClose }) {
+  const ref = reactExports.useRef(null);
+  const ctxRef = reactExports.useRef(null);
+  const gainRef = reactExports.useRef(null);
+  const nextTimeRef = reactExports.useRef(0);
+  const playedSamplesRef = reactExports.useRef(0);
+  const totalSamplesRef = reactExports.useRef(0);
+  const streamDoneRef = reactExports.useRef(false);
+  const cleanupRef = reactExports.useRef(null);
+  const [state, setState] = reactExports.useState("loading");
+  const [progress2, setProgress] = reactExports.useState(0);
+  const animFrameRef = reactExports.useRef(0);
+  const clampPosition = reactExports.useCallback((pos) => {
+    const el = ref.current;
+    if (!el) return pos;
+    const { innerWidth, innerHeight } = window;
+    const rect = el.getBoundingClientRect();
+    return {
+      x: pos.x + rect.width > innerWidth ? innerWidth - rect.width - 8 : pos.x,
+      y: pos.y + rect.height > innerHeight ? innerHeight - rect.height - 8 : pos.y
+    };
+  }, []);
+  reactExports.useEffect(() => {
+    if (!ref.current) return;
+    const clamped = clampPosition(position2);
+    ref.current.style.left = `${clamped.x}px`;
+    ref.current.style.top = `${clamped.y}px`;
+  }, [position2, clampPosition, streamId]);
+  const startProgressTracking = reactExports.useCallback(() => {
+    const tick = () => {
+      const ctx = ctxRef.current;
+      if (!ctx || state === "ended") return;
+      const total = totalSamplesRef.current;
+      if (total > 0 && streamDoneRef.current) {
+        const elapsed = ctx.currentTime;
+        const startOffset = nextTimeRef.current - total / sampleRate;
+        const played = Math.max(0, elapsed - Math.max(0, startOffset));
+        const duration = total / sampleRate;
+        setProgress(Math.min(played / duration, 1) * 100);
+      }
+      animFrameRef.current = requestAnimationFrame(tick);
+    };
+    animFrameRef.current = requestAnimationFrame(tick);
+  }, [sampleRate, state]);
+  const cleanup = reactExports.useCallback(() => {
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = 0;
+    }
+    if (cleanupRef.current) {
+      cleanupRef.current();
+      cleanupRef.current = null;
+    }
+    if (ctxRef.current) {
+      ctxRef.current.close().catch(() => {
+      });
+      ctxRef.current = null;
+    }
+    gainRef.current = null;
+  }, []);
+  reactExports.useEffect(() => cleanup, [cleanup]);
+  reactExports.useEffect(() => {
+    if (!streamId) return;
+    const ctx = new AudioContext({ sampleRate });
+    ctxRef.current = ctx;
+    const gain = ctx.createGain();
+    gain.connect(ctx.destination);
+    gainRef.current = gain;
+    nextTimeRef.current = 0;
+    playedSamplesRef.current = 0;
+    totalSamplesRef.current = 0;
+    streamDoneRef.current = false;
+    let firstChunk = true;
+    const unsub = window.api.tts.onStream(streamId, (event) => {
+      if (event.type === "chunk") {
+        const binary = atob(event.data);
+        const bytes = new Uint8Array(binary.length);
+        for (let i8 = 0; i8 < binary.length; i8++) bytes[i8] = binary.charCodeAt(i8);
+        const int16 = new Int16Array(bytes.buffer);
+        const float32 = new Float32Array(int16.length);
+        for (let i8 = 0; i8 < int16.length; i8++) {
+          float32[i8] = int16[i8] / 32768;
+        }
+        totalSamplesRef.current += float32.length;
+        const buffer = ctx.createBuffer(1, float32.length, sampleRate);
+        buffer.getChannelData(0).set(float32);
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(gain);
+        const now2 = ctx.currentTime;
+        if (firstChunk || nextTimeRef.current < now2) {
+          nextTimeRef.current = now2;
+          firstChunk = false;
+        }
+        source.start(nextTimeRef.current);
+        nextTimeRef.current += buffer.duration;
+        setState("playing");
+      } else if (event.type === "done") {
+        streamDoneRef.current = true;
+        const remaining = Math.max(0, nextTimeRef.current - ctx.currentTime);
+        setTimeout(() => {
+          setState("ended");
+          setProgress(100);
+        }, remaining * 1e3);
+      } else if (event.type === "error") {
+        setState("ended");
+      }
+    });
+    cleanupRef.current = unsub;
+    return () => {
+      unsub();
+      cleanupRef.current = null;
+    };
+  }, [streamId, sampleRate]);
+  reactExports.useEffect(() => {
+    if (state === "playing") {
+      startProgressTracking();
+    }
+    return () => {
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = 0;
+      }
+    };
+  }, [state, startProgressTracking]);
+  reactExports.useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+  const handleClose = reactExports.useCallback(() => {
+    cleanup();
+    onClose();
+  }, [cleanup, onClose]);
+  const handlePauseResume = reactExports.useCallback(() => {
+    const ctx = ctxRef.current;
+    if (!ctx) return;
+    if (state === "playing") {
+      ctx.suspend();
+      setState("paused");
+    } else if (state === "paused") {
+      ctx.resume();
+      setState("playing");
+    }
+  }, [state]);
+  const handleStop = reactExports.useCallback(() => {
+    cleanup();
+    setState("ended");
+    setProgress(0);
+  }, [cleanup]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    motion.div,
+    {
+      ref,
+      initial: { opacity: 0, scale: 0.95, y: -4 },
+      animate: { opacity: 1, scale: 1, y: 0 },
+      exit: { opacity: 0, scale: 0.95 },
+      transition: { duration: 0.15 },
+      className: "fixed z-50 max-w-sm min-w-[200px] rounded-lg border border-border bg-popup-bg shadow-xl",
+      style: { left: position2.x, top: position2.y },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between border-b border-border px-3 py-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-medium text-fg-muted", children: "Speak" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              onClick: handleClose,
+              className: "flex h-5 w-5 items-center justify-center rounded text-fg-muted hover:bg-surface-hover hover:text-fg",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "none", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M1 1l8 8M9 1l-8 8" }) })
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "border-b border-border px-3 py-2.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "line-clamp-3 text-sm text-fg-muted", children: text2 }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-3 py-3", children: state === "loading" ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 text-base text-fg-secondary", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "inline-block h-4 w-4 animate-spin rounded-full border-2 border-fg-muted border-t-accent" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Connecting…" })
+        ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-1 w-full overflow-hidden rounded-full bg-surface-hover", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: "h-full rounded-full bg-accent transition-[width] duration-200",
+              style: { width: `${progress2}%` }
+            }
+          ) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                onClick: handlePauseResume,
+                disabled: state === "ended",
+                className: "rounded px-2 py-0.5 text-xs text-fg-secondary hover:bg-surface-hover hover:text-fg disabled:opacity-40 disabled:hover:bg-transparent",
+                children: state === "paused" ? "Resume" : state === "playing" ? "Pause" : "Play"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                onClick: handleStop,
+                disabled: state === "ended",
+                className: "rounded px-2 py-0.5 text-xs text-fg-secondary hover:bg-surface-hover hover:text-fg disabled:opacity-40 disabled:hover:bg-transparent",
+                children: "Stop"
+              }
+            )
+          ] })
+        ] }) })
+      ]
+    }
+  ) });
+}
 const MIME_FILES = "application/x-terma-files";
 const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, terminalKey, active, cwd: cwd2, command, args }) {
   const tmKey = terminalKey ?? paneId;
@@ -37534,7 +37840,9 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, t
   const [menuPosition, setMenuPosition] = reactExports.useState(null);
   const [hasSelection, setHasSelection] = reactExports.useState(false);
   const hasApiKey = useSettingsStore((s2) => !!s2.settings.openaiApiKey);
+  const hasElevenlabsKey = useSettingsStore((s2) => !!s2.settings.elevenlabsApiKey);
   const [translationSnippet, setTranslationSnippet] = reactExports.useState(null);
+  const [speechSnippet, setSpeechSnippet] = reactExports.useState(null);
   reactExports.useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -37680,6 +37988,21 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, t
       setTranslationSnippet((prev) => prev ? { ...prev, translated: "[Translation error]" } : null);
     }
   }, [tmKey, menuPosition]);
+  const handleSpeak = reactExports.useCallback(async () => {
+    const terminal = getTerminal(tmKey);
+    const selection = terminal?.getSelection();
+    if (!selection) return;
+    const pos = menuPosition ?? { x: 100, y: 100 };
+    setSpeechSnippet({ position: pos, text: selection, streamId: null, sampleRate: 16e3 });
+    setMenuPosition(null);
+    try {
+      const { streamId, sampleRate } = await window.api.tts.speak(selection);
+      setSpeechSnippet((prev) => prev ? { ...prev, streamId, sampleRate } : null);
+    } catch (err) {
+      useToastStore.getState().addToast("error", err instanceof Error ? err.message : "TTS failed");
+      setSpeechSnippet(null);
+    }
+  }, [tmKey, menuPosition]);
   const menuEntries = [
     {
       type: "item",
@@ -37699,6 +38022,12 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, t
       label: "Translate",
       disabled: !hasSelection || !hasApiKey,
       onAction: handleTranslate
+    },
+    {
+      type: "item",
+      label: "Speak",
+      disabled: !hasSelection || !hasElevenlabsKey,
+      onAction: handleSpeak
     },
     { type: "separator" },
     {
@@ -37742,10 +38071,19 @@ const TerminalPane = reactExports.memo(function TerminalPane2({ tabId, paneId, t
         translated: translationSnippet.translated,
         onClose: () => setTranslationSnippet(null)
       }
+    ),
+    speechSnippet && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      SpeechSnippet,
+      {
+        position: speechSnippet.position,
+        text: speechSnippet.text,
+        streamId: speechSnippet.streamId,
+        sampleRate: speechSnippet.sampleRate,
+        onClose: () => setSpeechSnippet(null)
+      }
     )
   ] });
 });
-var reactDomExports = requireReactDom();
 function memo(getDeps, fn2, opts) {
   let deps = opts.initialDeps ?? [];
   let result;
@@ -42048,7 +42386,7 @@ const FileItem = reactExports.memo(function FileItem2({
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
-      className: `relative flex w-full cursor-default items-center pr-2 hover:bg-surface-hover ${isSelected ? "bg-overlay-subtle" : ""}`,
+      className: "relative flex w-full cursor-default items-center pr-2 hover:bg-white/[0.015]",
       style: {
         height: rowHeight,
         fontSize,
@@ -42085,12 +42423,12 @@ const FileItem = reactExports.memo(function FileItem2({
             )
           }
         ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mr-1.5 flex shrink-0 items-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileTypeIcon, { name: name2, isDirectory, isExpanded, size: iconSize }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mr-1.5 flex shrink-0 items-center opacity-60", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileTypeIcon, { name: name2, isDirectory, isExpanded, size: iconSize }) }),
         isRenaming ? /* @__PURE__ */ jsxRuntimeExports.jsx(
           "input",
           {
             ref: inputRef,
-            className: "min-w-0 flex-1 rounded-sm border border-accent bg-surface px-1 text-fg outline-none",
+            className: "min-w-0 flex-1 rounded-sm border border-pane-active bg-surface px-1 text-fg outline-none",
             style: { fontSize, lineHeight: `${rowHeight - 4}px`, height: rowHeight - 4 },
             value: editValue,
             onChange: (e) => setEditValue(e.target.value),
@@ -42106,7 +42444,7 @@ const FileItem = reactExports.memo(function FileItem2({
             },
             onBlur: submitRename
           }
-        ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `truncate ${isSelected ? "text-file-selected" : "text-fg"}`, children: name2 })
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `truncate ${isSelected ? "text-pane-active" : "text-fg"}`, children: name2 })
       ]
     }
   );
@@ -42135,8 +42473,9 @@ function FileTree({
   const undoStack = reactExports.useRef([]);
   const addToast = useToastStore((s2) => s2.addToast);
   const fontSize = useSettingsStore((s2) => s2.getEffectiveFontSize());
+  const lineHeight = useSettingsStore((s2) => s2.settings.lineHeight);
   const fileAssociations = useSettingsStore((s2) => s2.settings.fileAssociations);
-  const rowHeight = Math.round(fontSize * 1.6);
+  const rowHeight = Math.round(Math.max(fontSize * lineHeight, fontSize * 1.15) + 6);
   const readDir = readDirFn ?? window.api.fs.readDir;
   const loadDir = reactExports.useCallback(
     async (dirPath, depth) => {
@@ -42426,6 +42765,9 @@ function FileTree({
     estimateSize: () => rowHeight,
     overscan: 20
   });
+  reactExports.useEffect(() => {
+    virtualizer.measure();
+  }, [rowHeight, virtualizer]);
   const contextMenuEntries = contextMenu ? isRemote ? [
     {
       type: "item",
@@ -42564,6 +42906,184 @@ function FileTree({
     )
   ] });
 }
+const SKIP_DIRS = /* @__PURE__ */ new Set(["node_modules", ".git", ".hg", ".svn", "__pycache__", ".cache", ".bun"]);
+const MAX_DEPTH = 20;
+const MAX_RESULTS = 100;
+async function collectFiles(rootDir, query, signal) {
+  const lowerQuery = query.toLowerCase();
+  const results = [];
+  const walk = async (dir, depth) => {
+    if (signal.aborted || depth > MAX_DEPTH || results.length >= MAX_RESULTS) return;
+    let entries;
+    try {
+      entries = await window.api.fs.readDir(dir);
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      if (signal.aborted || results.length >= MAX_RESULTS) return;
+      if (entry.isDirectory && SKIP_DIRS.has(entry.name)) continue;
+      if (entry.name.toLowerCase().includes(lowerQuery)) {
+        results.push({
+          name: entry.name,
+          path: entry.path,
+          isDirectory: entry.isDirectory
+        });
+      }
+      if (entry.isDirectory) {
+        await walk(entry.path, depth + 1);
+      }
+    }
+  };
+  await walk(rootDir, 0);
+  return results;
+}
+function FileSearchModal({ rootPath, onClose, onSelect }) {
+  const [query, setQuery] = reactExports.useState("");
+  const [results, setResults] = reactExports.useState([]);
+  const [selectedIndex, setSelectedIndex] = reactExports.useState(0);
+  const [isSearching, setIsSearching] = reactExports.useState(false);
+  const inputRef = reactExports.useRef(null);
+  const listRef = reactExports.useRef(null);
+  const abortRef = reactExports.useRef();
+  reactExports.useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+  reactExports.useEffect(() => {
+    abortRef.current?.abort();
+    if (!query.trim()) {
+      setResults([]);
+      setIsSearching(false);
+      return;
+    }
+    setIsSearching(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const timer = setTimeout(async () => {
+      try {
+        const items = await collectFiles(rootPath, query.trim(), controller.signal);
+        if (!controller.signal.aborted) {
+          setResults(items);
+          setSelectedIndex(0);
+          setIsSearching(false);
+        }
+      } catch {
+        if (!controller.signal.aborted) {
+          setResults([]);
+          setIsSearching(false);
+        }
+      }
+    }, 200);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query, rootPath]);
+  const handleSelect = reactExports.useCallback((result) => {
+    onSelect(result.path, result.isDirectory);
+    onClose();
+  }, [onSelect, onClose]);
+  const handleKeyDown = reactExports.useCallback((e) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      onClose();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((i8) => Math.min(i8 + 1, results.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((i8) => Math.max(i8 - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (results[selectedIndex]) {
+        handleSelect(results[selectedIndex]);
+      }
+    }
+  }, [results, selectedIndex, onClose, handleSelect]);
+  reactExports.useEffect(() => {
+    const list2 = listRef.current;
+    if (!list2) return;
+    const item = list2.children[selectedIndex];
+    item?.scrollIntoView({ block: "nearest" });
+  }, [selectedIndex]);
+  reactExports.useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handler, true);
+    return () => window.removeEventListener("keydown", handler, true);
+  }, [onClose]);
+  const relativePath2 = (fullPath) => {
+    const dir = parentDir(fullPath);
+    if (dir.startsWith(rootPath)) {
+      const rel = dir.slice(rootPath.length);
+      return rel.startsWith("/") ? rel.slice(1) : rel;
+    }
+    return dir;
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: "fixed inset-0 z-50 flex justify-center bg-backdrop pt-[15vh]",
+      onMouseDown: onClose,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          className: "flex h-fit max-h-[60vh] w-[560px] flex-col overflow-hidden rounded-lg bg-popup-bg shadow-2xl",
+          onMouseDown: (e) => e.stopPropagation(),
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 border-b border-border px-4 py-2", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Folder, { size: 12, strokeWidth: 1.8, className: "shrink-0 text-fg-muted" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate text-xs text-fg-muted", children: rootPath })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 border-b border-border px-4 py-3", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Search, { size: 16, strokeWidth: 1.8, className: "shrink-0 text-fg-muted" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  ref: inputRef,
+                  type: "text",
+                  value: query,
+                  onChange: (e) => setQuery(e.target.value),
+                  onKeyDown: handleKeyDown,
+                  placeholder: "Search files...",
+                  spellCheck: false,
+                  className: "min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-muted"
+                }
+              ),
+              isSearching && /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { size: 16, strokeWidth: 1.8, className: "shrink-0 animate-spin text-fg-muted" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { ref: listRef, className: "overflow-y-auto", children: [
+              results.length === 0 && query.trim() && !isSearching && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-4 py-8 text-center text-sm text-fg-muted", children: "No files found" }),
+              results.map((result, index2) => {
+                const rel = relativePath2(result.path);
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    onClick: () => handleSelect(result),
+                    onMouseEnter: () => setSelectedIndex(index2),
+                    className: `flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left transition-colors ${index2 === selectedIndex ? "bg-surface-hover" : ""}`,
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(FileTypeIcon, { name: result.name, isDirectory: result.isDirectory, size: 16 }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate text-sm text-fg", children: result.name }),
+                      rel && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-auto truncate text-xs text-fg-muted", children: rel })
+                    ]
+                  },
+                  result.path
+                );
+              })
+            ] })
+          ]
+        }
+      )
+    }
+  );
+}
 function FileManagerPane({ tabId, paneId, cwd: cwd2 }) {
   const pane = useFileManagerStore((s2) => s2.panes[paneId]);
   const initPane = useFileManagerStore((s2) => s2.initPane);
@@ -42572,11 +43092,13 @@ function FileManagerPane({ tabId, paneId, cwd: cwd2 }) {
   const updatePaneCwd = useTabStore((s2) => s2.updatePaneCwd);
   const addToast = useToastStore((s2) => s2.addToast);
   const sshProfiles = useSettingsStore((s2) => s2.settings.sshProfiles);
+  const fontSize = useSettingsStore((s2) => s2.getEffectiveFontSize());
   const sshPaneState = useSshStore((s2) => s2.panes[paneId]);
   const [pathInput, setPathInput] = reactExports.useState("");
   const [isEditing, setIsEditing] = reactExports.useState(false);
   const [refreshToken, setRefreshToken] = reactExports.useState(0);
   const [isLoadingDir, setIsLoadingDir] = reactExports.useState(false);
+  const [showSearch, setShowSearch] = reactExports.useState(false);
   const inputRef = reactExports.useRef(null);
   const isConnected = sshPaneState?.state === "connected";
   const isConnecting = sshPaneState?.state === "connecting";
@@ -42589,6 +43111,11 @@ function FileManagerPane({ tabId, paneId, cwd: cwd2 }) {
       setPathInput(pane.rootPath);
     }
   }, [pane?.rootPath, isEditing]);
+  reactExports.useEffect(() => {
+    const handler = () => setShowSearch(true);
+    window.addEventListener("terma:file-search", handler);
+    return () => window.removeEventListener("terma:file-search", handler);
+  }, []);
   const pendingReads = reactExports.useRef(0);
   const readDirFn = reactExports.useMemo(() => {
     if (!isConnected || !sshProfileId) return void 0;
@@ -42761,12 +43288,21 @@ function FileManagerPane({ tabId, paneId, cwd: cwd2 }) {
           },
           onKeyDown: handleKeyDown,
           spellCheck: false,
-          className: "min-w-0 flex-1 bg-transparent px-3 py-2 text-md text-fg outline-none placeholder:text-fg-muted",
+          style: { fontSize },
+          className: "min-w-0 flex-1 bg-transparent px-3 py-2 text-fg outline-none placeholder:text-fg-muted",
           placeholder: "/"
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1 pr-2", children: [
-        isLoadingDir && /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { size: 16, strokeWidth: 1.8, className: "animate-spin text-accent" }),
+        isLoadingDir && /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { size: Math.round(fontSize * 1.15), strokeWidth: 1.8, className: "animate-spin text-pane-active" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          IconButton,
+          {
+            icon: Search,
+            onClick: () => setShowSearch(true),
+            title: "Search files (Ctrl+P)"
+          }
+        ),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           IconButton,
           {
@@ -42802,7 +43338,22 @@ function FileManagerPane({ tabId, paneId, cwd: cwd2 }) {
         readDirFn,
         isRemote: isConnected
       }
-    ) }) })
+    ) }) }),
+    showSearch && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      FileSearchModal,
+      {
+        rootPath: pane.rootPath,
+        onClose: () => setShowSearch(false),
+        onSelect: (path2, isDirectory) => {
+          if (isDirectory) {
+            handleNavigateToDir(path2);
+          } else {
+            const dir = path2.substring(0, path2.lastIndexOf("/")) || "/";
+            handleNavigateToDir(dir);
+          }
+        }
+      }
+    )
   ] });
 }
 function ok$1() {
@@ -64517,7 +65068,7 @@ const PaneContent = reactExports.memo(function PaneContent2({ paneType, tabId, p
       if (!agentParsed) {
         content2 = /* @__PURE__ */ jsxRuntimeExports.jsx(AgentPlaceholder, {});
       } else {
-        content2 = /* @__PURE__ */ jsxRuntimeExports.jsx(TerminalPane, { tabId, paneId, terminalKey: paneId + ":agent", active: isActive, cwd: cwd2, command: agentParsed.command, args: agentParsed.args });
+        content2 = /* @__PURE__ */ jsxRuntimeExports.jsx(TerminalPane, { tabId, paneId, terminalKey: paneId + ":agent", active: isActive, cwd: cwd2, command: agentParsed.command, args: agentParsed.args }, agentProfileId);
       }
       break;
     case "markdown":
@@ -64602,7 +65153,7 @@ const PaneWrapper = reactExports.memo(function PaneWrapper2({ node: node2, tabId
             }
           )
         ] }),
-        isDragOver && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-accent bg-accent/10" })
+        isDragOver && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pointer-events-none absolute inset-0 z-10 rounded-lg border-2 border-pane-active bg-pane-active/10" })
       ]
     }
   );
@@ -64846,11 +65397,11 @@ function Toggle({ checked, onChange }) {
     "button",
     {
       onClick: () => onChange(!checked),
-      className: `relative h-7 w-12 rounded-full transition-colors ${checked ? "bg-accent" : "bg-border"}`,
+      className: `relative h-7 w-12 rounded-full transition-colors ${checked ? "bg-fg" : "bg-fg-muted/40"}`,
       children: /* @__PURE__ */ jsxRuntimeExports.jsx(
         motion.div,
         {
-          className: "absolute top-1 h-5 w-5 rounded-full bg-fg shadow-md",
+          className: `absolute top-1 h-5 w-5 rounded-full shadow-md ${checked ? "bg-elevated" : "bg-fg"}`,
           animate: { left: checked ? 26 : 4 },
           transition: { type: "spring", stiffness: 500, damping: 30 }
         }
@@ -64904,15 +65455,25 @@ function SegmentedControl({
     opt.value
   )) });
 }
-function Input({ value, onChange, placeholder, className = "" }) {
+function Input({ value, onChange, delay: delay2 = 400, className = "", ...rest }) {
+  const [local, setLocal] = reactExports.useState(value);
+  reactExports.useEffect(() => {
+    setLocal(value);
+  }, [value]);
+  const stableOnChange = reactExports.useCallback(onChange, [onChange]);
+  reactExports.useEffect(() => {
+    if (local === value) return;
+    const t = setTimeout(() => stableOnChange(local), delay2);
+    return () => clearTimeout(t);
+  }, [local, value, stableOnChange, delay2]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     "input",
     {
       type: "text",
-      value,
-      onChange,
-      placeholder,
-      className: `w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-accent/40 focus:bg-surface-hover ${className}`
+      value: local,
+      onChange: (e) => setLocal(e.target.value),
+      className: `w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-accent/40 focus:bg-surface-hover ${className}`,
+      ...rest
     }
   );
 }
@@ -64929,7 +65490,7 @@ function ThemeCard({ name: name2, colors, active, onClick }) {
       whileHover: { scale: 1.02 },
       whileTap: { scale: 0.98 },
       onClick,
-      className: `group relative flex flex-col gap-2.5 rounded-xl border p-3.5 text-left transition-colors ${active ? "border-accent/40 bg-accent/8 shadow-[--shadow-accent-glow]" : "border-border bg-surface hover:border-border-hover hover:bg-surface-hover"}`,
+      className: `group relative flex flex-col gap-2.5 rounded-xl border p-3.5 text-left transition-colors ${active ? "border-fg/40 bg-fg/8 shadow-[--shadow-accent-glow]" : "border-border bg-surface hover:border-border-hover hover:bg-surface-hover"}`,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -64953,7 +65514,7 @@ function ThemeCard({ name: name2, colors, active, onClick }) {
             {
               initial: { scale: 0 },
               animate: { scale: 1 },
-              className: "flex h-5 w-5 items-center justify-center rounded-full bg-accent",
+              className: "flex h-5 w-5 items-center justify-center rounded-full bg-fg text-base",
               children: /* @__PURE__ */ jsxRuntimeExports.jsx(CheckIcon, {})
             }
           )
@@ -64993,6 +65554,21 @@ const TABS = [
   { id: "general", label: "General", icon: Settings2 },
   { id: "style", label: "Style", icon: Paintbrush }
 ];
+function IdeSection() {
+  const { settings, updateSettings } = useSettingsStore();
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: CodeXml, title: "IDE", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "IDE Executable" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Input,
+      {
+        value: settings.idePath,
+        onChange: (v2) => updateSettings({ idePath: v2 }),
+        placeholder: "code, cursor, /usr/bin/code"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-[11px] text-fg-muted", children: "Command or path to IDE executable" })
+  ] }) });
+}
 function OpenAISection() {
   const { settings, updateSettings } = useSettingsStore();
   const [showKey, setShowKey] = reactExports.useState(false);
@@ -65001,13 +65577,12 @@ function OpenAISection() {
       /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "OpenAI API Key" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "input",
+          Input,
           {
             type: showKey ? "text" : "password",
             value: settings.openaiApiKey,
-            onChange: (e) => updateSettings({ openaiApiKey: e.target.value }),
-            placeholder: "sk-proj-...",
-            className: "w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-muted focus:border-accent/40 focus:bg-surface-hover"
+            onChange: (v2) => updateSettings({ openaiApiKey: v2 }),
+            placeholder: "sk-proj-..."
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -65037,6 +65612,48 @@ function OpenAISection() {
     ] })
   ] });
 }
+function NetworkSection() {
+  const { settings, updateSettings } = useSettingsStore();
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: Globe, title: "Network", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "HTTP Proxy" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Input,
+      {
+        value: settings.httpProxy,
+        onChange: (v2) => updateSettings({ httpProxy: v2 }),
+        placeholder: "http://user:pass@host:port"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-[11px] text-fg-muted", children: "Proxy for API requests (ElevenLabs TTS)" })
+  ] }) });
+}
+function ElevenLabsSection() {
+  const { settings, updateSettings } = useSettingsStore();
+  const [showKey, setShowKey] = reactExports.useState(false);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Section, { icon: AudioLines, title: "ElevenLabs", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "mb-2 block text-xs text-fg-muted", children: "ElevenLabs API Key" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Input,
+        {
+          type: showKey ? "text" : "password",
+          value: settings.elevenlabsApiKey,
+          onChange: (v2) => updateSettings({ elevenlabsApiKey: v2 }),
+          placeholder: "sk_..."
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          onClick: () => setShowKey((v2) => !v2),
+          className: "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-fg-muted transition-colors hover:text-fg",
+          children: showKey ? /* @__PURE__ */ jsxRuntimeExports.jsx(EyeOff, { size: 16 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Eye, { size: 16 })
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-[11px] text-fg-muted", children: "Used for text-to-speech." })
+  ] }) });
+}
 function SettingsPanel() {
   const [activeTab, setActiveTab] = reactExports.useState("general");
   const { settings, updateSettings, resetSettings, zoomIn, zoomOut, zoomReset, toggleSettings } = useSettingsStore();
@@ -65055,7 +65672,7 @@ function SettingsPanel() {
         initial: { opacity: 0 },
         animate: { opacity: 1 },
         exit: { opacity: 0 },
-        className: "pointer-events-none absolute inset-0 bg-backdrop backdrop-blur-sm"
+        className: "pointer-events-none absolute inset-0 bg-backdrop"
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -65066,7 +65683,7 @@ function SettingsPanel() {
         exit: { x: "100%", opacity: 0.8 },
         transition: { type: "spring", damping: 30, stiffness: 300 },
         onClick: (e) => e.stopPropagation(),
-        className: "relative flex h-full w-[440px] flex-col border-l border-border bg-settings-bg/98 shadow-panel backdrop-blur-xl",
+        className: "relative flex h-full w-[440px] flex-col border-l border-border bg-settings-bg shadow-panel",
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between px-7 pt-7 pb-2", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
@@ -65158,9 +65775,9 @@ function SettingsPanel() {
                     {
                       value: assoc.pattern,
                       placeholder: "*.txt",
-                      onChange: (e) => {
+                      onChange: (v2) => {
                         const next2 = [...settings.fileAssociations];
-                        next2[i8] = { ...next2[i8], pattern: e.target.value };
+                        next2[i8] = { ...next2[i8], pattern: v2 };
                         updateSettings({ fileAssociations: next2 });
                       },
                       className: "flex-1"
@@ -65171,9 +65788,9 @@ function SettingsPanel() {
                     {
                       value: assoc.command,
                       placeholder: "code",
-                      onChange: (e) => {
+                      onChange: (v2) => {
                         const next2 = [...settings.fileAssociations];
-                        next2[i8] = { ...next2[i8], command: e.target.value };
+                        next2[i8] = { ...next2[i8], command: v2 };
                         updateSettings({ fileAssociations: next2 });
                       },
                       className: "flex-1"
@@ -65198,7 +65815,7 @@ function SettingsPanel() {
                       const next2 = [...settings.fileAssociations ?? [], { pattern: "", command: "" }];
                       updateSettings({ fileAssociations: next2 });
                     },
-                    className: "flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-transparent px-4 py-2.5 text-sm text-fg-muted transition-colors hover:border-accent/40 hover:text-fg",
+                    className: "flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-transparent px-4 py-2.5 text-sm text-fg-muted transition-colors hover:border-fg/40 hover:text-fg",
                     children: [
                       /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { size: 14 }),
                       "Add"
@@ -65208,6 +65825,12 @@ function SettingsPanel() {
               ] }) }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
               /* @__PURE__ */ jsxRuntimeExports.jsx(OpenAISection, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(ElevenLabsSection, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(NetworkSection, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Divider, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(IdeSection, {}),
               /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pt-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
                 motion.button,
                 {
@@ -65243,7 +65866,7 @@ function SettingsPanel() {
                       {
                         value: settings.fontFamily,
                         onChange: (e) => updateSettings({ fontFamily: e.target.value }),
-                        className: "w-full appearance-none rounded-xl border border-border bg-surface px-4 py-2.5 pr-9 text-sm text-fg outline-none transition-colors focus:border-accent/40 focus:bg-surface-hover",
+                        className: "w-full appearance-none rounded-xl border border-border bg-surface px-4 py-2.5 pr-9 text-sm text-fg outline-none transition-colors focus:border-fg/40 focus:bg-surface-hover",
                         children: [
                           FONT_PRESETS.map((f) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: f.value, children: f.label }, f.label)),
                           !FONT_PRESETS.some((f) => f.value === settings.fontFamily) && /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: settings.fontFamily, children: settings.fontFamily })
@@ -65422,7 +66045,8 @@ const TAB_COLOR_VARS = {
   yellow: "var(--color-tab-yellow)",
   green: "var(--color-tab-green)",
   blue: "var(--color-tab-blue)",
-  purple: "var(--color-tab-purple)"
+  purple: "var(--color-tab-purple)",
+  pink: "var(--color-tab-pink)"
 };
 const TabContent = reactExports.memo(function TabContent2({
   tabId,
@@ -65509,6 +66133,11 @@ function App() {
     if (mod && !shiftKey && (code2 === "KeyW" || code2 === "KeyQ")) {
       e.preventDefault();
       window.api.window.close();
+      return;
+    }
+    if (mod && !shiftKey && code2 === "KeyP") {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("terma:file-search"));
       return;
     }
     if (mod && !shiftKey && code2 === "Slash") {

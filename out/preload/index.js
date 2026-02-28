@@ -20,6 +20,7 @@ const FS_CHANNELS = {
   RESTORE: "fs:restore",
   COPY: "fs:copy",
   COPY_PROGRESS: "fs:copyProgress",
+  SEARCH_FILES: "fs:searchFiles",
   WATCH: "fs:watch",
   UNWATCH: "fs:unwatch",
   FS_EVENT: "fs:event"
@@ -61,6 +62,10 @@ const LOG_CHANNELS = {
 };
 const TRANSLATE_CHANNELS = {
   TRANSLATE: "translate:translate"
+};
+const TTS_CHANNELS = {
+  SPEAK: "tts:speak",
+  STREAM: "tts:stream"
 };
 const SYSMON_CHANNELS = {
   METRICS: "sysmon:metrics"
@@ -122,6 +127,7 @@ const fsApi = {
   delete: (filePath) => electron.ipcRenderer.invoke(FS_CHANNELS.DELETE, filePath),
   restore: (originalPaths) => electron.ipcRenderer.invoke(FS_CHANNELS.RESTORE, originalPaths),
   copy: (srcPath, destDir) => electron.ipcRenderer.invoke(FS_CHANNELS.COPY, srcPath, destDir),
+  searchFiles: (rootDir, query) => electron.ipcRenderer.invoke(FS_CHANNELS.SEARCH_FILES, rootDir, query),
   onCopyProgress: (cb) => {
     const listener = (_event, progress) => {
       cb(progress);
@@ -207,6 +213,22 @@ const logApi = {
 const translateApi = {
   translate: (text) => electron.ipcRenderer.invoke(TRANSLATE_CHANNELS.TRANSLATE, text)
 };
+const ttsStreamListeners = /* @__PURE__ */ new Map();
+electron.ipcRenderer.on(TTS_CHANNELS.STREAM, (_event, streamId, data) => {
+  ttsStreamListeners.get(streamId)?.(data);
+  if (data.type === "done" || data.type === "error") {
+    ttsStreamListeners.delete(streamId);
+  }
+});
+const ttsApi = {
+  speak: (text) => electron.ipcRenderer.invoke(TTS_CHANNELS.SPEAK, text),
+  onStream: (streamId, cb) => {
+    ttsStreamListeners.set(streamId, cb);
+    return () => {
+      ttsStreamListeners.delete(streamId);
+    };
+  }
+};
 const sysmonApi = {
   getMetrics: () => electron.ipcRenderer.invoke(SYSMON_CHANNELS.METRICS)
 };
@@ -237,6 +259,7 @@ electron.contextBridge.exposeInMainWorld("api", {
   log: logApi,
   ssh: sshApi,
   translate: translateApi,
+  tts: ttsApi,
   sysmon: sysmonApi,
   selfmon: selfmonApi,
   git: gitApi
