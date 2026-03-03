@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect, memo } from 'react'
-import { Columns2, Rows2, X, ChevronDown, Server, Loader2, Check, Terminal, FolderOpen, FileCode, Code2 } from 'lucide-react'
+import { Columns2, Rows2, X, ChevronDown, Server, Loader2, Check, Terminal, FolderOpen, FileCode, Code2, Share2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { baseName } from '@shared/path-utils'
 import type { PaneType } from '@/lib/layout-tree'
@@ -18,6 +18,7 @@ import { AgentDropdown } from '@/components/agent/AgentDropdown'
 import { AgentProfilesModal } from '@/components/agent/AgentProfilesModal'
 import { WhisperButton } from './WhisperButton'
 import { GitInfo } from './GitInfo'
+import { ShareModal } from '@/components/share/ShareModal'
 
 interface PaneHeaderProps {
   tabId: string
@@ -446,6 +447,13 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
   const isSshMode = !!sshPaneState
   const showMic = paneType === 'terminal' || paneType === 'agent'
   const showIde = !!idePath && (paneType === 'terminal' || paneType === 'file-manager')
+  const showShare = paneType === 'terminal' || paneType === 'agent'
+
+  const [showShareModal, setShowShareModal] = useState(false)
+
+  // Resolve ptyId for this pane (terminal key is paneId, agent key is paneId+':agent')
+  const tmKey = paneType === 'agent' ? paneId + ':agent' : isSshMode ? paneId + ':ssh' : paneId
+  const ptyId = getPtyId(tmKey)
 
   const resolvedProfileId = sshProfileId || sshPaneState?.profileId
   const connectedProfile = sshProfiles.find((p) => p.id === resolvedProfileId)
@@ -456,6 +464,7 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
       : 'Connect...'
 
   return (
+    <>
     <div
       className="flex shrink-0 cursor-grab items-center justify-between gap-3 border-b border-border bg-pane-header-bg px-3.5 py-2.5 active:cursor-grabbing"
       draggable
@@ -501,7 +510,7 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
         <GitInfo cwd={cwd} isSshMode={isSshMode} />
       )}
 
-      {/* Right: mic + split + close */}
+      {/* Right: mic + share + split + close */}
       <div className="flex gap-1.5">
         {showMic && !editorMeta && (
           <WhisperButton
@@ -509,6 +518,16 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
             paneType={paneType}
             isSshMode={isSshMode}
             disabled={!hasApiKey}
+          />
+        )}
+        {showShare && !editorMeta && ptyId && (
+          <IconButton
+            icon={Share2}
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowShareModal(true)
+            }}
+            title="Share terminal"
           />
         )}
         {showIde && !editorMeta && cwd && (
@@ -551,5 +570,13 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
         />
       </div>
     </div>
+    {showShareModal && ptyId && (
+      <ShareModal
+        paneId={paneId}
+        ptyId={ptyId}
+        onClose={() => setShowShareModal(false)}
+      />
+    )}
+    </>
   )
 }

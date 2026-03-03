@@ -89,6 +89,13 @@ export class PtyManager {
     }
   }
 
+  subscribe(id: string, cb: (data: string) => void): (() => void) | null {
+    const term = this.sessions.get(id)
+    if (!term) return null
+    const d = term.onData(cb)
+    return () => d.dispose()
+  }
+
   getCwd(id: string): string | null {
     const term = this.sessions.get(id)
     if (!term) return null

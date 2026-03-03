@@ -97,3 +97,9 @@ export const SSH_CHANNELS = {
   GET_HOME_DIR: 'ssh:getHomeDir'
 } as const
 
+export const SHARE_CHANNELS = {
+  START: 'share:start',
+  STOP: 'share:stop',
+  STATUS: 'share:status'
+} as const
+

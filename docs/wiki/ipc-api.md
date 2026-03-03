@@ -17,6 +17,7 @@ window.api = {
   log: LogApi,           // Логирование
   ssh: SshApi,           // SSH-подключения
   translate: TranslateApi, // Перевод текста
+  tts: TtsApi,           // Синтез речи (ElevenLabs)
   sysmon: SysmonApi,     // Метрики системы
   selfmon: SelfmonApi,   // Self-monitoring (ресурсы приложения)
   git: GitApi            // Git-интеграция
@@ -37,7 +38,7 @@ window.api = {
 
 ## IPC-каналы
 
-Определены в `src/shared/channels.ts` (13 групп) и используются обоими процессами.
+Определены в `src/shared/channels.ts` (15 групп) и используются обоими процессами.
 
 ### PTY-каналы
 
@@ -129,6 +130,13 @@ window.api = {
 | Канал | Направление | Тип | Описание |
 |-------|-------------|-----|----------|
 | `translate:translate` | renderer → main | `invoke` | Перевести текст через OpenAI API |
+
+### Каналы TTS
+
+| Канал | Направление | Тип | Описание |
+|-------|-------------|-----|----------|
+| `tts:speak` | renderer → main | `invoke` | Начать синтез речи через ElevenLabs, возвращает `{ streamId, sampleRate }` |
+| `tts:stream` | main → renderer | event | Поток аудио: чанк PCM-16 / завершение / ошибка |
 
 ### Каналы системного мониторинга
 
@@ -481,6 +489,35 @@ const translated = await window.api.translate.translate('Hello, world!')
 
 ---
 
+## TTS API
+
+Синтез речи через ElevenLabs. Использует потоковую передачу PCM-16 аудиоданных для минимальной задержки начала воспроизведения.
+
+```typescript
+// Начать синтез речи (требуется elevenlabsApiKey в настройках)
+const { streamId, sampleRate } = await window.api.tts.speak('Привет, мир!')
+
+// Подписка на поток аудиоданных для данного streamId
+const unsubscribe = window.api.tts.onStream(streamId, (event) => {
+  if (event.type === 'chunk') {
+    // event.data — base64-строка с PCM-16 аудиоданными (16kHz mono)
+  } else if (event.type === 'done') {
+    // Поток завершён
+  } else if (event.type === 'error') {
+    // event.message — описание ошибки
+  }
+})
+
+// Отписка
+unsubscribe()
+```
+
+Реализация использует per-stream dispatch (`Map<streamId, callback>`) — аналогично per-PTY dispatch. Поток аудиоданных декодируется и воспроизводится компонентом `SpeechSnippet` через Web Audio API (`AudioContext`).
+
+Требуется настройка `elevenlabsApiKey`. Опционально: `httpProxy` для проксирования запросов к API.
+
+---
+
 ## Sysmon API
 
 ```typescript
@@ -551,7 +588,7 @@ SSH-профили хранятся в настройках (`settings.sshProfil
 
 ## Типизация
 
-Типы для `window.api` объявлены в `src/renderer/src/types/electron.d.ts` через `declare global`. Это обеспечивает автодополнение в renderer-коде без явных импортов. Определено 14 API-интерфейсов: `PtyApi`, `FsApi`, `SettingsApi`, `SessionApi`, `ShellApi`, `ClipboardApi`, `WindowApi`, `WhisperApi`, `LogApi`, `TranslateApi`, `SysmonApi`, `SelfmonApi`, `GitApi`, `SshApi`.
+Типы для `window.api` объявлены в `src/renderer/src/types/electron.d.ts` через `declare global`. Это обеспечивает автодополнение в renderer-коде без явных импортов. Определено 15 API-интерфейсов: `PtyApi`, `FsApi`, `SettingsApi`, `SessionApi`, `ShellApi`, `ClipboardApi`, `WindowApi`, `WhisperApi`, `LogApi`, `TranslateApi`, `TtsApi`, `SysmonApi`, `SelfmonApi`, `GitApi`, `SshApi`.
 
 Общие типы данных (FileEntry, SessionState, LogEntry, SystemMetrics, SelfMetrics и др.) определены в `src/shared/types.ts` и используются обоими процессами.
 

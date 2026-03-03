@@ -1,5 +1,6 @@
 import type { FileEntry, FsEvent, SessionState } from '@shared/types'
 import type { TerminalSettings } from '@shared/settings'
+import type { ShareSessionInfo } from '@shared/share-types'
 
 interface PtyApi {
   create(opts?: { cols?: number; rows?: number; cwd?: string; command?: string; args?: string[] }): Promise<string>
@@ -104,6 +105,12 @@ interface SshApi {
   getHomeDir(profileId: string): Promise<string>
 }
 
+interface ShareApi {
+  start(ptyId: string): Promise<ShareSessionInfo>
+  stop(sessionId: string): Promise<void>
+  status(sessionId: string): Promise<ShareSessionInfo | null>
+}
+
 declare global {
   interface Window {
     api: {
@@ -122,6 +129,7 @@ declare global {
       sysmon: SysmonApi
       selfmon: SelfmonApi
       git: GitApi
+      share: ShareApi
     }
   }
 }

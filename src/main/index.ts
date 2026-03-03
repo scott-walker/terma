@@ -15,6 +15,8 @@ import { registerSshHandlers } from './ipc/ssh-handlers'
 import { registerTranslateHandlers } from './ipc/translate-handlers'
 import { registerTtsHandlers } from './ipc/tts-handlers'
 import { registerSysmonHandlers } from './ipc/sysmon-handlers'
+import { registerShareHandlers } from './ipc/share-handlers'
+import { ShareService } from './share/share-service'
 import { SshService } from './ssh/ssh-service'
 import { logger } from './services/logger-service'
 import { createPlatformService } from './services/platform-service'
@@ -31,6 +33,7 @@ const ptyManager = new PtyManager(platform)
 const fsService = new FsService()
 const fsWatcher = new FsWatcher()
 const sshService = new SshService()
+const shareService = new ShareService()
 
 // CPU tracking for self-monitoring
 let lastCpuUsage = process.cpuUsage()
@@ -82,6 +85,7 @@ app.whenReady().then(() => {
   registerTranslateHandlers()
   registerTtsHandlers()
   registerSysmonHandlers()
+  registerShareHandlers(ptyManager, shareService)
 
   logger.info('app', 'App ready')
 
@@ -206,6 +210,7 @@ app.on('window-all-closed', () => {
   ptyManager.destroyAll()
   fsWatcher.unwatchAll()
   sshService.disconnectAll()
+  shareService.stopAll()
   if (process.platform !== 'darwin') {
     app.quit()
   }
@@ -216,4 +221,5 @@ app.on('before-quit', () => {
   ptyManager.destroyAll()
   fsWatcher.unwatchAll()
   sshService.disconnectAll()
+  shareService.stopAll()
 })

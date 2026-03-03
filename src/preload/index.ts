@@ -1,8 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { homedir } from 'os'
-import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS, WINDOW_CHANNELS, LOG_CHANNELS, SSH_CHANNELS, TRANSLATE_CHANNELS, TTS_CHANNELS, SYSMON_CHANNELS, GIT_CHANNELS, SELFMON_CHANNELS } from '../shared/channels'
+import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS, WINDOW_CHANNELS, LOG_CHANNELS, SSH_CHANNELS, TRANSLATE_CHANNELS, TTS_CHANNELS, SYSMON_CHANNELS, GIT_CHANNELS, SELFMON_CHANNELS, SHARE_CHANNELS } from '../shared/channels'
 import type { TerminalSettings } from '../shared/settings'
 import type { FileEntry, SessionState, LogEntry, SystemMetrics, SelfMetrics } from '../shared/types'
+import type { ShareSessionInfo } from '../shared/share-types'
 
 // Per-PTY dispatch: single IPC listener, O(1) lookup per event
 const dataListeners = new Map<string, (data: string) => void>()
@@ -224,6 +225,15 @@ const selfmonApi = {
     ipcRenderer.invoke(SELFMON_CHANNELS.METRICS)
 }
 
+const shareApi = {
+  start: (ptyId: string): Promise<ShareSessionInfo> =>
+    ipcRenderer.invoke(SHARE_CHANNELS.START, ptyId),
+  stop: (sessionId: string): Promise<void> =>
+    ipcRenderer.invoke(SHARE_CHANNELS.STOP, sessionId),
+  status: (sessionId: string): Promise<ShareSessionInfo | null> =>
+    ipcRenderer.invoke(SHARE_CHANNELS.STATUS, sessionId)
+}
+
 contextBridge.exposeInMainWorld('api', {
   pty: ptyApi,
   fs: fsApi,
@@ -239,5 +249,6 @@ contextBridge.exposeInMainWorld('api', {
   tts: ttsApi,
   sysmon: sysmonApi,
   selfmon: selfmonApi,
-  git: gitApi
+  git: gitApi,
+  share: shareApi
 })

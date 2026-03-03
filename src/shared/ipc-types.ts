@@ -10,6 +10,7 @@
 
 import type { FileEntry, PtyCreateOpts, SessionState, LogEntry, SystemMetrics, SelfMetrics } from './types'
 import type { TerminalSettings } from './settings'
+import type { ShareSessionInfo } from './share-types'
 
 // ── invoke/handle channels (request → response) ──
 
@@ -79,6 +80,11 @@ export interface IpcInvokeMap {
   'ssh:disconnect': [args: [profileId: string], ret: void]
   'ssh:readDir': [args: [profileId: string, remotePath: string], ret: FileEntry[]]
   'ssh:getHomeDir': [args: [profileId: string], ret: string]
+
+  // Share
+  'share:start': [args: [ptyId: string], ret: ShareSessionInfo]
+  'share:stop': [args: [sessionId: string], ret: void]
+  'share:status': [args: [sessionId: string], ret: ShareSessionInfo | null]
 }
 
 // ── send/on channels (fire-and-forget) ──
