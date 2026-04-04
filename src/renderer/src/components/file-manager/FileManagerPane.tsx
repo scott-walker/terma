@@ -26,7 +26,7 @@ export function FileManagerPane({ tabId, paneId, cwd }: FileManagerPaneProps): J
   const updatePaneCwd = useTabStore((s) => s.updatePaneCwd)
   const addToast = useToastStore((s) => s.addToast)
   const sshProfiles = useSettingsStore((s) => s.settings.sshProfiles)
-  const fontSize = useSettingsStore((s) => s.getEffectiveFontSize())
+  const fontSize = useSettingsStore((s) => s.settings.fontSize)
   const sshPaneState = useSshStore((s) => s.panes[paneId])
 
   const [pathInput, setPathInput] = useState('')

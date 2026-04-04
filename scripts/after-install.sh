@@ -26,5 +26,16 @@ if [ -f "$METAINFO_SRC" ]; then
   chmod 644 "$METAINFO_DST"
 fi
 
+# Install icon to AppStream cache for GNOME Software pre-install display
+for SIZE in 64 128 256; do
+  ICON_SRC="/usr/share/icons/hicolor/$SIZEx$SIZE/apps/terma.png"
+  CACHE_DIR="/usr/share/app-info/icons/hicolor/$SIZEx$SIZE"
+  if [ -f "$ICON_SRC" ]; then
+    mkdir -p "$CACHE_DIR"
+    cp "$ICON_SRC" "$CACHE_DIR/com.terma.app.png"
+    chmod 644 "$CACHE_DIR/com.terma.app.png"
+  fi
+done
+
 update-desktop-database /usr/share/applications 2>/dev/null || true
 gtk-update-icon-cache -f -t /usr/share/icons/hicolor 2>/dev/null || true

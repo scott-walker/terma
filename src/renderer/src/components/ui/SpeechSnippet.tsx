@@ -240,14 +240,6 @@ export function SpeechSnippet({ position, text, streamId, sampleRate, onClose }:
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              {/* Progress bar */}
-              <div className="h-1 w-full overflow-hidden rounded-full bg-surface-hover">
-                <div
-                  className="h-full rounded-full bg-accent transition-[width] duration-200"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-
               {/* Buttons */}
               <div className="flex items-center gap-2">
                 <button

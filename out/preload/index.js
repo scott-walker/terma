@@ -58,10 +58,13 @@ const WINDOW_CHANNELS = {
 };
 const LOG_CHANNELS = {
   GET_LOGS: "log:getLogs",
-  ON_LOG: "log:onLog"
+  ON_LOG: "log:onLog",
+  RENDERER_LOG: "log:rendererLog"
 };
 const TRANSLATE_CHANNELS = {
-  TRANSLATE: "translate:translate"
+  TRANSLATE: "translate:translate",
+  DEFINE: "translate:define",
+  SUMMARIZE: "translate:summarize"
 };
 const TTS_CHANNELS = {
   SPEAK: "tts:speak",
@@ -84,6 +87,11 @@ const SSH_CHANNELS = {
   DISCONNECT: "ssh:disconnect",
   READ_DIR: "ssh:readDir",
   GET_HOME_DIR: "ssh:getHomeDir"
+};
+const SHARE_CHANNELS = {
+  START: "share:start",
+  STOP: "share:stop",
+  STATUS: "share:status"
 };
 const dataListeners = /* @__PURE__ */ new Map();
 const exitListeners = /* @__PURE__ */ new Map();
@@ -208,10 +216,15 @@ const logApi = {
     };
     electron.ipcRenderer.on(LOG_CHANNELS.ON_LOG, listener);
     return () => electron.ipcRenderer.removeListener(LOG_CHANNELS.ON_LOG, listener);
+  },
+  rendererLog: (level, source, message) => {
+    electron.ipcRenderer.invoke(LOG_CHANNELS.RENDERER_LOG, level, source, message);
   }
 };
 const translateApi = {
-  translate: (text) => electron.ipcRenderer.invoke(TRANSLATE_CHANNELS.TRANSLATE, text)
+  translate: (text) => electron.ipcRenderer.invoke(TRANSLATE_CHANNELS.TRANSLATE, text),
+  define: (text, rephrase) => electron.ipcRenderer.invoke(TRANSLATE_CHANNELS.DEFINE, text, rephrase),
+  summarize: (text) => electron.ipcRenderer.invoke(TRANSLATE_CHANNELS.SUMMARIZE, text)
 };
 const ttsStreamListeners = /* @__PURE__ */ new Map();
 electron.ipcRenderer.on(TTS_CHANNELS.STREAM, (_event, streamId, data) => {
@@ -247,6 +260,17 @@ const sshApi = {
 const selfmonApi = {
   getMetrics: () => electron.ipcRenderer.invoke(SELFMON_CHANNELS.METRICS)
 };
+const shareApi = {
+  start: (ptyId) => electron.ipcRenderer.invoke(SHARE_CHANNELS.START, ptyId),
+  stop: (sessionId) => electron.ipcRenderer.invoke(SHARE_CHANNELS.STOP, sessionId),
+  status: (sessionId) => electron.ipcRenderer.invoke(SHARE_CHANNELS.STATUS, sessionId)
+};
+const zoomApi = {
+  setFactor: (factor) => {
+    electron.webFrame.setZoomFactor(factor);
+  },
+  getFactor: () => electron.webFrame.getZoomFactor()
+};
 electron.contextBridge.exposeInMainWorld("api", {
   pty: ptyApi,
   fs: fsApi,
@@ -262,5 +286,7 @@ electron.contextBridge.exposeInMainWorld("api", {
   tts: ttsApi,
   sysmon: sysmonApi,
   selfmon: selfmonApi,
-  git: gitApi
+  git: gitApi,
+  share: shareApi,
+  zoom: zoomApi
 });

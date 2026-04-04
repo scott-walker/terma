@@ -25,6 +25,8 @@ extraResources:
     to: com.terma.app.metainfo.xml
   - from: build/terma.desktop
     to: terma.desktop
+  - from: build/screenshots
+    to: screenshots
 
 # ──────────────────────────────
 #  Linux
@@ -36,7 +38,7 @@ linux:
   executableName: terma
   category: TerminalEmulator
   synopsis: Modern terminal emulator with split panes, tabs and AI agent support
-  description: |
+  description: >-
     Terma is a modern terminal emulator built with Electron, React and xterm.js.
     Features include split panes with unlimited nesting, 6 pane types (terminal,
     file manager, AI agent, markdown viewer, image viewer, system monitor),
@@ -53,6 +55,9 @@ deb:
     - libnss3
   afterInstall: scripts/after-install.sh
   afterRemove: scripts/after-remove.sh
+  fpm:
+    - "build/com.terma.app.metainfo.xml=/usr/share/metainfo/com.terma.app.metainfo.xml"
+    - "build/icons/256x256.png=/usr/share/pixmaps/terma.png"
 
 # ──────────────────────────────
 #  macOS

@@ -74,6 +74,8 @@ interface LogApi {
 
 interface TranslateApi {
   translate(text: string): Promise<string>
+  define(text: string, rephrase: boolean): Promise<string>
+  summarize(text: string): Promise<{ summary: string; streamId: string; sampleRate: number }>
 }
 
 type TtsStreamEvent = { type: 'chunk'; data: string } | { type: 'done' } | { type: 'error'; message: string }
@@ -111,6 +113,11 @@ interface ShareApi {
   status(sessionId: string): Promise<ShareSessionInfo | null>
 }
 
+interface ZoomApi {
+  setFactor(factor: number): void
+  getFactor(): number
+}
+
 declare global {
   interface Window {
     api: {
@@ -130,6 +137,7 @@ declare global {
       selfmon: SelfmonApi
       git: GitApi
       share: ShareApi
+      zoom: ZoomApi
     }
   }
 }

@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { X } from 'lucide-react'
 
+export const DEFAULT_TAB_COLOR = 'gray'
+
 const TAB_COLOR_CLASSES: Record<string, { border: string; bg: string }> = {
   red: { border: 'border-tab-red', bg: 'bg-tab-red' },
   orange: { border: 'border-tab-orange', bg: 'bg-tab-orange' },
@@ -8,7 +10,8 @@ const TAB_COLOR_CLASSES: Record<string, { border: string; bg: string }> = {
   green: { border: 'border-tab-green', bg: 'bg-tab-green' },
   blue: { border: 'border-tab-blue', bg: 'bg-tab-blue' },
   purple: { border: 'border-tab-purple', bg: 'bg-tab-purple' },
-  pink: { border: 'border-tab-pink', bg: 'bg-tab-pink' }
+  pink: { border: 'border-tab-pink', bg: 'bg-tab-pink' },
+  gray: { border: 'border-tab-gray', bg: 'bg-tab-gray' }
 }
 
 interface TabItemProps {
@@ -90,7 +93,7 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
     [commit, title, stopEditing]
   )
 
-  const effectiveColor = TAB_COLOR_CLASSES[color ?? 'green']
+  const effectiveColor = TAB_COLOR_CLASSES[color ?? DEFAULT_TAB_COLOR]
 
   const borderClass = isActive ? effectiveColor.border : 'border-transparent'
 
@@ -131,7 +134,7 @@ export function TabItem({ title, isActive, canClose, color, forceEdit, onClick, 
           }}
           className="ml-1 shrink-0 rounded p-0.5 opacity-0 transition-opacity hover:bg-fg/10 group-hover:opacity-100 aria-[current]:opacity-100"
           aria-current={isActive ? 'true' : undefined}
-          title="Close tab"
+
         >
           <X className="h-3.5 w-3.5" />
         </button>

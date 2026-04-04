@@ -22,14 +22,18 @@ class LoggerService {
       this.entries.shift()
     }
 
-    // Console output for dev
-    const prefix = `[${level.toUpperCase()}] [${source}]`
-    if (level === 'error') {
-      console.error(prefix, message, data ?? '')
-    } else if (level === 'warn') {
-      console.warn(prefix, message, data ?? '')
-    } else {
-      console.log(prefix, message, data ?? '')
+    // Console output for dev (may throw EIO if stdout pipe is broken)
+    try {
+      const prefix = `[${level.toUpperCase()}] [${source}]`
+      if (level === 'error') {
+        console.error(prefix, message, data ?? '')
+      } else if (level === 'warn') {
+        console.warn(prefix, message, data ?? '')
+      } else {
+        console.log(prefix, message, data ?? '')
+      }
+    } catch {
+      // stdout/stderr broken — ignore silently
     }
 
     // Broadcast to renderer — skip debug to reduce IPC traffic

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X,
@@ -7,7 +7,6 @@ import {
   Monitor,
   RotateCcw,
   ZoomIn,
-  Minus,
   Plus,
   ScrollText,
   Settings2,
@@ -17,6 +16,7 @@ import {
   EyeOff,
   KeyRound,
   ChevronDown,
+  Check,
   AudioLines,
   Code2,
   Globe
@@ -33,17 +33,80 @@ import { Divider } from '../ui/Divider'
 import { ThemeCard } from './ThemeCard'
 
 const FONT_PRESETS = [
-  { label: 'JetBrains Mono', value: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', Menlo, monospace" },
-  { label: 'Cascadia Code', value: "'Cascadia Code', 'JetBrains Mono', 'Fira Code', Menlo, monospace" },
-  { label: 'Fira Code', value: "'Fira Code', 'JetBrains Mono', 'Cascadia Code', Menlo, monospace" },
-  { label: 'Source Code Pro', value: "'Source Code Pro', 'JetBrains Mono', Menlo, monospace" },
-  { label: 'IBM Plex Mono', value: "'IBM Plex Mono', 'JetBrains Mono', Menlo, monospace" },
-  { label: 'Hack', value: "'Hack', 'JetBrains Mono', Menlo, monospace" },
-  { label: 'Inconsolata', value: "'Inconsolata', 'JetBrains Mono', Menlo, monospace" },
-  { label: 'Ubuntu Mono', value: "'Ubuntu Mono', 'JetBrains Mono', Menlo, monospace" },
-  { label: 'Menlo', value: "Menlo, 'JetBrains Mono', monospace" },
-  { label: 'Consolas', value: "Consolas, 'JetBrains Mono', Menlo, monospace" }
+  { label: 'JetBrains Mono', value: "'JetBrains Mono', monospace" },
+  { label: 'Cascadia Code', value: "'Cascadia Code', monospace" },
+  { label: 'Fira Code', value: "'Fira Code', monospace" },
+  { label: 'Source Code Pro', value: "'Source Code Pro', monospace" },
+  { label: 'IBM Plex Mono', value: "'IBM Plex Mono', monospace" },
+  { label: 'Inconsolata', value: "'Inconsolata', monospace" },
+  { label: 'Ubuntu Mono', value: "'Ubuntu Mono', monospace" }
 ]
+
+function FontFamilyDropdown({ value, onChange }: { value: string; onChange: (v: string) => void }): JSX.Element {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  const activePreset = FONT_PRESETS.find((f) => f.value === value)
+  const displayLabel = activePreset?.label ?? value
+
+  useEffect(() => {
+    if (!open) return
+    const handleClick = (e: MouseEvent): void => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [open])
+
+  return (
+    <div>
+      <label className="mb-2 block text-xs text-fg-muted">Family</label>
+      <div ref={ref} className="relative">
+        <button
+          onClick={() => setOpen(!open)}
+          className="flex w-full items-center justify-between rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg outline-none transition-colors hover:bg-surface-hover"
+          style={{ fontFamily: value }}
+        >
+          <span>{displayLabel}</span>
+          <ChevronDown size={14} className={`text-fg-muted transition-transform ${open ? 'rotate-180' : ''}`} />
+        </button>
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.12 }}
+              className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-xl border border-border bg-popup-bg py-1 shadow-xl"
+            >
+              {FONT_PRESETS.map((f) => {
+                const isActive = f.value === value
+                return (
+                  <button
+                    key={f.label}
+                    onClick={() => { onChange(f.value); setOpen(false) }}
+                    className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${isActive ? 'bg-surface-hover text-white' : 'text-fg hover:bg-surface-hover'}`}
+                    style={{ fontFamily: f.value }}
+                  >
+                    <span className="flex-1">{f.label}</span>
+                    {isActive && <Check size={14} />}
+                  </button>
+                )
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  )
+}
 
 type SettingsTab = 'general' | 'style'
 
@@ -165,9 +228,8 @@ function ElevenLabsSection(): JSX.Element {
 
 export function SettingsPanel(): JSX.Element {
   const [activeTab, setActiveTab] = useState<SettingsTab>('general')
-  const { settings, updateSettings, resetSettings, zoomIn, zoomOut, zoomReset, toggleSettings } =
+  const { settings, updateSettings, resetSettings, toggleSettings } =
     useSettingsStore()
-  const effectiveFontSize = useSettingsStore((s) => s.getEffectiveFontSize())
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent): void => {
@@ -392,24 +454,10 @@ export function SettingsPanel(): JSX.Element {
                 {/* Font */}
                 <Section icon={Type} title="Font">
                   <div className="space-y-4">
-                    <div>
-                      <label className="mb-2 block text-xs text-fg-muted">Family</label>
-                      <div className="relative">
-                        <select
-                          value={settings.fontFamily}
-                          onChange={(e) => updateSettings({ fontFamily: e.target.value })}
-                          className="w-full appearance-none rounded-xl border border-border bg-surface px-4 py-2.5 pr-9 text-sm text-fg outline-none transition-colors focus:border-fg/40 focus:bg-surface-hover"
-                        >
-                          {FONT_PRESETS.map((f) => (
-                            <option key={f.label} value={f.value}>{f.label}</option>
-                          ))}
-                          {!FONT_PRESETS.some((f) => f.value === settings.fontFamily) && (
-                            <option value={settings.fontFamily}>{settings.fontFamily}</option>
-                          )}
-                        </select>
-                        <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-fg-muted" />
-                      </div>
-                    </div>
+                    <FontFamilyDropdown
+                      value={settings.fontFamily}
+                      onChange={(v) => updateSettings({ fontFamily: v })}
+                    />
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="mb-2 block text-xs text-fg-muted">Size</label>
@@ -426,10 +474,13 @@ export function SettingsPanel(): JSX.Element {
                         <NumberStepper
                           value={settings.lineHeight}
                           min={1}
-                          max={2}
-                          step={0.1}
+                          max={1.5}
+                          step={0.05}
                           onChange={(v) => updateSettings({ lineHeight: v })}
                         />
+                        <p className="mt-1.5 text-[10px] text-fg-muted">
+                          {'> 1.2 breaks box-drawing lines'}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -437,41 +488,21 @@ export function SettingsPanel(): JSX.Element {
 
                 <Divider />
 
-                {/* Zoom */}
+                {/* Zoom Step */}
                 <Section icon={ZoomIn} title="Zoom">
-                  <div className="flex items-center justify-between rounded-xl bg-surface p-4">
-                    <div>
-                      <div className="text-base font-medium text-fg">{effectiveFontSize}px</div>
-                      <div className="mt-0.5 text-[11px] text-fg-muted">
-                        {settings.fontSize}px base {settings.zoomLevel >= 0 ? '+' : ''}{settings.zoomLevel} zoom
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={zoomOut}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
-                      >
-                        <Minus size={16} />
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={zoomReset}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg text-xs font-semibold text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
-                      >
-                        0
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={zoomIn}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
-                      >
-                        <Plus size={16} />
-                      </motion.button>
-                    </div>
+                  <div>
+                    <label className="mb-2 block text-xs text-fg-muted">Step (%)</label>
+                    <NumberStepper
+                      value={settings.zoomStep || 10}
+                      min={5}
+                      max={50}
+                      step={5}
+                      onChange={(v) => updateSettings({ zoomStep: v })}
+                      suffix="%"
+                    />
+                    <p className="mt-2 text-[11px] text-fg-muted">
+                      Ctrl+Plus / Ctrl+Minus / Ctrl+0
+                    </p>
                   </div>
                 </Section>
               </>

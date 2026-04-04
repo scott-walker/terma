@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
-import { Loader2, Cpu, MemoryStick, HardDrive, Activity } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Loader2, Cpu, MemoryStick, HardDrive, Activity, MonitorCog, Network, Clock, Thermometer, ChevronRight, ArrowDown, ArrowUp } from 'lucide-react'
 import type { SystemMetrics } from '@shared/types'
 
 interface SystemMonitorPaneProps {
@@ -17,6 +17,25 @@ function formatBytes(bytes: number): string {
   return `${(gb / 1024).toFixed(1)} TB`
 }
 
+function formatSpeed(bytesPerSec: number | null): string {
+  if (bytesPerSec === null || bytesPerSec < 0) return '—'
+  if (bytesPerSec < 1024) return `${bytesPerSec.toFixed(0)} B/s`
+  const kb = bytesPerSec / 1024
+  if (kb < 1024) return `${kb.toFixed(1)} KB/s`
+  const mb = kb / 1024
+  if (mb < 1024) return `${mb.toFixed(1)} MB/s`
+  return `${(mb / 1024).toFixed(1)} GB/s`
+}
+
+function formatUptime(seconds: number): string {
+  const d = Math.floor(seconds / 86400)
+  const h = Math.floor((seconds % 86400) / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  if (d > 0) return `${d}d ${h}h ${m}m`
+  if (h > 0) return `${h}h ${m}m`
+  return `${m}m`
+}
+
 function loadColor(percent: number): string {
   if (percent >= 80) return 'bg-danger'
   if (percent >= 50) return 'bg-warning'
@@ -27,6 +46,12 @@ function loadTextColor(percent: number): string {
   if (percent >= 80) return 'text-danger'
   if (percent >= 50) return 'text-warning'
   return 'text-accent'
+}
+
+function tempColor(temp: number): string {
+  if (temp >= 85) return 'text-danger'
+  if (temp >= 70) return 'text-warning'
+  return 'text-fg-muted'
 }
 
 function LoadBar({ percent, label }: { percent: number; label?: string }): JSX.Element {
@@ -46,12 +71,32 @@ function LoadBar({ percent, label }: { percent: number; label?: string }): JSX.E
   )
 }
 
-function SectionHeader({ icon: Icon, title }: { icon: typeof Cpu; title: string }): JSX.Element {
+function CollapsibleSection({ icon: Icon, title, children, defaultOpen = true }: {
+  icon: typeof Cpu
+  title: string
+  children: React.ReactNode
+  defaultOpen?: boolean
+}): JSX.Element {
+  const [open, setOpen] = useState(defaultOpen)
+  const toggle = useCallback(() => setOpen((v) => !v), [])
+
   return (
-    <div className="flex items-center gap-2 border-b border-border pb-1.5">
-      <Icon size={14} strokeWidth={1.8} className="text-info" />
-      <span className="text-xs font-semibold uppercase tracking-wider text-fg-muted">{title}</span>
-    </div>
+    <section className="flex flex-col gap-2">
+      <button
+        type="button"
+        onClick={toggle}
+        className="flex cursor-pointer items-center gap-2 border-b border-border pb-1.5 text-left"
+      >
+        <ChevronRight
+          size={14}
+          strokeWidth={2}
+          className={`text-fg-muted transition-transform duration-200 ${open ? 'rotate-90' : ''}`}
+        />
+        <Icon size={14} strokeWidth={1.8} className="text-info" />
+        <span className="text-xs font-semibold uppercase tracking-wider text-fg-muted">{title}</span>
+      </button>
+      {open && <div className="pl-5">{children}</div>}
+    </section>
   )
 }
 
@@ -104,35 +149,54 @@ export function SystemMonitorPane({ paneId }: SystemMonitorPaneProps): JSX.Eleme
 
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto p-4">
-      {/* Processes */}
-      <section className="flex flex-col gap-2">
-        <SectionHeader icon={Activity} title="Processes" />
-        <div className="flex items-baseline gap-2 pl-5">
-          <span className="text-2xl font-semibold text-fg">{metrics.processCount}</span>
-          <span className="text-xs text-fg-muted">running</span>
+      {/* Processes & Uptime */}
+      <CollapsibleSection icon={Activity} title="Processes">
+        <div className="flex items-baseline gap-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold text-fg">{metrics.processCount}</span>
+            <span className="text-xs text-fg-muted">running</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-fg-muted">
+            <Clock size={12} strokeWidth={1.8} />
+            <span>Uptime: <span className="text-fg">{formatUptime(metrics.uptime)}</span></span>
+          </div>
         </div>
-      </section>
+      </CollapsibleSection>
 
       {/* Memory */}
-      <section className="flex flex-col gap-2">
-        <SectionHeader icon={MemoryStick} title="Memory" />
-        <div className="flex flex-col gap-1.5 pl-5">
+      <CollapsibleSection icon={MemoryStick} title="Memory">
+        <div className="flex flex-col gap-1.5">
           <LoadBar percent={metrics.ram.usedPercent} />
           <div className="flex gap-4 text-xs text-fg-muted">
             <span>Used: <span className="text-fg">{formatBytes(metrics.ram.used)}</span></span>
             <span>Free: <span className="text-fg">{formatBytes(metrics.ram.free)}</span></span>
             <span>Total: <span className="text-fg">{formatBytes(metrics.ram.total)}</span></span>
           </div>
+          {metrics.swap.total > 0 && (
+            <div className="mt-1 flex flex-col gap-1">
+              <span className="text-xs text-fg-muted">Swap</span>
+              <LoadBar percent={metrics.swap.usedPercent} />
+              <div className="flex gap-4 text-xs text-fg-muted">
+                <span>Used: <span className="text-fg">{formatBytes(metrics.swap.used)}</span></span>
+                <span>Total: <span className="text-fg">{formatBytes(metrics.swap.total)}</span></span>
+              </div>
+            </div>
+          )}
         </div>
-      </section>
+      </CollapsibleSection>
 
       {/* CPU */}
-      <section className="flex flex-col gap-2">
-        <SectionHeader icon={Cpu} title="CPU" />
-        <div className="flex flex-col gap-2 pl-5">
+      <CollapsibleSection icon={Cpu} title="CPU">
+        <div className="flex flex-col gap-2">
           <div className="flex items-baseline gap-2">
             <span className="text-xs text-fg-muted">{metrics.cpu.model}</span>
             <span className="text-xs text-fg-muted">({metrics.cpu.cores} cores)</span>
+            {metrics.cpu.tempMain !== null && (
+              <span className={`flex items-center gap-1 text-xs ${tempColor(metrics.cpu.tempMain)}`}>
+                <Thermometer size={11} strokeWidth={1.8} />
+                {metrics.cpu.tempMain.toFixed(0)}°C
+              </span>
+            )}
           </div>
           <LoadBar percent={metrics.cpu.avgLoad} label="Avg" />
           <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-4 gap-y-1">
@@ -141,12 +205,82 @@ export function SystemMonitorPane({ paneId }: SystemMonitorPaneProps): JSX.Eleme
             ))}
           </div>
         </div>
-      </section>
+      </CollapsibleSection>
+
+      {/* GPU */}
+      {metrics.gpus.length > 0 && (
+        <CollapsibleSection icon={MonitorCog} title="GPU">
+          <div className="flex flex-col gap-4">
+            {metrics.gpus.map((gpu, i) => (
+              <div key={i} className="flex flex-col gap-1.5">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xs font-medium text-fg">{gpu.model}</span>
+                  <span className="text-xs text-fg-muted">{gpu.bus === 'Onboard' ? 'iGPU' : gpu.bus}</span>
+                  {gpu.temperatureGpu !== null && (
+                    <span className={`flex items-center gap-1 text-xs ${tempColor(gpu.temperatureGpu)}`}>
+                      <Thermometer size={11} strokeWidth={1.8} />
+                      {gpu.temperatureGpu.toFixed(0)}°C
+                    </span>
+                  )}
+                  {gpu.fanSpeed !== null && gpu.fanSpeed > 0 && (
+                    <span className="text-xs text-fg-muted">Fan: {gpu.fanSpeed}%</span>
+                  )}
+                  {gpu.powerDraw !== null && gpu.powerDraw > 0 && (
+                    <span className="text-xs text-fg-muted">{gpu.powerDraw.toFixed(0)}W</span>
+                  )}
+                </div>
+                {gpu.utilizationGpu !== null && (
+                  <LoadBar percent={gpu.utilizationGpu} label="Core" />
+                )}
+                {gpu.memoryTotal > 0 && (
+                  <LoadBar
+                    percent={(gpu.memoryUsed / gpu.memoryTotal) * 100}
+                    label="VRAM"
+                  />
+                )}
+                <div className="flex gap-4 text-xs text-fg-muted">
+                  {gpu.memoryTotal > 0 && (
+                    <>
+                      <span>Used: <span className="text-fg">{formatBytes(gpu.memoryUsed)}</span></span>
+                      <span>Free: <span className="text-fg">{formatBytes(gpu.memoryFree)}</span></span>
+                      <span>Total: <span className="text-fg">{formatBytes(gpu.memoryTotal)}</span></span>
+                    </>
+                  )}
+                  {gpu.clockCore !== null && (
+                    <span>Core: <span className="text-fg">{gpu.clockCore} MHz</span></span>
+                  )}
+                  {gpu.clockMemory !== null && (
+                    <span>Mem: <span className="text-fg">{gpu.clockMemory} MHz</span></span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Network */}
+      {metrics.network.length > 0 && (
+        <CollapsibleSection icon={Network} title="Network">
+          <div className="flex flex-col gap-2">
+            {metrics.network.map((net) => (
+              <div key={net.iface} className="flex items-center gap-4 text-xs">
+                <span className="shrink-0 font-medium text-fg">{net.iface}</span>
+                <div className="flex flex-1 items-center justify-end gap-4 text-fg-muted">
+                  <span className="inline-flex items-center gap-0.5"><ArrowDown size={11} strokeWidth={2} className="text-danger" /> <span className="text-fg">{formatSpeed(net.rxSec)}</span></span>
+                  <span className="inline-flex items-center gap-0.5"><ArrowUp size={11} strokeWidth={2} className="text-accent" /> <span className="text-fg">{formatSpeed(net.txSec)}</span></span>
+                  <span className="inline-flex items-center gap-0.5">Total <ArrowDown size={11} strokeWidth={2} className="text-danger" /> <span className="text-fg">{formatBytes(net.rxTotal)}</span></span>
+                  <span className="inline-flex items-center gap-0.5">Total <ArrowUp size={11} strokeWidth={2} className="text-accent" /> <span className="text-fg">{formatBytes(net.txTotal)}</span></span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+      )}
 
       {/* Disk */}
-      <section className="flex flex-col gap-2">
-        <SectionHeader icon={HardDrive} title="Disk" />
-        <div className="flex flex-col gap-3 pl-5">
+      <CollapsibleSection icon={HardDrive} title="Disk">
+        <div className="flex flex-col gap-3">
           {metrics.disks.map((disk) => (
             <div key={disk.mount} className="flex flex-col gap-1">
               <div className="flex items-baseline gap-2">
@@ -161,7 +295,7 @@ export function SystemMonitorPane({ paneId }: SystemMonitorPaneProps): JSX.Eleme
             </div>
           ))}
         </div>
-      </section>
+      </CollapsibleSection>
     </div>
   )
 }

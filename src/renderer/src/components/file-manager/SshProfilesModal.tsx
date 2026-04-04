@@ -90,7 +90,7 @@ export function SshProfilesModal({ onClose }: SshProfilesModalProps): JSX.Elemen
               <button
                 onClick={() => handleDelete(profile.id)}
                 className="ml-2 text-fg-muted hover:text-danger"
-                title="Delete"
+
               >
                 <Trash2 size={14} strokeWidth={1.8} />
               </button>

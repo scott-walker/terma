@@ -46,7 +46,6 @@ function createWindow(): BrowserWindow {
     minWidth: 400,
     minHeight: 300,
     frame: false,
-    titleBarStyle: 'hidden',
     backgroundColor: '#191c24',
     icon: app.isPackaged
       ? join(process.resourcesPath, 'icon-256.png')
@@ -56,10 +55,6 @@ function createWindow(): BrowserWindow {
       sandbox: false
     }
   })
-
-  // Block native Electron zoom — zoom is handled in renderer via settings
-  win.webContents.setZoomFactor(1)
-  win.webContents.setVisualZoomLevelLimits(1, 1)
 
   win.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url)

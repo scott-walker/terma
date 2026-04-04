@@ -18,7 +18,7 @@ terma/
 │   └── after-install.sh            # Post-install скрипт (DEB/RPM)
 └── src/
     ├── shared/                     # Код, общий для main и renderer
-    │   ├── channels.ts             # Константы IPC-каналов (13 групп)
+    │   ├── channels.ts             # Константы IPC-каналов (15 групп)
     │   ├── ipc-types.ts            # Типизированный IPC-контракт (IpcInvokeMap, IpcSendMap, IpcEventMap)
     │   ├── types.ts                # Типы: LayoutNode, FileEntry, SessionState, SystemMetrics, SelfMetrics и др.
     │   ├── settings.ts             # Интерфейс TerminalSettings + значения по умолчанию
@@ -52,7 +52,11 @@ terma/
     │       ├── log-handlers.ts     # Обработчики логирования
     │       ├── ssh-handlers.ts     # Обработчики SSH (connect, disconnect, readDir, getHomeDir)
     │       ├── sysmon-handlers.ts  # Обработчики системного мониторинга + self-monitoring
-    │       └── translate-handlers.ts # Обработчики перевода текста (OpenAI API)
+    │       ├── translate-handlers.ts # Обработчики перевода текста (OpenAI API)
+    │       └── tts-handlers.ts     # Обработчики TTS: потоковый синтез речи (ElevenLabs)
+    ├── tts/
+    │   ├── tts-provider.ts         # Интерфейс TtsProvider (speak: AsyncIterable<Uint8Array>)
+    │   └── elevenlabs.ts           # Реализация TtsProvider через ElevenLabs API
     ├── preload/
     │   └── index.ts                # contextBridge: window.api (14 API-групп)
     └── renderer/
@@ -82,6 +86,7 @@ terma/
             │   │   ├── FileTree.tsx     # Виртуализированное дерево файлов
             │   │   ├── FileItem.tsx     # Строка файла/папки
             │   │   ├── FileTypeIcon.tsx # Иконки по расширению файла
+            │   │   ├── FileSearchModal.tsx # Быстрый поиск файлов (Ctrl+P стиль)
             │   │   ├── SshDropdown.tsx  # Dropdown для выбора SSH-профиля
             │   │   └── SshProfilesModal.tsx # Модалка управления SSH-профилями
             │   ├── agent/
@@ -112,6 +117,7 @@ terma/
             │       ├── ConfirmDialog.tsx# Диалог подтверждения
             │       ├── WindowControls.tsx # Кнопки управления окном
             │       ├── TranslationSnippet.tsx # Сниппет для отображения переведённого текста
+            │       ├── SpeechSnippet.tsx # Плеер TTS: потоковое воспроизведение синтезированной речи
             │       └── icons/          # Переиспользуемые иконки (lucide-react)
             ├── stores/
             │   ├── tab-store.ts         # Zustand: табы + layout деревья + сессии
@@ -131,16 +137,16 @@ terma/
 ## Описание ключевых директорий
 
 ### `src/shared/`
-Код, который импортируется из обоих процессов (main и renderer). Содержит константы IPC-каналов (13 групп), типизированный IPC-контракт (`ipc-types.ts`), типы данных (layout, файлы, сессии, метрики), настройки, пресеты тем, профили агентов и SSH.
+Код, который импортируется из обоих процессов (main и renderer). Содержит константы IPC-каналов (15 групп), типизированный IPC-контракт (`ipc-types.ts`), типы данных (layout, файлы, сессии, метрики), настройки, пресеты тем, профили агентов и SSH.
 
 ### `src/main/`
-Код, выполняемый в Node.js контексте Electron. Имеет доступ к `node-pty`, `fs`, `chokidar`, `electron-store`, `ssh2`, `systeminformation` и другим нативным модулям. IPC-обработчики разделены на 8 модулей по функциональности.
+Код, выполняемый в Node.js контексте Electron. Имеет доступ к `node-pty`, `fs`, `chokidar`, `electron-store`, `ssh2`, `systeminformation` и другим нативным модулям. IPC-обработчики разделены на 9 модулей по функциональности. Синтез речи реализован отдельным слоем `src/main/tts/` (провайдер + ElevenLabs-реализация).
 
 ### `src/preload/`
-Скрипт, выполняемый в изолированном контексте перед загрузкой renderer. Единственный мост между Node.js API и браузерным окружением. Экспортирует 14 API-групп через `contextBridge`. Реализует per-PTY dispatch для оптимальной маршрутизации данных.
+Скрипт, выполняемый в изолированном контексте перед загрузкой renderer. Единственный мост между Node.js API и браузерным окружением. Экспортирует 15 API-групп через `contextBridge`. Реализует per-PTY и per-stream (TTS) dispatch для оптимальной маршрутизации данных.
 
 ### `src/renderer/`
-React-приложение, работающее в Chromium. Не имеет прямого доступа к Node.js. Взаимодействует с main process исключительно через `window.api`. Управление xterm-инстансами централизовано в `terminal-manager.ts`. Содержит 12 директорий компонентов и 6 Zustand stores.
+React-приложение, работающее в Chromium. Не имеет прямого доступа к Node.js. Взаимодействует с main process исключительно через `window.api`. Управление xterm-инстансами централизовано в `terminal-manager.ts`. Содержит 12 директорий компонентов и 6 Zustand stores. Аудиовоспроизведение TTS выполняется через Web Audio API (`AudioContext`) в компоненте `SpeechSnippet`.
 
 ## Конфигурация TypeScript
 

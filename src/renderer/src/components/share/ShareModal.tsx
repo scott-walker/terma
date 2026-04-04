@@ -99,7 +99,7 @@ export function ShareModal({ paneId, ptyId, onClose }: ShareModalProps): JSX.Ele
                 <button
                   onClick={handleCopy}
                   className="shrink-0 rounded p-1 text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
-                  title="Copy URL"
+
                 >
                   <Copy size={14} />
                 </button>

@@ -62,7 +62,7 @@ export function FileTree({
   const anchorPath = useRef<string | null>(null)
   const undoStack = useRef<string[][]>([])
   const addToast = useToastStore((s) => s.addToast)
-  const fontSize = useSettingsStore((s) => s.getEffectiveFontSize())
+  const fontSize = useSettingsStore((s) => s.settings.fontSize)
   const lineHeight = useSettingsStore((s) => s.settings.lineHeight)
   const fileAssociations = useSettingsStore((s) => s.settings.fileAssociations)
   const rowHeight = Math.round(Math.max(fontSize * lineHeight, fontSize * 1.15) + 6)

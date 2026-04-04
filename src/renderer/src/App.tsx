@@ -10,9 +10,10 @@ import { useSettingsStore } from './stores/settings-store'
 import { useToastStore } from './stores/toast-store'
 import { ToastContainer } from './components/ui/Toast'
 import { ConfirmDialog } from './components/ui/ConfirmDialog'
-import { getAllPaneIds, findNode } from './lib/layout-tree'
+import { findNode } from './lib/layout-tree'
 import { isModKey } from '@shared/path-utils'
 import { PRESET_THEMES, type ThemePreset } from '@shared/themes'
+import { DEFAULT_TAB_COLOR } from './components/ui/TabItem'
 
 /* ── Derive UI color tokens from a terminal theme ── */
 
@@ -89,7 +90,8 @@ const TAB_COLOR_VARS: Record<string, string> = {
   green: 'var(--color-tab-green)',
   blue: 'var(--color-tab-blue)',
   purple: 'var(--color-tab-purple)',
-  pink: 'var(--color-tab-pink)'
+  pink: 'var(--color-tab-pink)',
+  gray: 'var(--color-tab-gray)'
 }
 
 /** Renders a single tab — memoized so hidden tabs don't re-render on tab switch */
@@ -106,7 +108,7 @@ const TabContent = memo(function TabContent({
   return (
     <div
       className={`absolute inset-0 ${isActive ? 'z-10' : 'z-0 invisible pointer-events-none'}`}
-      style={{ '--color-pane-active': TAB_COLOR_VARS[tab.color ?? 'green'] } as React.CSSProperties}
+      style={{ '--color-pane-active': TAB_COLOR_VARS[tab.color ?? DEFAULT_TAB_COLOR] } as React.CSSProperties}
     >
       <SplitPane node={tab.layoutTree} tabId={tabId} isTabActive={isActive} />
     </div>
@@ -260,22 +262,17 @@ export default function App(): JSX.Element {
         case 'KeyW':
           e.preventDefault()
           if (state.activeTabId) {
-            const tab = state.tabs[state.activeTabId]
-            if (tab && getAllPaneIds(tab.layoutTree).length > 1) {
-              setConfirmCloseTabId(state.activeTabId)
-            } else {
-              state.closeTab(state.activeTabId)
-            }
+            setConfirmCloseTabId(state.activeTabId)
           }
           break
-        case 'KeyD':
+        case 'KeyE':
           e.preventDefault()
           if (state.activeTabId) {
             const tab = state.tabs[state.activeTabId]
             if (tab) state.splitPane(state.activeTabId, tab.activePaneId, 'vertical')
           }
           break
-        case 'KeyE':
+        case 'KeyO':
           e.preventDefault()
           if (state.activeTabId) {
             const tab = state.tabs[state.activeTabId]
@@ -344,7 +341,7 @@ export default function App(): JSX.Element {
       {confirmCloseTabId && (
         <ConfirmDialog
           title="Close Tab"
-          message="This tab has multiple panes. Close all of them?"
+          message="Close this tab? The terminal session will be lost."
           confirmLabel="Close"
           onConfirm={() => {
             useTabStore.getState().closeTab(confirmCloseTabId)

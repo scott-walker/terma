@@ -50,7 +50,7 @@ export function MarkdownPane({ tabId, paneId, filePath }: MarkdownPaneProps): JS
   const navFlag = useRef(false)
 
   const fontFamily = useSettingsStore((s) => s.settings.fontFamily)
-  const effectiveFontSize = useSettingsStore((s) => s.getEffectiveFontSize())
+  const effectiveFontSize = useSettingsStore((s) => s.settings.fontSize)
 
   const prevFilePath = useRef(filePath)
   useEffect(() => {

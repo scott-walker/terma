@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webFrame } from 'electron'
 import { homedir } from 'os'
 import { PTY_CHANNELS, FS_CHANNELS, SETTINGS_CHANNELS, SESSION_CHANNELS, SHELL_CHANNELS, CLIPBOARD_CHANNELS, WHISPER_CHANNELS, WINDOW_CHANNELS, LOG_CHANNELS, SSH_CHANNELS, TRANSLATE_CHANNELS, TTS_CHANNELS, SYSMON_CHANNELS, GIT_CHANNELS, SELFMON_CHANNELS, SHARE_CHANNELS } from '../shared/channels'
 import type { TerminalSettings } from '../shared/settings'
@@ -165,12 +165,19 @@ const logApi = {
     }
     ipcRenderer.on(LOG_CHANNELS.ON_LOG, listener)
     return () => ipcRenderer.removeListener(LOG_CHANNELS.ON_LOG, listener)
+  },
+  rendererLog: (level: string, source: string, message: string): void => {
+    ipcRenderer.invoke(LOG_CHANNELS.RENDERER_LOG, level, source, message)
   }
 }
 
 const translateApi = {
   translate: (text: string): Promise<string> =>
-    ipcRenderer.invoke(TRANSLATE_CHANNELS.TRANSLATE, text)
+    ipcRenderer.invoke(TRANSLATE_CHANNELS.TRANSLATE, text),
+  define: (text: string, rephrase: boolean): Promise<string> =>
+    ipcRenderer.invoke(TRANSLATE_CHANNELS.DEFINE, text, rephrase),
+  summarize: (text: string): Promise<{ summary: string; streamId: string; sampleRate: number }> =>
+    ipcRenderer.invoke(TRANSLATE_CHANNELS.SUMMARIZE, text)
 }
 
 // Per-stream TTS dispatch: single IPC listener, O(1) lookup per event
@@ -234,6 +241,11 @@ const shareApi = {
     ipcRenderer.invoke(SHARE_CHANNELS.STATUS, sessionId)
 }
 
+const zoomApi = {
+  setFactor: (factor: number): void => { webFrame.setZoomFactor(factor) },
+  getFactor: (): number => webFrame.getZoomFactor()
+}
+
 contextBridge.exposeInMainWorld('api', {
   pty: ptyApi,
   fs: fsApi,
@@ -250,5 +262,6 @@ contextBridge.exposeInMainWorld('api', {
   sysmon: sysmonApi,
   selfmon: selfmonApi,
   git: gitApi,
-  share: shareApi
+  share: shareApi,
+  zoom: zoomApi
 })

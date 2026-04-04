@@ -1,4 +1,26 @@
 "use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 const electron = require("electron");
 const child_process = require("child_process");
 const path = require("path");
@@ -18,6 +40,8 @@ require("node:events");
 require("node:stream");
 const undici = require("undici");
 const si = require("systeminformation");
+const http = require("http");
+const ws = require("ws");
 const ssh2 = require("ssh2");
 const fs$1 = require("fs");
 function _interopNamespaceDefault(e) {
@@ -94,10 +118,13 @@ const WINDOW_CHANNELS = {
 };
 const LOG_CHANNELS = {
   GET_LOGS: "log:getLogs",
-  ON_LOG: "log:onLog"
+  ON_LOG: "log:onLog",
+  RENDERER_LOG: "log:rendererLog"
 };
 const TRANSLATE_CHANNELS = {
-  TRANSLATE: "translate:translate"
+  TRANSLATE: "translate:translate",
+  DEFINE: "translate:define",
+  SUMMARIZE: "translate:summarize"
 };
 const TTS_CHANNELS = {
   SPEAK: "tts:speak",
@@ -121,6 +148,11 @@ const SSH_CHANNELS = {
   READ_DIR: "ssh:readDir",
   GET_HOME_DIR: "ssh:getHomeDir"
 };
+const SHARE_CHANNELS = {
+  START: "share:start",
+  STOP: "share:stop",
+  STATUS: "share:status"
+};
 const MAX_ENTRIES = 500;
 const BROADCAST_LEVELS = /* @__PURE__ */ new Set(["info", "warn", "error"]);
 class LoggerService {
@@ -137,13 +169,16 @@ class LoggerService {
     if (this.entries.length > MAX_ENTRIES) {
       this.entries.shift();
     }
-    const prefix = `[${level.toUpperCase()}] [${source}]`;
-    if (level === "error") {
-      console.error(prefix, message, data ?? "");
-    } else if (level === "warn") {
-      console.warn(prefix, message, data ?? "");
-    } else {
-      console.log(prefix, message, data ?? "");
+    try {
+      const prefix = `[${level.toUpperCase()}] [${source}]`;
+      if (level === "error") {
+        console.error(prefix, message, data ?? "");
+      } else if (level === "warn") {
+        console.warn(prefix, message, data ?? "");
+      } else {
+        console.log(prefix, message, data ?? "");
+      }
+    } catch {
     }
     if (BROADCAST_LEVELS.has(level)) {
       for (const win of electron.BrowserWindow.getAllWindows()) {
@@ -236,6 +271,12 @@ class PtyManager {
       term.kill();
       logger.info("pty", `PTY destroyed: ${id2}`);
     }
+  }
+  subscribe(id2, cb) {
+    const term = this.sessions.get(id2);
+    if (!term) return null;
+    const d = term.onData(cb);
+    return () => d.dispose();
   }
   getCwd(id2) {
     const term = this.sessions.get(id2);
@@ -4770,7 +4811,7 @@ function requireSchemes() {
     urnComponent.nss = (uuidComponent.uuid || "").toLowerCase();
     return urnComponent;
   }
-  const http = (
+  const http2 = (
     /** @type {SchemeHandler} */
     {
       scheme: "http",
@@ -4783,12 +4824,12 @@ function requireSchemes() {
     /** @type {SchemeHandler} */
     {
       scheme: "https",
-      domainHost: http.domainHost,
+      domainHost: http2.domainHost,
       parse: httpParse,
       serialize: httpSerialize
     }
   );
-  const ws = (
+  const ws2 = (
     /** @type {SchemeHandler} */
     {
       scheme: "ws",
@@ -4801,9 +4842,9 @@ function requireSchemes() {
     /** @type {SchemeHandler} */
     {
       scheme: "wss",
-      domainHost: ws.domainHost,
-      parse: ws.parse,
-      serialize: ws.serialize
+      domainHost: ws2.domainHost,
+      parse: ws2.parse,
+      serialize: ws2.serialize
     }
   );
   const urn = (
@@ -4827,9 +4868,9 @@ function requireSchemes() {
   const SCHEMES = (
     /** @type {Record<SchemeName, SchemeHandler>} */
     {
-      http,
+      http: http2,
       https,
-      ws,
+      ws: ws2,
       wss,
       urn,
       "urn:uuid": urnuuid
@@ -8043,7 +8084,7 @@ var hasRequired_2020;
 function require_2020() {
   if (hasRequired_2020) return _2020.exports;
   hasRequired_2020 = 1;
-  (function(module, exports$1) {
+  (function(module2, exports$1) {
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.MissingRefError = exports$1.ValidationError = exports$1.CodeGen = exports$1.Name = exports$1.nil = exports$1.stringify = exports$1.str = exports$1._ = exports$1.KeywordCxt = exports$1.Ajv2020 = void 0;
     const core_1 = /* @__PURE__ */ requireCore$1();
@@ -8079,8 +8120,8 @@ function require_2020() {
       }
     }
     exports$1.Ajv2020 = Ajv2020;
-    module.exports = exports$1 = Ajv2020;
-    module.exports.Ajv2020 = Ajv2020;
+    module2.exports = exports$1 = Ajv2020;
+    module2.exports.Ajv2020 = Ajv2020;
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.default = Ajv2020;
     var validate_1 = /* @__PURE__ */ requireValidate();
@@ -8367,7 +8408,7 @@ var hasRequiredAjv;
 function requireAjv() {
   if (hasRequiredAjv) return ajv.exports;
   hasRequiredAjv = 1;
-  (function(module, exports$1) {
+  (function(module2, exports$1) {
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.MissingRefError = exports$1.ValidationError = exports$1.CodeGen = exports$1.Name = exports$1.nil = exports$1.stringify = exports$1.str = exports$1._ = exports$1.KeywordCxt = exports$1.Ajv = void 0;
     const core_1 = /* @__PURE__ */ requireCore$1();
@@ -8396,8 +8437,8 @@ function requireAjv() {
       }
     }
     exports$1.Ajv = Ajv;
-    module.exports = exports$1 = Ajv;
-    module.exports.Ajv = Ajv;
+    module2.exports = exports$1 = Ajv;
+    module2.exports.Ajv = Ajv;
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.default = Ajv;
     var validate_1 = /* @__PURE__ */ requireValidate();
@@ -8511,7 +8552,7 @@ var hasRequiredDist;
 function requireDist() {
   if (hasRequiredDist) return dist.exports;
   hasRequiredDist = 1;
-  (function(module, exports$1) {
+  (function(module2, exports$1) {
     Object.defineProperty(exports$1, "__esModule", { value: true });
     const formats_1 = requireFormats();
     const limit_1 = requireLimit();
@@ -8544,7 +8585,7 @@ function requireDist() {
       for (const f of list)
         ajv2.addFormat(f, fs2[f]);
     }
-    module.exports = exports$1 = formatsPlugin;
+    module2.exports = exports$1 = formatsPlugin;
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.default = formatsPlugin;
   })(dist, dist.exports);
@@ -8708,14 +8749,14 @@ var hasRequiredRe;
 function requireRe() {
   if (hasRequiredRe) return re.exports;
   hasRequiredRe = 1;
-  (function(module, exports$1) {
+  (function(module2, exports$1) {
     const {
       MAX_SAFE_COMPONENT_LENGTH,
       MAX_SAFE_BUILD_LENGTH,
       MAX_LENGTH
     } = requireConstants();
     const debug = requireDebug();
-    exports$1 = module.exports = {};
+    exports$1 = module2.exports = {};
     const re2 = exports$1.re = [];
     const safeRe = exports$1.safeRe = [];
     const src = exports$1.src = [];
@@ -11341,7 +11382,8 @@ const DEFAULT_SETTINGS = {
   cursorBlink: true,
   cursorStyle: "bar",
   scrollback: 1e4,
-  zoomLevel: 0,
+  zoomLevel: 100,
+  zoomStep: 10,
   fileAssociations: [],
   agentCommand: "claude",
   openaiApiKey: "",
@@ -11486,6 +11528,10 @@ function registerLogHandlers() {
   typedHandle(LOG_CHANNELS.GET_LOGS, () => {
     return logger.getEntries();
   });
+  typedHandle(LOG_CHANNELS.RENDERER_LOG, (_e, level, source, message) => {
+    const fn = level === "error" ? "error" : level === "warn" ? "warn" : "info";
+    logger[fn](source, message);
+  });
 }
 function registerSshHandlers(sshService2) {
   typedHandle(SSH_CHANNELS.CONNECT, async (_event, profileId) => {
@@ -11502,41 +11548,6 @@ function registerSshHandlers(sshService2) {
   });
   typedHandle(SSH_CHANNELS.GET_HOME_DIR, async (_event, profileId) => {
     return sshService2.getHomeDir(profileId);
-  });
-}
-function registerTranslateHandlers() {
-  typedHandle(TRANSLATE_CHANNELS.TRANSLATE, async (_event, text) => {
-    const { openaiApiKey } = SettingsService.getAll();
-    if (!openaiApiKey) {
-      throw new Error("OpenAI API key is not configured");
-    }
-    logger.info("translate", "Translation started");
-    const res = await electron.net.fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${openaiApiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content: "You are a translator. If the text is in Russian, translate to English. If the text is in any other language, translate to Russian. Return only the translation, no explanations."
-          },
-          { role: "user", content: text }
-        ],
-        temperature: 0.3
-      })
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`OpenAI API error ${res.status}: ${errText}`);
-    }
-    const data = await res.json();
-    const translated = data.choices[0]?.message?.content?.trim() ?? "";
-    logger.info("translate", "Translation complete");
-    return translated;
   });
 }
 const VOICE_ID = "WTn2eCRCpoFAC50VD351";
@@ -11597,6 +11608,129 @@ const elevenlabs = {
     logger.info("tts", `Stream complete: ${totalBytes} bytes`);
   }
 };
+function registerTranslateHandlers() {
+  typedHandle(TRANSLATE_CHANNELS.TRANSLATE, async (_event, text) => {
+    const { openaiApiKey } = SettingsService.getAll();
+    if (!openaiApiKey) {
+      throw new Error("OpenAI API key is not configured");
+    }
+    logger.info("translate", "Translation started");
+    const res = await electron.net.fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiApiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You are a translator. If the text is in Russian, translate to English. If the text is in any other language, translate to Russian. Return only the translation, no explanations."
+          },
+          { role: "user", content: text }
+        ],
+        temperature: 0.3
+      })
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`OpenAI API error ${res.status}: ${errText}`);
+    }
+    const data = await res.json();
+    const translated = data.choices[0]?.message?.content?.trim() ?? "";
+    logger.info("translate", "Translation complete");
+    return translated;
+  });
+  typedHandle(TRANSLATE_CHANNELS.DEFINE, async (_event, text, rephrase) => {
+    const { openaiApiKey } = SettingsService.getAll();
+    if (!openaiApiKey) {
+      throw new Error("OpenAI API key is not configured");
+    }
+    logger.info("translate", `Define started (rephrase=${rephrase})`);
+    const res = await electron.net.fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiApiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: rephrase ? "You previously explained this term but the user did not understand. Rephrase the explanation in simpler, more everyday language. Use analogies if helpful. Keep it short (1-3 sentences). Always reply in Russian." : "You are a concise dictionary/explainer. The user selected a word, phrase, or piece of text and wants to understand what it means. Give a clear, simple definition or explanation in 1-3 sentences. If it is a technical term, explain it in plain language. Always reply in Russian."
+          },
+          { role: "user", content: text }
+        ],
+        temperature: rephrase ? 0.8 : 0.3
+      })
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`OpenAI API error ${res.status}: ${errText}`);
+    }
+    const data = await res.json();
+    const definition = data.choices[0]?.message?.content?.trim() ?? "";
+    logger.info("translate", "Define complete");
+    return definition;
+  });
+  typedHandle(TRANSLATE_CHANNELS.SUMMARIZE, async (event, text) => {
+    const { openaiApiKey, elevenlabsApiKey, httpProxy } = SettingsService.getAll();
+    if (!openaiApiKey) throw new Error("OpenAI API key is not configured");
+    if (!elevenlabsApiKey) throw new Error("ElevenLabs API key is not configured");
+    logger.info("translate", "Summarize started");
+    const res = await electron.net.fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiApiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "Ты делаешь краткое саммари текста на русском языке. Пиши лаконично, 2-4 предложения. Если текст на другом языке — переведи и резюмируй на русском. Только саммари, без вступлений."
+          },
+          { role: "user", content: text }
+        ],
+        temperature: 0.3
+      })
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`OpenAI API error ${res.status}: ${errText}`);
+    }
+    const data = await res.json();
+    const summary = data.choices[0]?.message?.content?.trim() ?? "";
+    logger.info("translate", `Summarize complete: ${summary.length} chars`);
+    const streamId = nanoid.nanoid();
+    const win = electron.BrowserWindow.fromWebContents(event.sender);
+    (async () => {
+      try {
+        for await (const chunk of elevenlabs.speak(summary, elevenlabsApiKey, httpProxy || void 0)) {
+          if (win?.isDestroyed()) break;
+          win?.webContents.send(TTS_CHANNELS.STREAM, streamId, {
+            type: "chunk",
+            data: Buffer.from(chunk).toString("base64")
+          });
+        }
+        if (!win?.isDestroyed()) {
+          win?.webContents.send(TTS_CHANNELS.STREAM, streamId, { type: "done" });
+        }
+        logger.info("translate", `Summarize TTS stream ${streamId} complete`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "TTS stream failed";
+        logger.error("translate", `Summarize TTS stream ${streamId} error`, message);
+        if (!win?.isDestroyed()) {
+          win?.webContents.send(TTS_CHANNELS.STREAM, streamId, { type: "error", message });
+        }
+      }
+    })();
+    return { summary, streamId, sampleRate: elevenlabs.sampleRate };
+  });
+}
 const provider = elevenlabs;
 function registerTtsHandlers() {
   typedHandle(TTS_CHANNELS.SPEAK, (event, text) => {
@@ -11631,30 +11765,155 @@ function registerTtsHandlers() {
     return { streamId, sampleRate: provider.sampleRate };
   });
 }
+async function readSysfs(path2) {
+  try {
+    return (await promises.readFile(path2, "utf-8")).trim();
+  } catch {
+    return null;
+  }
+}
+async function readSysfsNumber(path2) {
+  const val = await readSysfs(path2);
+  if (val === null) return null;
+  const n = Number(val);
+  return Number.isFinite(n) ? n : null;
+}
+function parseActiveClock(content) {
+  if (!content) return null;
+  const match = content.match(/(\d+)Mhz\s+\*/);
+  return match ? Number(match[1]) : null;
+}
+async function readAmdGpuSysfs(busAddress) {
+  const drmBase = "/sys/class/drm";
+  let devicePath = null;
+  try {
+    const cards = await promises.readdir(drmBase);
+    for (const card of cards) {
+      if (!card.match(/^card\d+$/)) continue;
+      const busAddr = await readSysfs(path.join(drmBase, card, "device/uevent"));
+      if (busAddr && busAddr.includes(busAddress.replace(/^0000:/, ""))) {
+        devicePath = path.join(drmBase, card, "device");
+        break;
+      }
+    }
+  } catch {
+  }
+  if (!devicePath) {
+    for (const card of ["card0", "card1"]) {
+      const path$12 = path.join(drmBase, card, "device/gpu_busy_percent");
+      if (await readSysfs(path$12) !== null) {
+        devicePath = path.join(drmBase, card, "device");
+        break;
+      }
+    }
+  }
+  if (!devicePath) return {};
+  const [busyPercent, vramUsed, vramTotal, sclk, mclk] = await Promise.all([
+    readSysfsNumber(path.join(devicePath, "gpu_busy_percent")),
+    readSysfsNumber(path.join(devicePath, "mem_info_vram_used")),
+    readSysfsNumber(path.join(devicePath, "mem_info_vram_total")),
+    readSysfs(path.join(devicePath, "pp_dpm_sclk")),
+    readSysfs(path.join(devicePath, "pp_dpm_mclk"))
+  ]);
+  let temp = null;
+  try {
+    const hwmonDir = path.join(devicePath, "hwmon");
+    const hwmons = await promises.readdir(hwmonDir);
+    for (const h of hwmons) {
+      const t = await readSysfsNumber(path.join(hwmonDir, h, "temp1_input"));
+      if (t !== null) {
+        temp = t / 1e3;
+        break;
+      }
+    }
+  } catch {
+  }
+  const result = {};
+  if (busyPercent !== null) result.utilizationGpu = busyPercent;
+  if (vramUsed !== null) result.memoryUsed = vramUsed;
+  if (vramTotal !== null) result.memoryTotal = vramTotal;
+  if (vramTotal !== null && vramUsed !== null) result.memoryFree = vramTotal - vramUsed;
+  if (temp !== null) result.temperatureGpu = temp;
+  result.clockCore = parseActiveClock(sclk);
+  result.clockMemory = parseActiveClock(mclk);
+  return result;
+}
 class SystemMonitorService {
   async getMetrics() {
     try {
-      const [load, mem, disks, procs, cpuInfo] = await Promise.all([
+      const [load, mem, disks, procs, cpuInfo, cpuTemp, graphics, netStats, time] = await Promise.all([
         si.currentLoad(),
         si.mem(),
         si.fsSize(),
         si.processes(),
-        si.cpu()
+        si.cpu(),
+        si.cpuTemperature(),
+        si.graphics(),
+        si.networkStats(),
+        si.time()
       ]);
+      const swapTotal = mem.swaptotal || 0;
+      const gpus = await Promise.all(
+        graphics.controllers.map(async (g) => {
+          const base = {
+            model: g.name || g.model,
+            bus: g.bus || "Unknown",
+            memoryTotal: (g.memoryTotal ?? 0) * 1024 * 1024,
+            memoryUsed: (g.memoryUsed ?? 0) * 1024 * 1024,
+            memoryFree: (g.memoryFree ?? 0) * 1024 * 1024,
+            utilizationGpu: g.utilizationGpu ?? null,
+            utilizationMemory: g.utilizationMemory ?? null,
+            temperatureGpu: g.temperatureGpu ?? null,
+            fanSpeed: g.fanSpeed !== -1 ? g.fanSpeed : null,
+            clockCore: g.clockCore ?? null,
+            clockMemory: g.clockMemory ?? null,
+            powerDraw: g.powerDraw ?? null
+          };
+          if (g.vendor?.toLowerCase().includes("amd") || g.model?.toLowerCase().includes("raphael") || g.model?.toLowerCase().includes("radeon")) {
+            const sysfs = await readAmdGpuSysfs(g.busAddress ?? "");
+            if (sysfs.utilizationGpu !== void 0 && base.utilizationGpu === null) base.utilizationGpu = sysfs.utilizationGpu;
+            if (sysfs.memoryTotal && base.memoryTotal === 0) base.memoryTotal = sysfs.memoryTotal;
+            if (sysfs.memoryUsed && base.memoryUsed === 0) base.memoryUsed = sysfs.memoryUsed;
+            if (sysfs.memoryFree !== void 0 && base.memoryFree === 0) base.memoryFree = sysfs.memoryFree;
+            if (sysfs.temperatureGpu !== void 0 && base.temperatureGpu === null) base.temperatureGpu = sysfs.temperatureGpu;
+            if (sysfs.clockCore !== void 0 && base.clockCore === null) base.clockCore = sysfs.clockCore;
+            if (sysfs.clockMemory !== void 0 && base.clockMemory === null) base.clockMemory = sysfs.clockMemory;
+          }
+          return base;
+        })
+      );
       return {
         processCount: procs.all,
+        uptime: time.uptime,
         ram: {
           total: mem.total,
-          used: mem.used,
-          free: mem.free,
-          usedPercent: mem.used / mem.total * 100
+          used: mem.active,
+          free: mem.available,
+          available: mem.available,
+          usedPercent: mem.active / mem.total * 100
+        },
+        swap: {
+          total: swapTotal,
+          used: mem.swapused,
+          free: mem.swapfree,
+          usedPercent: swapTotal > 0 ? mem.swapused / swapTotal * 100 : 0
         },
         cpu: {
           cores: cpuInfo.cores,
           model: `${cpuInfo.manufacturer} ${cpuInfo.brand}`,
           avgLoad: load.currentLoad,
-          coreLoads: load.cpus.map((c, i) => ({ core: i, load: c.load }))
+          coreLoads: load.cpus.map((c, i) => ({ core: i, load: c.load })),
+          tempMain: cpuTemp.main !== -1 ? cpuTemp.main : null,
+          tempCores: cpuTemp.cores.filter((t) => t !== -1)
         },
+        gpus,
+        network: netStats.filter((n) => n.operstate === "up" && (n.rx_bytes > 0 || n.tx_bytes > 0)).map((n) => ({
+          iface: n.iface,
+          rxSec: n.rx_sec !== -1 ? n.rx_sec : null,
+          txSec: n.tx_sec !== -1 ? n.tx_sec : null,
+          rxTotal: n.rx_bytes,
+          txTotal: n.tx_bytes
+        })),
         disks: disks.filter((d) => d.size > 0).map((d) => ({
           fs: d.fs,
           size: d.size,
@@ -11674,6 +11933,425 @@ function registerSysmonHandlers() {
   typedHandle(SYSMON_CHANNELS.METRICS, async () => {
     return systemMonitorService.getMetrics();
   });
+}
+function registerShareHandlers(ptyManager2, shareService2) {
+  typedHandle(SHARE_CHANNELS.START, (_event, ptyId) => {
+    return shareService2.start(ptyId, ptyManager2);
+  });
+  typedHandle(SHARE_CHANNELS.STOP, (_event, sessionId) => {
+    shareService2.stop(sessionId);
+  });
+  typedHandle(SHARE_CHANNELS.STATUS, (_event, sessionId) => {
+    return shareService2.getStatus(sessionId);
+  });
+}
+class WsRemoteClient {
+  clientId = nanoid.nanoid();
+  ws;
+  constructor(ws2) {
+    this.ws = ws2;
+  }
+  send(msg) {
+    if (this.ws.readyState === this.ws.OPEN) {
+      this.ws.send(JSON.stringify(msg));
+    }
+  }
+  onMessage(cb) {
+    this.ws.on("message", (raw) => {
+      try {
+        const msg = JSON.parse(raw.toString());
+        cb(msg);
+      } catch {
+      }
+    });
+  }
+  onClose(cb) {
+    this.ws.on("close", cb);
+  }
+  terminate() {
+    this.ws.terminate();
+  }
+}
+class RemoteSession {
+  sessionId;
+  ptyId;
+  clients = /* @__PURE__ */ new Set();
+  unsubscribe = null;
+  onEmpty;
+  lastCols = 80;
+  lastRows = 24;
+  constructor(sessionId, ptyId, ptyManager2, onEmpty) {
+    this.sessionId = sessionId;
+    this.ptyId = ptyId;
+    this.onEmpty = onEmpty;
+    this.unsubscribe = ptyManager2.subscribe(ptyId, (data) => {
+      this.broadcast({ v: 1, type: "output", data });
+    });
+    if (!this.unsubscribe) {
+      logger.warn("share", `PTY ${ptyId} not found for session ${sessionId}`);
+    }
+  }
+  addClient(client) {
+    this.clients.add(client);
+    logger.info("share", `Client ${client.clientId} joined session ${this.sessionId}`);
+    client.send({ v: 1, type: "hello", sessionId: this.sessionId, cols: this.lastCols, rows: this.lastRows });
+    client.onMessage((msg) => {
+      if (msg.type === "resize") {
+        this.lastCols = msg.cols;
+        this.lastRows = msg.rows;
+      }
+    });
+    client.onClose(() => {
+      this.removeClient(client.clientId);
+    });
+  }
+  removeClient(clientId) {
+    for (const c of this.clients) {
+      if (c.clientId === clientId) {
+        this.clients.delete(c);
+        logger.info("share", `Client ${clientId} left session ${this.sessionId}`);
+        break;
+      }
+    }
+    if (this.clients.size === 0) {
+      this.onEmpty();
+    }
+  }
+  get clientCount() {
+    return this.clients.size;
+  }
+  broadcast(msg) {
+    for (const c of this.clients) {
+      c.send(msg);
+    }
+  }
+  destroy() {
+    this.broadcast({ v: 1, type: "bye", reason: "session-closed" });
+    for (const c of this.clients) {
+      c.terminate();
+    }
+    this.clients.clear();
+    this.unsubscribe?.();
+    this.unsubscribe = null;
+    logger.info("share", `Session ${this.sessionId} destroyed`);
+  }
+}
+function getLocalIp() {
+  const nets = os.networkInterfaces();
+  for (const ifaces of Object.values(nets)) {
+    if (!ifaces) continue;
+    for (const iface of ifaces) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return "127.0.0.1";
+}
+function getXtermPath() {
+  try {
+    return require.resolve("@xterm/xterm/lib/xterm.js");
+  } catch {
+    return path.join(__dirname, "../../node_modules/@xterm/xterm/lib/xterm.js");
+  }
+}
+function getAddonFitPath() {
+  try {
+    return require.resolve("@xterm/addon-fit/lib/addon-fit.js");
+  } catch {
+    return path.join(__dirname, "../../node_modules/@xterm/addon-fit/lib/addon-fit.js");
+  }
+}
+function buildHtml(url, sessionId) {
+  const wsUrl = url.replace(/\/t\/.*$/, "").replace(/^http/, "ws") + "/ws";
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Terma</title>
+<link rel="stylesheet" href="/xterm.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #0d1117; overflow: hidden; }
+#terminal { width: 100%; height: 100%; }
+.xterm { height: 100%; }
+.xterm-viewport, .xterm-scrollable-element { overflow-y: hidden !important; }
+</style>
+</head>
+<body>
+<div id="terminal"></div>
+<script src="/xterm.js"><\/script>
+<script src="/addon-fit.js"><\/script>
+<script>
+(function() {
+  var term = new Terminal({
+    theme: { background: '#0d1117', foreground: '#e6edf3', cursor: '#e6edf3', selectionBackground: '#264f78' },
+    fontFamily: 'monospace',
+    fontSize: 14,
+    cursorBlink: true,
+    allowProposedApi: true
+  })
+  var fitAddon = new FitAddon.FitAddon()
+  term.loadAddon(fitAddon)
+  term.open(document.getElementById('terminal'))
+  fitAddon.fit()
+
+  var WS_URL = ${JSON.stringify(wsUrl)}
+  var SESSION_ID = ${JSON.stringify(sessionId)}
+  var MAX_RETRIES = 3
+  var retries = 0
+  var ws = null
+
+  function connect() {
+    ws = new WebSocket(WS_URL)
+    ws.onopen = function() { retries = 0 }
+    ws.onmessage = function(e) {
+      try {
+        var msg = JSON.parse(e.data)
+        if (msg.type === 'hello') {
+          term.resize(msg.cols, msg.rows)
+        } else if (msg.type === 'output') {
+          term.write(msg.data)
+        } else if (msg.type === 'resize') {
+          term.resize(msg.cols, msg.rows)
+        } else if (msg.type === 'bye') {
+          term.writeln('\\r\\n\\x1b[33m[Session ended]\\x1b[0m')
+          ws.close()
+        }
+      } catch(ex) {}
+    }
+    ws.onclose = function() {
+      if (retries < MAX_RETRIES) {
+        retries++
+        setTimeout(connect, 5000)
+        term.writeln('\\r\\n\\x1b[33m[Reconnecting... ' + retries + '/' + MAX_RETRIES + ']\\x1b[0m')
+      } else {
+        term.writeln('\\r\\n\\x1b[31m[Connection lost]\\x1b[0m')
+      }
+    }
+  }
+
+  connect()
+
+  function sendInput(data) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ v: 1, type: 'input', data: data }))
+    }
+  }
+
+  var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
+
+  if (isMobile) {
+    // На мобильных используем скрытый <input> с отключённой автокоррекцией.
+    // xterm.js-textarea не имеет autocorrect=off, поэтому Android IME
+    // заменяет введённое слово при нажатии пробела.
+    var inp = document.createElement('input')
+    inp.type = 'text'
+    inp.setAttribute('autocomplete', 'off')
+    inp.setAttribute('autocorrect', 'off')
+    inp.setAttribute('autocapitalize', 'none')
+    inp.setAttribute('spellcheck', 'false')
+    inp.setAttribute('inputmode', 'text')
+    // font-size ≥ 16px — предотвращает авто-зум в iOS Safari
+    inp.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;font-size:16px;'
+    document.body.appendChild(inp)
+    inp.focus()
+
+    // Тап по терминалу → фокус на скрытый input
+    document.getElementById('terminal').addEventListener('click', function() { inp.focus() })
+
+    var lastVal = ''
+
+    inp.addEventListener('keydown', function(e) {
+      switch (e.key) {
+        case 'Backspace':  sendInput(''); break
+        case 'Enter':      sendInput('\r'); e.preventDefault(); break
+        case 'Tab':        sendInput('	'); e.preventDefault(); break
+        case 'Escape':     sendInput('\x1B'); e.preventDefault(); break
+        case 'ArrowUp':    sendInput('\x1B[A'); e.preventDefault(); break
+        case 'ArrowDown':  sendInput('\x1B[B'); e.preventDefault(); break
+        case 'ArrowRight': sendInput('\x1B[C'); e.preventDefault(); break
+        case 'ArrowLeft':  sendInput('\x1B[D'); e.preventDefault(); break
+      }
+    })
+
+    inp.addEventListener('input', function() {
+      var val = inp.value
+      // Отправляем только добавленные символы (дельта)
+      if (val.length > lastVal.length) {
+        sendInput(val.slice(lastVal.length))
+      }
+      lastVal = val
+      // Сбрасываем накопленное значение раз в 200 символов
+      if (val.length > 200) { inp.value = ''; lastVal = '' }
+    })
+  } else {
+    // Desktop: стандартный обработчик xterm.js
+    term.onData(function(data) { sendInput(data) })
+  }
+
+  var resizeTimer = null
+  var ro = new ResizeObserver(function() {
+    clearTimeout(resizeTimer)
+    resizeTimer = setTimeout(function() {
+      fitAddon.fit()
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ v: 1, type: 'resize', cols: term.cols, rows: term.rows }))
+      }
+    }, 100)
+  })
+  ro.observe(document.getElementById('terminal'))
+})()
+<\/script>
+</body>
+</html>`;
+}
+class ShareService {
+  sessions = /* @__PURE__ */ new Map();
+  // ptyId → sessionId (one share per PTY)
+  ptyToSession = /* @__PURE__ */ new Map();
+  async start(ptyId, ptyManager2) {
+    const existingId = this.ptyToSession.get(ptyId);
+    if (existingId) {
+      const existing = this.sessions.get(existingId);
+      if (existing) {
+        return this.toInfo(existingId, existing);
+      }
+    }
+    const port = await this.findFreePort();
+    const ip = getLocalIp();
+    const sessionId = nanoid.nanoid(10);
+    const url = `http://${ip}:${port}/t/${sessionId}`;
+    const httpServer = http.createServer((req, res) => {
+      this.handleHttp(req, res, sessionId, url);
+    });
+    const wss = new ws.WebSocketServer({ noServer: true });
+    httpServer.on("upgrade", (req, socket, head) => {
+      const pathname = new URL(req.url ?? "/", `http://localhost`).pathname;
+      if (pathname === "/ws") {
+        wss.handleUpgrade(req, socket, head, (ws2) => {
+          const entry2 = this.sessions.get(sessionId);
+          if (!entry2) {
+            ws2.terminate();
+            return;
+          }
+          const client = new WsRemoteClient(ws2);
+          entry2.session.addClient(client);
+        });
+      } else {
+        socket.destroy();
+      }
+    });
+    const session = new RemoteSession(sessionId, ptyId, ptyManager2, () => {
+    });
+    await new Promise((resolve2, reject) => {
+      httpServer.listen(port, "0.0.0.0", () => resolve2());
+      httpServer.once("error", reject);
+    });
+    const entry = {
+      session,
+      server: httpServer,
+      wss,
+      port,
+      url,
+      createdAt: Date.now()
+    };
+    this.sessions.set(sessionId, entry);
+    this.ptyToSession.set(ptyId, sessionId);
+    logger.info("share", `Started session ${sessionId} on port ${port}`);
+    return this.toInfo(sessionId, entry);
+  }
+  stop(sessionId) {
+    const entry = this.sessions.get(sessionId);
+    if (!entry) return;
+    entry.session.destroy();
+    entry.wss.close();
+    entry.server.close();
+    this.ptyToSession.delete(entry.session.ptyId);
+    this.sessions.delete(sessionId);
+    logger.info("share", `Stopped session ${sessionId}`);
+  }
+  stopAll() {
+    for (const sessionId of this.sessions.keys()) {
+      this.stop(sessionId);
+    }
+  }
+  getStatus(sessionId) {
+    const entry = this.sessions.get(sessionId);
+    if (!entry) return null;
+    return this.toInfo(sessionId, entry);
+  }
+  toInfo(sessionId, entry) {
+    return {
+      sessionId,
+      ptyId: entry.session.ptyId,
+      url: entry.url,
+      port: entry.port,
+      clientCount: entry.session.clientCount,
+      createdAt: entry.createdAt
+    };
+  }
+  async handleHttp(req, res, sessionId, url) {
+    const pathname = new URL(req.url ?? "/", `http://localhost`).pathname;
+    if (pathname === `/t/${sessionId}` || pathname === `/t/${sessionId}/`) {
+      const html = buildHtml(url, sessionId);
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(html);
+      return;
+    }
+    if (pathname === "/xterm.js") {
+      try {
+        const data = await promises.readFile(getXtermPath());
+        res.writeHead(200, { "Content-Type": "application/javascript" });
+        res.end(data);
+      } catch {
+        res.writeHead(404);
+        res.end();
+      }
+      return;
+    }
+    if (pathname === "/xterm.css") {
+      try {
+        const cssPath = getXtermPath().replace(/lib[/\\]xterm\.js$/, "css/xterm.css");
+        const data = await promises.readFile(cssPath);
+        res.writeHead(200, { "Content-Type": "text/css" });
+        res.end(data);
+      } catch {
+        res.writeHead(200, { "Content-Type": "text/css" });
+        res.end("");
+      }
+      return;
+    }
+    if (pathname === "/addon-fit.js") {
+      try {
+        const data = await promises.readFile(getAddonFitPath());
+        res.writeHead(200, { "Content-Type": "application/javascript" });
+        res.end(data);
+      } catch {
+        res.writeHead(404);
+        res.end();
+      }
+      return;
+    }
+    res.writeHead(404);
+    res.end();
+  }
+  findFreePort() {
+    return new Promise((resolve2, reject) => {
+      const srv = http.createServer();
+      srv.listen(0, "0.0.0.0", () => {
+        const addr = srv.address();
+        srv.close(() => {
+          if (addr && typeof addr === "object") {
+            resolve2(addr.port);
+          } else {
+            reject(new Error("Could not get free port"));
+          }
+        });
+      });
+    });
+  }
 }
 const CONNECT_TIMEOUT = 1e4;
 const SFTP_TIMEOUT = 15e3;
@@ -11998,6 +12676,7 @@ const ptyManager = new PtyManager(platform);
 const fsService = new FsService();
 const fsWatcher = new FsWatcher();
 const sshService = new SshService();
+const shareService = new ShareService();
 let lastCpuUsage = process.cpuUsage();
 let lastCpuTime = Date.now();
 function createWindow() {
@@ -12007,7 +12686,6 @@ function createWindow() {
     minWidth: 400,
     minHeight: 300,
     frame: false,
-    titleBarStyle: "hidden",
     backgroundColor: "#191c24",
     icon: electron.app.isPackaged ? path.join(process.resourcesPath, "icon-256.png") : path.join(__dirname, "../../assets/icon-256.png"),
     webPreferences: {
@@ -12015,8 +12693,6 @@ function createWindow() {
       sandbox: false
     }
   });
-  win.webContents.setZoomFactor(1);
-  win.webContents.setVisualZoomLevelLimits(1, 1);
   win.webContents.setWindowOpenHandler(({ url }) => {
     electron.shell.openExternal(url);
     return { action: "deny" };
@@ -12038,6 +12714,7 @@ electron.app.whenReady().then(() => {
   registerTranslateHandlers();
   registerTtsHandlers();
   registerSysmonHandlers();
+  registerShareHandlers(ptyManager, shareService);
   logger.info("app", "App ready");
   typedHandle(CLIPBOARD_CHANNELS.READ_FILE_PATHS, () => {
     return platform.getClipboardFilePaths();
@@ -12147,6 +12824,7 @@ electron.app.on("window-all-closed", () => {
   ptyManager.destroyAll();
   fsWatcher.unwatchAll();
   sshService.disconnectAll();
+  shareService.stopAll();
   if (process.platform !== "darwin") {
     electron.app.quit();
   }
@@ -12156,4 +12834,5 @@ electron.app.on("before-quit", () => {
   ptyManager.destroyAll();
   fsWatcher.unwatchAll();
   sshService.disconnectAll();
+  shareService.stopAll();
 });

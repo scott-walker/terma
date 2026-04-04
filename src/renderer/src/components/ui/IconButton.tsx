@@ -25,7 +25,7 @@ export function IconButton({
   return (
     <button
       onClick={onClick}
-      title={title}
+
       className={`cursor-pointer rounded-sm border-none bg-transparent px-1.5 py-1 leading-none transition-colors ${variantClasses[variant]}`}
     >
       <Icon size={iconSize} strokeWidth={1.8} />

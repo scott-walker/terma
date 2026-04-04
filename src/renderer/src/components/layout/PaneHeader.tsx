@@ -33,10 +33,10 @@ const previewPaneTypes = new Set<PaneType>(['markdown', 'image'])
 type DropdownItem = 'terminal' | 'file-manager' | 'agent' | 'system-monitor' | 'ssh'
 
 const DROPDOWN_ITEMS: { key: DropdownItem; label: string }[] = [
-  { key: 'terminal', label: 'Terminal' },
-  { key: 'file-manager', label: 'Files' },
-  { key: 'agent', label: 'Agent' },
-  { key: 'system-monitor', label: 'System' },
+  { key: 'terminal', label: PANE_TYPE_CONFIGS.terminal.label },
+  { key: 'file-manager', label: PANE_TYPE_CONFIGS['file-manager'].label },
+  { key: 'agent', label: PANE_TYPE_CONFIGS.agent.label },
+  { key: 'system-monitor', label: PANE_TYPE_CONFIGS['system-monitor'].label },
   { key: 'ssh', label: 'SSH' }
 ]
 
@@ -506,7 +506,7 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
       </div>
 
       {/* Center: git info */}
-      {cwd && !isPreview && !isSshMode && (
+      {cwd && !isPreview && !isSshMode && paneType !== 'system-monitor' && (
         <GitInfo cwd={cwd} isSshMode={isSshMode} />
       )}
 

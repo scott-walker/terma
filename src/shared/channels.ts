@@ -63,11 +63,14 @@ export const WINDOW_CHANNELS = {
 
 export const LOG_CHANNELS = {
   GET_LOGS: 'log:getLogs',
-  ON_LOG: 'log:onLog'
+  ON_LOG: 'log:onLog',
+  RENDERER_LOG: 'log:rendererLog'
 } as const
 
 export const TRANSLATE_CHANNELS = {
-  TRANSLATE: 'translate:translate'
+  TRANSLATE: 'translate:translate',
+  DEFINE: 'translate:define',
+  SUMMARIZE: 'translate:summarize'
 } as const
 
 export const TTS_CHANNELS = {

@@ -1,9 +1,13 @@
 import { create } from 'zustand'
 import { PRESET_THEMES } from '@shared/themes'
-import { DEFAULT_SETTINGS, getEffectiveFontSize } from '@shared/settings'
+import { DEFAULT_SETTINGS } from '@shared/settings'
 import type { TerminalSettings } from '@shared/settings'
 import type { ThemePreset } from '@shared/themes'
 import { useToastStore } from './toast-store'
+
+function applyZoomFactor(zoomLevel: number): void {
+  window.api.zoom.setFactor(zoomLevel / 100)
+}
 
 interface SettingsState {
   settings: TerminalSettings
@@ -19,7 +23,6 @@ interface SettingsState {
   toggleSettings: () => void
 
   getActiveTheme: () => ThemePreset
-  getEffectiveFontSize: () => number
 }
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
@@ -30,6 +33,11 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   loadSettings: async () => {
     try {
       const settings = await window.api.settings.get()
+      // Migrate old zoomLevel (was an integer offset, e.g. 0, 1, -2) to percentage
+      if (settings.zoomLevel < 50) {
+        settings.zoomLevel = 100
+      }
+      applyZoomFactor(settings.zoomLevel)
       set({ settings, loaded: true })
     } catch {
       useToastStore.getState().addToast('error', 'Failed to load settings')
@@ -56,31 +64,32 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
   zoomIn: async () => {
     const { settings } = get()
-    if (settings.zoomLevel < 10) {
-      try {
-        const s = await window.api.settings.update({ zoomLevel: settings.zoomLevel + 1 })
-        set({ settings: s })
-      } catch {
-        useToastStore.getState().addToast('error', 'Failed to zoom in')
-      }
+    const next = Math.min(500, settings.zoomLevel + (settings.zoomStep || 10))
+    try {
+      applyZoomFactor(next)
+      const s = await window.api.settings.update({ zoomLevel: next })
+      set({ settings: s })
+    } catch {
+      useToastStore.getState().addToast('error', 'Failed to zoom in')
     }
   },
 
   zoomOut: async () => {
     const { settings } = get()
-    if (settings.zoomLevel > -5) {
-      try {
-        const s = await window.api.settings.update({ zoomLevel: settings.zoomLevel - 1 })
-        set({ settings: s })
-      } catch {
-        useToastStore.getState().addToast('error', 'Failed to zoom out')
-      }
+    const next = Math.max(25, settings.zoomLevel - (settings.zoomStep || 10))
+    try {
+      applyZoomFactor(next)
+      const s = await window.api.settings.update({ zoomLevel: next })
+      set({ settings: s })
+    } catch {
+      useToastStore.getState().addToast('error', 'Failed to zoom out')
     }
   },
 
   zoomReset: async () => {
     try {
-      const s = await window.api.settings.update({ zoomLevel: 0 })
+      applyZoomFactor(100)
+      const s = await window.api.settings.update({ zoomLevel: 100 })
       set({ settings: s })
     } catch {
       useToastStore.getState().addToast('error', 'Failed to reset zoom')
@@ -94,9 +103,5 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     return (
       PRESET_THEMES.find((t) => t.id === settings.activeThemeId) ?? PRESET_THEMES[0]
     )
-  },
-
-  getEffectiveFontSize: () => {
-    return getEffectiveFontSize(get().settings)
   }
 }))

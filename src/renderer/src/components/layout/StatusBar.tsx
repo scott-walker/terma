@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react'
-import { ClipboardCopy, Wifi, Cpu, MemoryStick, Bot } from 'lucide-react'
+import { ClipboardCopy, Wifi, Bot, ZoomIn } from 'lucide-react'
 import { useTabStore } from '@/stores/tab-store'
 import { useSshStore } from '@/stores/ssh-store'
 import { useAgentStore } from '@/stores/agent-store'
@@ -68,6 +68,7 @@ export function StatusBar(): JSX.Element {
   const addToast = useToastStore((s) => s.addToast)
   const sshPanes = useSshStore((s) => s.panes)
   const sshProfiles = useSettingsStore((s) => s.settings.sshProfiles)
+  const zoomLevel = useSettingsStore((s) => s.settings.zoomLevel)
 
   const paneCount = activeTab ? getAllPaneIds(activeTab.layoutTree).length : 0
 
@@ -180,10 +181,16 @@ export function StatusBar(): JSX.Element {
             />
           </>
         )}
+        {zoomLevel !== 100 && (
+          <span className="flex items-center gap-1">
+            <ZoomIn size={14} />
+            <span>{zoomLevel}%</span>
+          </span>
+        )}
         <span>{paneCount} panes</span>
         <button
           onClick={handleCopyLogs}
-          title="Copy logs to clipboard"
+
           className="cursor-pointer text-fg transition-colors hover:text-accent"
         >
           <ClipboardCopy size={17} />

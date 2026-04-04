@@ -59,6 +59,8 @@ export interface IpcInvokeMap {
 
   // Translate
   'translate:translate': [args: [text: string], ret: string]
+  'translate:define': [args: [text: string, rephrase: boolean], ret: string]
+  'translate:summarize': [args: [text: string], ret: { summary: string; streamId: string; sampleRate: number }]
 
   // TTS (ElevenLabs) — streaming PCM audio
   'tts:speak': [args: [text: string], ret: { streamId: string; sampleRate: number }]

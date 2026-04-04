@@ -35,7 +35,7 @@ export const PANE_TYPE_CONFIGS: Record<PaneType, PaneTypeConfig> = {
     icon: Image
   },
   'system-monitor': {
-    label: 'System',
+    label: 'Monitoring',
     icon: Monitor
   }
 }

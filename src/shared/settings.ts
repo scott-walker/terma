@@ -15,6 +15,7 @@ export interface TerminalSettings {
   cursorStyle: 'bar' | 'block' | 'underline'
   scrollback: number
   zoomLevel: number
+  zoomStep: number
   fileAssociations: FileAssociation[]
   agentCommand: string
   openaiApiKey: string
@@ -34,7 +35,8 @@ export const DEFAULT_SETTINGS: TerminalSettings = {
   cursorBlink: true,
   cursorStyle: 'bar',
   scrollback: 10000,
-  zoomLevel: 0,
+  zoomLevel: 100,
+  zoomStep: 10,
   fileAssociations: [],
   agentCommand: 'claude',
   openaiApiKey: '',
@@ -44,10 +46,6 @@ export const DEFAULT_SETTINGS: TerminalSettings = {
   idePath: '',
   sshProfiles: [],
   agentProfiles: [{ id: 'default-claude', name: 'Claude', command: 'claude' }]
-}
-
-export function getEffectiveFontSize(settings: TerminalSettings): number {
-  return settings.fontSize + settings.zoomLevel * 2
 }
 
 export function matchesGlob(filename: string, pattern: string): boolean {

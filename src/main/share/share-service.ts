@@ -62,7 +62,7 @@ function buildHtml(url: string, sessionId: string): string {
 html, body { width: 100%; height: 100%; background: #0d1117; overflow: hidden; }
 #terminal { width: 100%; height: 100%; }
 .xterm { height: 100%; }
-.xterm-viewport { overflow-y: hidden !important; }
+.xterm-viewport, .xterm-scrollable-element { overflow-y: hidden !important; }
 </style>
 </head>
 <body>

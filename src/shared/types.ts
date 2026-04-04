@@ -14,10 +14,37 @@ export interface DiskInfo {
   mount: string
 }
 
+export interface GpuInfo {
+  model: string
+  bus: string
+  memoryTotal: number
+  memoryUsed: number
+  memoryFree: number
+  utilizationGpu: number | null
+  utilizationMemory: number | null
+  temperatureGpu: number | null
+  fanSpeed: number | null
+  clockCore: number | null
+  clockMemory: number | null
+  powerDraw: number | null
+}
+
+export interface NetworkStats {
+  iface: string
+  rxSec: number | null
+  txSec: number | null
+  rxTotal: number
+  txTotal: number
+}
+
 export interface SystemMetrics {
   processCount: number
-  ram: { total: number; used: number; free: number; usedPercent: number }
-  cpu: { cores: number; model: string; avgLoad: number; coreLoads: CpuCoreLoad[] }
+  uptime: number
+  ram: { total: number; used: number; free: number; available: number; usedPercent: number }
+  swap: { total: number; used: number; free: number; usedPercent: number }
+  cpu: { cores: number; model: string; avgLoad: number; coreLoads: CpuCoreLoad[]; tempMain: number | null; tempCores: number[] }
+  gpus: GpuInfo[]
+  network: NetworkStats[]
   disks: DiskInfo[]
 }
 

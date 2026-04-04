@@ -1,15 +1,25 @@
 import { Terminal, type ITheme } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import { WebglAddon } from '@xterm/addon-webgl'
-import { CanvasAddon } from '@xterm/addon-canvas'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import { Unicode11Addon } from '@xterm/addon-unicode11'
 import { useSettingsStore } from '@/stores/settings-store'
 import '@xterm/xterm/css/xterm.css'
 
-/** Compute effective xterm lineHeight: base lineHeight + fixed padding (same principle as file manager) */
-function effectiveLineHeight(fontSize: number, lineHeight: number): number {
-  return lineHeight + 6 / fontSize
+
+/** Fit terminal while preserving scroll position (fit can reset viewport in some cases) */
+function safeFit(terminal: Terminal, fitAddon: FitAddon): void {
+  const buf = terminal.buffer.active
+  const isAtBottom = buf.viewportY === buf.baseY
+  const savedLine = buf.viewportY
+  try {
+    fitAddon.fit()
+  } catch {
+    // ignore
+  }
+  if (!isAtBottom) {
+    terminal.scrollToLine(savedLine)
+  }
 }
 
 interface TerminalEntry {
@@ -44,13 +54,7 @@ export function clearResizingPanes(): void {
   resizingPaneIds = new Set()
   resizeListeners.forEach((fn) => fn())
   for (const entry of terminals.values()) {
-    requestAnimationFrame(() => {
-      try {
-        entry.fitAddon.fit()
-      } catch {
-        // ignore
-      }
-    })
+    requestAnimationFrame(() => safeFit(entry.terminal, entry.fitAddon))
   }
 }
 
@@ -79,14 +83,13 @@ function ensureSettingsSubscription(): void {
   settingsUnsub = useSettingsStore.subscribe(() => {
     const state = useSettingsStore.getState()
     const theme = state.getActiveTheme()
-    const effectiveFontSize = state.getEffectiveFontSize()
     const { settings } = state
 
     const next = {
       themeColors: theme.colors,
       fontFamily: settings.fontFamily,
-      fontSize: effectiveFontSize,
-      lineHeight: effectiveLineHeight(effectiveFontSize, settings.lineHeight),
+      fontSize: settings.fontSize,
+      lineHeight: settings.lineHeight,
       cursorBlink: settings.cursorBlink,
       cursorStyle: settings.cursorStyle,
       scrollback: settings.scrollback
@@ -116,13 +119,7 @@ function ensureSettingsSubscription(): void {
       entry.terminal.options.cursorStyle = next.cursorStyle
       entry.terminal.options.scrollback = next.scrollback
 
-      requestAnimationFrame(() => {
-        try {
-          entry.fitAddon.fit()
-        } catch {
-          // ignore
-        }
-      })
+      requestAnimationFrame(() => safeFit(entry.terminal, entry.fitAddon))
     }
   })
 }
@@ -130,22 +127,26 @@ function ensureSettingsSubscription(): void {
 function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
   const state = useSettingsStore.getState()
   const theme = state.getActiveTheme()
-  const effectiveFontSize = state.getEffectiveFontSize()
 
   const terminal = new Terminal({
     fontFamily: state.settings.fontFamily,
-    fontSize: effectiveFontSize,
-    lineHeight: effectiveLineHeight(effectiveFontSize, state.settings.lineHeight),
+    fontSize: state.settings.fontSize,
+    lineHeight: state.settings.lineHeight,
     cursorBlink: state.settings.cursorBlink,
     cursorStyle: state.settings.cursorStyle,
     theme: theme.colors,
     allowProposedApi: true,
+    customGlyphs: true,
     scrollback: state.settings.scrollback
   })
 
   const fitAddon = new FitAddon()
   terminal.loadAddon(fitAddon)
-  terminal.loadAddon(new WebLinksAddon((_event, uri) => window.open(uri, '_blank')))
+  terminal.loadAddon(new WebLinksAddon((event, uri) => {
+    if (event.ctrlKey) {
+      window.open(uri, '_blank')
+    }
+  }))
 
   const unicode11 = new Unicode11Addon()
   terminal.loadAddon(unicode11)
@@ -158,30 +159,26 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
 
   terminal.open(wrapperDiv)
 
-  // Try WebGL, fall back to Canvas, then DOM renderer
+  // Try WebGL, fall back to DOM renderer
   try {
     const webgl = new WebglAddon()
     webgl.onContextLoss(() => {
       try { webgl.dispose() } catch { /* ignore */ }
-      try {
-        terminal.loadAddon(new CanvasAddon())
-      } catch {
-        // DOM renderer fallback
-      }
     })
     terminal.loadAddon(webgl)
   } catch {
-    try {
-      terminal.loadAddon(new CanvasAddon())
-    } catch {
-      // Use default DOM renderer
-    }
+    // Use default DOM renderer
   }
 
   // Selection-aware editing: typing/backspace/delete replaces selected text
   terminal.attachCustomKeyEventHandler((event) => {
-    // Ctrl+Q — toggle voice recording (prevent xterm from sending XON)
+    // Ctrl+Q — prevent xterm from sending XON (reserved for app)
     if (event.code === 'KeyQ' && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
+      return false
+    }
+
+    // Ctrl+/ — toggle voice recording (prevent xterm from sending 0x1F)
+    if (event.code === 'Slash' && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
       return false
     }
 
@@ -259,9 +256,34 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
     return false
   })
 
-  // PTY data → xterm
+  // PTY data → xterm (preserve scroll position via xterm API to prevent jump-to-top)
+  let lastViewportY = 0
+  let lastBaseY = 0
+
+  terminal.onScroll(() => {
+    const buf = terminal.buffer.active
+    const prev = lastViewportY
+    lastViewportY = buf.viewportY
+    lastBaseY = buf.baseY
+
+    // Log sudden jumps to top (diagnostic for scroll-to-top bug)
+    if (prev > 5 && buf.viewportY === 0 && buf.baseY > 0) {
+      window.api.log.rendererLog('warn', 'xterm-scroll',
+        `Scroll jumped to top: viewportY ${prev} → 0, baseY=${buf.baseY}, bufType=${buf.type}`)
+    }
+  })
+
   const unsubData = window.api.pty.onData(ptyId, (data) => {
-    terminal.write(data)
+    const buf = terminal.buffer.active
+    const isAtBottom = buf.viewportY === buf.baseY
+    const savedLine = buf.viewportY
+
+    terminal.write(data, () => {
+      // If user was NOT at the bottom, restore their scroll position
+      if (!isAtBottom) {
+        terminal.scrollToLine(savedLine)
+      }
+    })
   })
 
   // xterm input → PTY
@@ -295,13 +317,7 @@ function setupResizeObserver(entry: TerminalEntry, containerEl: HTMLElement): vo
   entry.resizeObserver?.disconnect()
   const observer = new ResizeObserver(() => {
     if (resizingPaneIds.size > 0) return
-    requestAnimationFrame(() => {
-      try {
-        entry.fitAddon.fit()
-      } catch {
-        // ignore
-      }
-    })
+    requestAnimationFrame(() => safeFit(entry.terminal, entry.fitAddon))
   })
   observer.observe(containerEl)
   entry.resizeObserver = observer
@@ -326,11 +342,7 @@ export async function attach(
     setupResizeObserver(existing, containerEl)
 
     requestAnimationFrame(() => {
-      try {
-        existing.fitAddon.fit()
-      } catch {
-        // ignore
-      }
+      safeFit(existing.terminal, existing.fitAddon)
       existing.terminal.focus()
     })
 
@@ -410,7 +422,7 @@ export function destroy(paneId: string): void {
   try {
     entry.terminal.dispose()
   } catch {
-    // WebGL addon may throw during dispose
+    // ignore
   }
 
   window.api.pty.destroy(entry.ptyId)
@@ -425,11 +437,7 @@ export function focus(paneId: string): void {
   if (!entry) return
 
   requestAnimationFrame(() => {
-    try {
-      entry.fitAddon.fit()
-    } catch {
-      // ignore
-    }
+    safeFit(entry.terminal, entry.fitAddon)
     entry.terminal.focus()
   })
 }

@@ -5,7 +5,9 @@ import { useSettingsStore } from '@/stores/settings-store'
 import { useToastStore } from '@/stores/toast-store'
 import { ContextMenu, type MenuEntry } from '@/components/ui/ContextMenu'
 import { TranslationSnippet } from '@/components/ui/TranslationSnippet'
+import { DefineSnippet } from '@/components/ui/DefineSnippet'
 import { SpeechSnippet } from '@/components/ui/SpeechSnippet'
+import { SummarySnippet } from '@/components/ui/SummarySnippet'
 import { relativePath, shellEscape } from '@shared/path-utils'
 
 const MIME_FILES = 'application/x-terma-files'
@@ -33,9 +35,20 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
     original: string
     translated: string | null
   } | null>(null)
+  const [defineSnippet, setDefineSnippet] = useState<{
+    position: { x: number; y: number }
+    original: string
+    definition: string | null
+  } | null>(null)
   const [speechSnippet, setSpeechSnippet] = useState<{
     position: { x: number; y: number }
     text: string
+    streamId: string | null
+    sampleRate: number
+  } | null>(null)
+  const [summarySnippet, setSummarySnippet] = useState<{
+    position: { x: number; y: number }
+    summary: string | null
     streamId: string | null
     sampleRate: number
   } | null>(null)
@@ -221,6 +234,33 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
     }
   }, [tmKey, menuPosition])
 
+  const handleDefine = useCallback(async (rephrase = false) => {
+    const terminal = getTerminal(tmKey)
+    const selection = terminal?.getSelection()
+    if (!selection) return
+
+    const pos = menuPosition ?? defineSnippet?.position ?? { x: 100, y: 100 }
+    setDefineSnippet({ position: pos, original: selection, definition: null })
+    setMenuPosition(null)
+
+    try {
+      const result = await window.api.translate.define(selection, rephrase)
+      setDefineSnippet((prev) => prev ? { ...prev, definition: result } : null)
+    } catch {
+      setDefineSnippet((prev) => prev ? { ...prev, definition: '[Error]' } : null)
+    }
+  }, [tmKey, menuPosition, defineSnippet?.position])
+
+  const handleRephrase = useCallback(() => {
+    if (!defineSnippet) return
+    setDefineSnippet((prev) => prev ? { ...prev, definition: null } : null)
+    window.api.translate.define(defineSnippet.original, true).then((result) => {
+      setDefineSnippet((prev) => prev ? { ...prev, definition: result } : null)
+    }).catch(() => {
+      setDefineSnippet((prev) => prev ? { ...prev, definition: '[Error]' } : null)
+    })
+  }, [defineSnippet])
+
   const handleSpeak = useCallback(async () => {
     const terminal = getTerminal(tmKey)
     const selection = terminal?.getSelection()
@@ -236,6 +276,24 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
     } catch (err) {
       useToastStore.getState().addToast('error', err instanceof Error ? err.message : 'TTS failed')
       setSpeechSnippet(null)
+    }
+  }, [tmKey, menuPosition])
+
+  const handleSummarize = useCallback(async () => {
+    const terminal = getTerminal(tmKey)
+    const selection = terminal?.getSelection()
+    if (!selection) return
+
+    const pos = menuPosition ?? { x: 100, y: 100 }
+    setSummarySnippet({ position: pos, summary: null, streamId: null, sampleRate: 16000 })
+    setMenuPosition(null)
+
+    try {
+      const { summary, streamId, sampleRate } = await window.api.translate.summarize(selection)
+      setSummarySnippet((prev) => prev ? { ...prev, summary, streamId, sampleRate } : null)
+    } catch (err) {
+      useToastStore.getState().addToast('error', err instanceof Error ? err.message : 'Summarize failed')
+      setSummarySnippet(null)
     }
   }, [tmKey, menuPosition])
 
@@ -261,9 +319,21 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
     },
     {
       type: 'item',
+      label: 'Define',
+      disabled: !hasSelection || !hasApiKey,
+      onAction: () => handleDefine(false)
+    },
+    {
+      type: 'item',
       label: 'Speak',
       disabled: !hasSelection || !hasElevenlabsKey,
       onAction: handleSpeak
+    },
+    {
+      type: 'item',
+      label: 'Summarize',
+      disabled: !hasSelection || !hasApiKey || !hasElevenlabsKey,
+      onAction: handleSummarize
     },
     { type: 'separator' },
     {
@@ -303,6 +373,15 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
           onClose={() => setTranslationSnippet(null)}
         />
       )}
+      {defineSnippet && (
+        <DefineSnippet
+          position={defineSnippet.position}
+          original={defineSnippet.original}
+          definition={defineSnippet.definition}
+          onRephrase={handleRephrase}
+          onClose={() => setDefineSnippet(null)}
+        />
+      )}
       {speechSnippet && (
         <SpeechSnippet
           position={speechSnippet.position}
@@ -310,6 +389,15 @@ export const TerminalPane = memo(function TerminalPane({ tabId, paneId, terminal
           streamId={speechSnippet.streamId}
           sampleRate={speechSnippet.sampleRate}
           onClose={() => setSpeechSnippet(null)}
+        />
+      )}
+      {summarySnippet && (
+        <SummarySnippet
+          position={summarySnippet.position}
+          summary={summarySnippet.summary}
+          streamId={summarySnippet.streamId}
+          sampleRate={summarySnippet.sampleRate}
+          onClose={() => setSummarySnippet(null)}
         />
       )}
     </>

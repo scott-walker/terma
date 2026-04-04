@@ -1,9 +1,8 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useTabStore } from '@/stores/tab-store'
 import { TabItem } from '@/components/ui/TabItem'
 import { ContextMenu, type MenuEntry } from '@/components/ui/ContextMenu'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
-import { getAllPaneIds } from '@/lib/layout-tree'
 
 const DRAG_FORMAT = 'application/x-terma-tab'
 
@@ -13,6 +12,7 @@ const TAB_COLORS = [
   { id: 'yellow', label: 'Yellow' },
   { id: 'green', label: 'Green' },
   { id: 'blue', label: 'Blue' },
+  { id: 'gray', label: 'Gray' },
   { id: 'purple', label: 'Purple' },
   { id: 'pink', label: 'Pink' }
 ]
@@ -25,15 +25,24 @@ export function TabBar(): JSX.Element {
   const [editingTabId, setEditingTabId] = useState<string | null>(null)
   const [confirmCloseTabId, setConfirmCloseTabId] = useState<string | null>(null)
   const dragCounters = useRef<Map<number, number>>(new Map())
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  // Horizontal scroll on mouse wheel
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const onWheel = (e: WheelEvent): void => {
+      if (e.deltaY === 0) return
+      e.preventDefault()
+      el.scrollLeft += e.deltaY
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [])
 
   const handleCloseTab = useCallback((tabId: string) => {
-    const tab = tabs[tabId]
-    if (tab && getAllPaneIds(tab.layoutTree).length > 1) {
-      setConfirmCloseTabId(tabId)
-    } else {
-      closeTab(tabId)
-    }
-  }, [tabs, closeTab])
+    setConfirmCloseTabId(tabId)
+  }, [])
 
   const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
     setDragIndex(index)
@@ -102,7 +111,7 @@ export function TabBar(): JSX.Element {
     : []
 
   return (
-    <div className="no-drag-region flex shrink-0 items-center gap-0.5 overflow-x-auto border-b border-border px-3">
+    <div ref={scrollRef} className="no-drag-region flex shrink-0 items-center gap-0.5 overflow-x-auto border-b border-border px-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {tabOrder.map((id, index) => {
         const tab = tabs[id]
         if (!tab) return null
@@ -142,7 +151,7 @@ export function TabBar(): JSX.Element {
       {confirmCloseTabId && (
         <ConfirmDialog
           title="Close Tab"
-          message="This tab has multiple panes. Close all of them?"
+          message="Close this tab? The terminal session will be lost."
           confirmLabel="Close"
           onConfirm={() => {
             closeTab(confirmCloseTabId)

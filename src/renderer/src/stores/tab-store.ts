@@ -94,9 +94,11 @@ export const useTabStore = create<TabStore>((set, get) => ({
   createTab: () => {
     const id = nanoid()
     const pane = createPane()
+    const state = get()
+    const sessionNum = state.tabOrder.length + 1
     const tab: Tab = {
       id,
-      title: 'Terminal',
+      title: `Session ${sessionNum}`,
       layoutTree: pane,
       activePaneId: pane.id
     }
