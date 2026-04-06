@@ -302,33 +302,6 @@ export function SettingsPanel(): JSX.Element {
           <div className="flex-1 space-y-8 overflow-y-auto px-7 py-6">
             {activeTab === 'general' && (
               <>
-                {/* Cursor */}
-                <Section icon={Monitor} title="Cursor">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="mb-2 block text-xs text-fg-muted">Style</label>
-                      <SegmentedControl
-                        value={settings.cursorStyle}
-                        options={[
-                          { value: 'bar', label: 'Bar' },
-                          { value: 'block', label: 'Block' },
-                          { value: 'underline', label: 'Underline' }
-                        ]}
-                        onChange={(v) => updateSettings({ cursorStyle: v as 'bar' | 'block' | 'underline' })}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between rounded-xl bg-surface px-4 py-3.5">
-                      <span className="text-sm text-fg-secondary">Cursor Blink</span>
-                      <Toggle
-                        checked={settings.cursorBlink}
-                        onChange={(v) => updateSettings({ cursorBlink: v })}
-                      />
-                    </div>
-                  </div>
-                </Section>
-
-                <Divider />
-
                 {/* Scrollback */}
                 <Section icon={ScrollText} title="Buffer">
                   <div className="flex items-center justify-between rounded-xl bg-surface p-4">
@@ -474,13 +447,10 @@ export function SettingsPanel(): JSX.Element {
                         <NumberStepper
                           value={settings.lineHeight}
                           min={1}
-                          max={1.5}
-                          step={0.05}
+                          max={2}
+                          step={0.1}
                           onChange={(v) => updateSettings({ lineHeight: v })}
                         />
-                        <p className="mt-1.5 text-[10px] text-fg-muted">
-                          {'> 1.2 breaks box-drawing lines'}
-                        </p>
                       </div>
                     </div>
                   </div>

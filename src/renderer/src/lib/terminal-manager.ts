@@ -1,6 +1,6 @@
 import { Terminal, type ITheme } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
-import { WebglAddon } from '@xterm/addon-webgl'
+import { CanvasAddon } from '@xterm/addon-canvas'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import { Unicode11Addon } from '@xterm/addon-unicode11'
 import { useSettingsStore } from '@/stores/settings-store'
@@ -73,8 +73,6 @@ let prevTerminalSettings: {
   fontFamily: string
   fontSize: number
   lineHeight: number
-  cursorBlink: boolean
-  cursorStyle: string
   scrollback: number
 } | null = null
 
@@ -90,20 +88,15 @@ function ensureSettingsSubscription(): void {
       fontFamily: settings.fontFamily,
       fontSize: settings.fontSize,
       lineHeight: settings.lineHeight,
-      cursorBlink: settings.cursorBlink,
-      cursorStyle: settings.cursorStyle,
       scrollback: settings.scrollback
     }
 
-    // Skip if nothing relevant changed
     if (
       prevTerminalSettings &&
       prevTerminalSettings.themeColors === next.themeColors &&
       prevTerminalSettings.fontFamily === next.fontFamily &&
       prevTerminalSettings.fontSize === next.fontSize &&
       prevTerminalSettings.lineHeight === next.lineHeight &&
-      prevTerminalSettings.cursorBlink === next.cursorBlink &&
-      prevTerminalSettings.cursorStyle === next.cursorStyle &&
       prevTerminalSettings.scrollback === next.scrollback
     ) {
       return
@@ -115,8 +108,6 @@ function ensureSettingsSubscription(): void {
       entry.terminal.options.fontFamily = next.fontFamily
       entry.terminal.options.fontSize = next.fontSize
       entry.terminal.options.lineHeight = next.lineHeight
-      entry.terminal.options.cursorBlink = next.cursorBlink
-      entry.terminal.options.cursorStyle = next.cursorStyle
       entry.terminal.options.scrollback = next.scrollback
 
       requestAnimationFrame(() => safeFit(entry.terminal, entry.fitAddon))
@@ -132,8 +123,8 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
     fontFamily: state.settings.fontFamily,
     fontSize: state.settings.fontSize,
     lineHeight: state.settings.lineHeight,
-    cursorBlink: state.settings.cursorBlink,
-    cursorStyle: state.settings.cursorStyle,
+    cursorBlink: true,
+    cursorStyle: 'block',
     theme: theme.colors,
     allowProposedApi: true,
     customGlyphs: true,
@@ -159,15 +150,11 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
 
   terminal.open(wrapperDiv)
 
-  // Try WebGL, fall back to DOM renderer
+  // Canvas 2D renderer — no GPU shaders, supports customGlyphs for box-drawing
   try {
-    const webgl = new WebglAddon()
-    webgl.onContextLoss(() => {
-      try { webgl.dispose() } catch { /* ignore */ }
-    })
-    terminal.loadAddon(webgl)
+    terminal.loadAddon(new CanvasAddon())
   } catch {
-    // Use default DOM renderer
+    // Fall back to DOM renderer
   }
 
   // Selection-aware editing: typing/backspace/delete replaces selected text

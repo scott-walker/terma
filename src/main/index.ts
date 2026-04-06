@@ -22,9 +22,16 @@ import { logger } from './services/logger-service'
 import { createPlatformService } from './services/platform-service'
 
 app.commandLine.appendSwitch('no-sandbox')
-app.setName('terma')
+const isDev = !app.isPackaged
+if (isDev) {
+  const devUserData = join(app.getPath('appData'), 'terma-dev')
+  app.setPath('userData', devUserData)
+  app.setName('terma-dev')
+} else {
+  app.setName('terma')
+}
 if (process.platform === 'linux') {
-  app.commandLine.appendSwitch('class', 'terma')
+  app.commandLine.appendSwitch('class', isDev ? 'terma-dev' : 'terma')
   app.commandLine.appendSwitch('ozone-platform-hint', 'auto')
 }
 

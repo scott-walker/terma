@@ -50,6 +50,7 @@ export const WhisperButton = memo(function WhisperButton({ paneId, paneType, isS
         try {
           const buffer = await blob.arrayBuffer()
           const text = await window.api.whisper.transcribe(buffer)
+          if (cancelledRef.current) return
           if (text) {
             const tmKey = isSshMode
               ? paneId + ':ssh'
@@ -61,7 +62,9 @@ export const WhisperButton = memo(function WhisperButton({ paneId, paneType, isS
             }
           }
         } catch (err) {
-          useToastStore.getState().addToast('error', err instanceof Error ? err.message : 'Transcription failed')
+          if (!cancelledRef.current) {
+            useToastStore.getState().addToast('error', err instanceof Error ? err.message : 'Transcription failed')
+          }
         } finally {
           setTranscribing(false)
         }
@@ -97,6 +100,7 @@ export const WhisperButton = memo(function WhisperButton({ paneId, paneType, isS
     }
     recorderRef.current = null
     setRecording(false)
+    setTranscribing(false)
   }, [])
 
   // Global hotkey: toggle recording for the active pane
@@ -116,11 +120,11 @@ export const WhisperButton = memo(function WhisperButton({ paneId, paneType, isS
     return () => window.removeEventListener('terma:toggle-recording', handler)
   }, [paneId, disabled, transcribing, recording, startRecording, stopRecording])
 
-  // Enter to confirm, Escape to cancel while recording
+  // Enter to confirm, Escape to cancel while recording or transcribing
   useEffect(() => {
-    if (!recording) return
+    if (!recording && !transcribing) return
     const handler = (e: KeyboardEvent): void => {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && recording) {
         e.preventDefault()
         e.stopPropagation()
         stopRecording()
@@ -132,7 +136,7 @@ export const WhisperButton = memo(function WhisperButton({ paneId, paneType, isS
     }
     window.addEventListener('keydown', handler, true)
     return () => window.removeEventListener('keydown', handler, true)
-  }, [recording, stopRecording, cancelRecording])
+  }, [recording, transcribing, stopRecording, cancelRecording])
 
   return (
     <div className="relative">
@@ -148,7 +152,7 @@ export const WhisperButton = memo(function WhisperButton({ paneId, paneType, isS
           }
         }}
         title={disabled ? 'Set OpenAI API key in Settings' : recording ? 'Stop recording' : transcribing ? 'Transcribing...' : 'Start recording'}
-        disabled={disabled || transcribing}
+        disabled={disabled}
         className={`rounded-sm border-none bg-transparent px-1.5 py-1 leading-none transition-colors ${
           disabled
             ? 'cursor-not-allowed text-fg-muted opacity-30'
@@ -166,6 +170,22 @@ export const WhisperButton = memo(function WhisperButton({ paneId, paneType, isS
         <div className="absolute right-0 top-full z-50 mt-1 flex items-center gap-2 rounded-lg border border-border bg-popup-bg px-3 py-2 shadow-xl">
           <span className="whitespace-nowrap text-xs text-fg-muted">Recording…</span>
           <span className="whitespace-nowrap text-xs text-fg-muted/50">Enter — send</span>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              cancelRecording()
+            }}
+            className="flex cursor-pointer items-center gap-1 whitespace-nowrap rounded px-2 py-0.5 text-xs text-danger hover:bg-surface-hover"
+          >
+            <X size={12} strokeWidth={2} />
+            Esc
+          </button>
+        </div>
+      )}
+
+      {transcribing && (
+        <div className="absolute right-0 top-full z-50 mt-1 flex items-center gap-2 rounded-lg border border-border bg-popup-bg px-3 py-2 shadow-xl">
+          <span className="whitespace-nowrap text-xs text-fg-muted">Transcribing…</span>
           <button
             onClick={(e) => {
               e.stopPropagation()

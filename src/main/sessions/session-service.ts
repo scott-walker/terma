@@ -1,17 +1,24 @@
 import Store from 'electron-store'
 import type { SessionState } from '../../shared/types'
 
-const store = new Store<{ session: SessionState | null }>({
-  name: 'terma-session',
-  defaults: { session: null }
-})
+let store: Store<{ session: SessionState | null }> | null = null
+
+function getStore(): Store<{ session: SessionState | null }> {
+  if (!store) {
+    store = new Store<{ session: SessionState | null }>({
+      name: 'terma-session',
+      defaults: { session: null }
+    })
+  }
+  return store
+}
 
 export const SessionService = {
   save(state: SessionState): void {
-    store.set('session', state)
+    getStore().set('session', state)
   },
 
   load(): SessionState | null {
-    return store.get('session')
+    return getStore().get('session')
   }
 }
