@@ -33,6 +33,7 @@ const SETTINGS_CHANNELS = {
 };
 const SESSION_CHANNELS = {
   SAVE: "session:save",
+  SAVE_SYNC: "session:save-sync",
   LOAD: "session:load"
 };
 const SHELL_CHANNELS = {
@@ -171,6 +172,9 @@ const settingsApi = {
 };
 const sessionApi = {
   save: (state) => electron.ipcRenderer.invoke(SESSION_CHANNELS.SAVE, state),
+  saveSync: (state) => {
+    electron.ipcRenderer.sendSync(SESSION_CHANNELS.SAVE_SYNC, state);
+  },
   load: () => electron.ipcRenderer.invoke(SESSION_CHANNELS.LOAD)
 };
 const shellApi = {

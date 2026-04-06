@@ -93,6 +93,7 @@ const SETTINGS_CHANNELS = {
 };
 const SESSION_CHANNELS = {
   SAVE: "session:save",
+  SAVE_SYNC: "session:save-sync",
   LOAD: "session:load"
 };
 const SHELL_CHANNELS = {
@@ -229,7 +230,12 @@ class PtyManager {
       cols: opts.cols || 80,
       rows: opts.rows || 24,
       cwd: opts.cwd || os.homedir(),
-      env: process.env
+      env: {
+        ...process.env,
+        COLORTERM: "truecolor",
+        TERM_PROGRAM: "terma",
+        TERM_PROGRAM_VERSION: electron.app.getVersion()
+      }
     });
     this.sessions.set(id2, term);
     logger.info("pty", `PTY created: ${id2} (pid=${term.pid})`);
@@ -11394,23 +11400,29 @@ const DEFAULT_SETTINGS = {
   sshProfiles: [],
   agentProfiles: [{ id: "default-claude", name: "Claude", command: "claude" }]
 };
-const store$1 = new ElectronStore({
-  name: "terma-settings",
-  defaults: DEFAULT_SETTINGS
-});
+let store$1 = null;
+function getStore$1() {
+  if (!store$1) {
+    store$1 = new ElectronStore({
+      name: "terma-settings",
+      defaults: DEFAULT_SETTINGS
+    });
+  }
+  return store$1;
+}
 const SettingsService = {
   getAll() {
-    return store$1.store;
+    return getStore$1().store;
   },
   update(partial) {
-    for (const [key, value] of Object.entries(partial)) {
-      store$1.set(key, value);
-    }
-    return store$1.store;
+    const s = getStore$1();
+    s.set(partial);
+    return s.store;
   },
   reset() {
-    store$1.clear();
-    return store$1.store;
+    const s = getStore$1();
+    s.clear();
+    return s.store;
   }
 };
 function broadcastSettings(settings) {
@@ -11436,21 +11448,34 @@ function registerSettingsHandlers() {
     return settings;
   });
 }
-const store = new ElectronStore({
-  name: "terma-session",
-  defaults: { session: null }
-});
+let store = null;
+function getStore() {
+  if (!store) {
+    store = new ElectronStore({
+      name: "terma-session",
+      defaults: { session: null }
+    });
+  }
+  return store;
+}
 const SessionService = {
   save(state) {
-    store.set("session", state);
+    getStore().set("session", state);
   },
   load() {
-    return store.get("session");
+    return getStore().get("session");
   }
 };
 function registerSessionHandlers() {
   typedHandle(SESSION_CHANNELS.SAVE, (_event, state) => {
     SessionService.save(state);
+  });
+  electron.ipcMain.on(SESSION_CHANNELS.SAVE_SYNC, (event, state) => {
+    try {
+      SessionService.save(state);
+    } catch {
+    }
+    event.returnValue = true;
   });
   typedHandle(SESSION_CHANNELS.LOAD, () => {
     return SessionService.load();
@@ -12666,9 +12691,16 @@ function createPlatformService() {
   }
 }
 electron.app.commandLine.appendSwitch("no-sandbox");
-electron.app.setName("terma");
+const isDev = !electron.app.isPackaged;
+if (isDev) {
+  const devUserData = path.join(electron.app.getPath("appData"), "terma-dev");
+  electron.app.setPath("userData", devUserData);
+  electron.app.setName("terma-dev");
+} else {
+  electron.app.setName("terma");
+}
 if (process.platform === "linux") {
-  electron.app.commandLine.appendSwitch("class", "terma");
+  electron.app.commandLine.appendSwitch("class", isDev ? "terma-dev" : "terma");
   electron.app.commandLine.appendSwitch("ozone-platform-hint", "auto");
 }
 const platform = createPlatformService();
