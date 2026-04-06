@@ -109,6 +109,9 @@ const settingsApi = {
 const sessionApi = {
   save: (state: SessionState): Promise<void> =>
     ipcRenderer.invoke(SESSION_CHANNELS.SAVE, state),
+  saveSync: (state: SessionState): void => {
+    ipcRenderer.sendSync(SESSION_CHANNELS.SAVE_SYNC, state)
+  },
   load: (): Promise<SessionState | null> =>
     ipcRenderer.invoke(SESSION_CHANNELS.LOAD)
 }

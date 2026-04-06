@@ -83,6 +83,7 @@ interface TabStore {
   openRightPane: (tabId: string, paneType: PaneType, cwd: string) => void
 
   getSessionState: () => Promise<SessionState>
+  getSessionStateSync: () => SessionState
   restoreSession: (snapshot: SessionState) => void
 }
 
@@ -224,10 +225,21 @@ export const useTabStore = create<TabStore>((set, get) => ({
 
       const newTree = removeNode(tab.layoutTree, paneId)
       if (!newTree) {
-        // Last pane closed — close the tab
-        const store = get()
-        setTimeout(() => store.closeTab(tabId), 0)
-        return state
+        // Last pane closed — close the tab inline
+        const newOrder = state.tabOrder.filter((tid) => tid !== tabId)
+        const { [tabId]: _, ...restTabs } = state.tabs
+
+        let newActiveId = state.activeTabId
+        if (state.activeTabId === tabId) {
+          const oldIndex = state.tabOrder.indexOf(tabId)
+          newActiveId = newOrder[Math.min(oldIndex, newOrder.length - 1)] || null
+        }
+
+        return {
+          tabs: restTabs,
+          tabOrder: newOrder,
+          activeTabId: newActiveId
+        }
       }
 
       const allPanes = getAllPaneIds(newTree)
@@ -355,6 +367,31 @@ export const useTabStore = create<TabStore>((set, get) => ({
     }
 
     // Collect file manager state
+    const fmStore = useFileManagerStore.getState()
+    const fileManagerPanes: Record<string, { rootPath: string; expandedDirs: string[] }> = {}
+    for (const [paneId, pane] of Object.entries(fmStore.panes)) {
+      fileManagerPanes[paneId] = {
+        rootPath: pane.rootPath,
+        expandedDirs: Array.from(pane.expandedDirs)
+      }
+    }
+
+    return {
+      tabs: snapshotTabs,
+      tabOrder: state.tabOrder,
+      activeTabId: state.activeTabId,
+      fileManagerPanes
+    }
+  },
+
+  getSessionStateSync: () => {
+    const state = get()
+    const snapshotTabs: Record<string, Tab> = {}
+
+    for (const [tabId, tab] of Object.entries(state.tabs)) {
+      snapshotTabs[tabId] = { ...tab, layoutTree: stripTerminalIds(tab.layoutTree) }
+    }
+
     const fmStore = useFileManagerStore.getState()
     const fileManagerPanes: Record<string, { rootPath: string; expandedDirs: string[] }> = {}
     for (const [paneId, pane] of Object.entries(fmStore.panes)) {

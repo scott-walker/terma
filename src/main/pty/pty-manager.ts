@@ -1,5 +1,5 @@
 import * as pty from 'node-pty'
-import { BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { homedir } from 'os'
 import { PTY_CHANNELS } from '../../shared/channels'
 import type { PtyCreateOpts } from '../../shared/types'
@@ -37,7 +37,12 @@ export class PtyManager {
       cols: opts.cols || 80,
       rows: opts.rows || 24,
       cwd: opts.cwd || homedir(),
-      env: process.env as Record<string, string>
+      env: {
+        ...process.env,
+        COLORTERM: 'truecolor',
+        TERM_PROGRAM: 'terma',
+        TERM_PROGRAM_VERSION: app.getVersion()
+      } as Record<string, string>
     })
 
     this.sessions.set(id, term)

@@ -37,6 +37,7 @@ interface SettingsApi {
 
 interface SessionApi {
   save(state: SessionState): Promise<void>
+  saveSync(state: SessionState): void
   load(): Promise<SessionState | null>
 }
 

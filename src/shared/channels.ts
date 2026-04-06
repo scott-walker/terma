@@ -33,6 +33,7 @@ export const SETTINGS_CHANNELS = {
 
 export const SESSION_CHANNELS = {
   SAVE: 'session:save',
+  SAVE_SYNC: 'session:save-sync',
   LOAD: 'session:load'
 } as const
 

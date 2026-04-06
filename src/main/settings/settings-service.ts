@@ -20,9 +20,7 @@ export const SettingsService = {
 
   update(partial: Partial<TerminalSettings>): TerminalSettings {
     const s = getStore()
-    for (const [key, value] of Object.entries(partial)) {
-      s.set(key as keyof TerminalSettings, value)
-    }
+    s.set(partial)
     return s.store
   },
 

@@ -183,8 +183,9 @@ export default function App(): JSX.Element {
     }
 
     const handleBeforeUnload = (): void => {
-      // Fire-and-forget save on close
-      saveSession()
+      // Synchronous IPC — blocks until main process writes to disk
+      const snapshot = useTabStore.getState().getSessionStateSync()
+      window.api.session.saveSync(snapshot)
     }
 
     window.addEventListener('beforeunload', handleBeforeUnload)
