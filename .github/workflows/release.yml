@@ -37,7 +37,7 @@ jobs:
         run: npx electron-vite build
 
       - name: Package .deb
-        run: npx electron-builder --linux deb
+        run: npx electron-builder --linux deb --publish never
 
       - name: Determine tag
         id: tag
