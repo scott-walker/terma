@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Terma
+GenericName=Terminal Emulator
+Comment=Modern terminal emulator with split panes, tabs and AI agent support
+Exec=/opt/Terma/terma %U
+Terminal=false
+Type=Application
+Icon=/usr/share/icons/hicolor/256x256/apps/terma.png
+StartupWMClass=terma
+Categories=System;TerminalEmulator;Development;
+Keywords=terminal;shell;console;emulator;pty;
+MimeType=x-scheme-handler/terma;

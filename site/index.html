@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terma — Modern terminal emulator</title>
+  <meta name="description" content="Terma — modern terminal emulator built with Electron, React and xterm.js. Download for Linux.">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1a1b26;
+      --fg: #c0caf5;
+      --accent: #9ece6a;
+      --muted: #565f89;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    main { text-align: center; max-width: 36rem; }
+    h1 {
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+    p.tagline {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 3rem;
+      letter-spacing: 0.02em;
+    }
+    a.download {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 0.9rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: filter 0.15s ease, transform 0.15s ease;
+    }
+    a.download:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    a.download:active { transform: translateY(0); }
+    p.meta {
+      margin-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    a.source {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--muted);
+    }
+    a.source:hover { color: var(--fg); border-bottom-color: var(--fg); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Terma</h1>
+    <p class="tagline">Modern terminal emulator for Linux</p>
+    <a id="download" class="download" href="https://github.com/scott-walker/terma/releases/latest">
+      Download for Linux (.deb)
+    </a>
+    <p class="meta">
+      <span id="version">Latest release</span>
+      &nbsp;&middot;&nbsp;
+      <a class="source" href="https://github.com/scott-walker/terma">Source on GitHub</a>
+    </p>
+  </main>
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('https://api.github.com/repos/scott-walker/terma/releases/latest');
+        if (!res.ok) return;
+        const rel = await res.json();
+        const deb = (rel.assets || []).find(a => a.name.endsWith('.deb'));
+        const btn = document.getElementById('download');
+        const ver = document.getElementById('version');
+        if (deb) btn.href = deb.browser_download_url;
+        if (rel.tag_name) ver.textContent = rel.tag_name;
+      } catch (_) {
+        /* keep fallback link to /releases/latest */
+      }
+    })();
+  </script>
+</body>
+</html>

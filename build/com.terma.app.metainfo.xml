@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.terma.app</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+
+  <name>Terma</name>
+  <summary>Modern terminal emulator with split panes, tabs and AI agent support</summary>
+
+  <description>
+    <p>
+      Terma is a modern terminal emulator built with Electron, React and xterm.js.
+      It features split panes with unlimited nesting, multiple tabs with color coding,
+      and a rich set of integrated tools — all in a single window.
+    </p>
+    <p>Features include:</p>
+    <ul>
+      <li>6 pane types: terminal, file manager, AI agent, markdown viewer, image viewer, system monitor</li>
+      <li>Split panes with unlimited nesting and drag-and-drop rearrangement</li>
+      <li>Multiple tabs with color coding</li>
+      <li>Git integration and SSH file browsing</li>
+      <li>Voice input via Whisper and TTS via ElevenLabs</li>
+      <li>4 built-in color themes</li>
+      <li>Session persistence</li>
+    </ul>
+  </description>
+
+  <icon type="stock">terma</icon>
+  <icon type="local" width="256" height="256">/usr/share/icons/hicolor/256x256/apps/terma.png</icon>
+
+  <launchable type="desktop-id">terma.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Terminal with split panes and file manager</caption>
+      <image type="source" width="1480" height="810">file:///opt/Terma/resources/screenshots/app-screenshot.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Terma — modern terminal emulator</caption>
+      <image type="source" width="1280" height="720">file:///opt/Terma/resources/screenshots/banner.png</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://github.com/scott/terma</url>
+  <url type="bugtracker">https://github.com/scott/terma/issues</url>
+  <url type="vcs-browser">https://github.com/scott/terma</url>
+
+  <developer id="com.terma">
+    <name>Scott</name>
+  </developer>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#7c3aed</color>
+    <color type="primary" scheme_preference="dark">#a78bfa</color>
+  </branding>
+
+  <provides>
+    <binary>terma</binary>
+  </provides>
+
+  <categories>
+    <category>System</category>
+    <category>TerminalEmulator</category>
+    <category>Development</category>
+  </categories>
+
+  <keywords>
+    <keyword>terminal</keyword>
+    <keyword>shell</keyword>
+    <keyword>console</keyword>
+    <keyword>emulator</keyword>
+    <keyword>pty</keyword>
+    <keyword>split panes</keyword>
+  </keywords>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="1.2.0" date="2026-02-28">
+      <description>
+        <p>Streaming TTS playback, file search, and UI improvements.</p>
+      </description>
+    </release>
+    <release version="1.1.0" date="2026-02-22">
+      <description>
+        <p>SSH file browsing, AI agent profiles, system monitor, and brand refresh.</p>
+      </description>
+    </release>
+    <release version="1.0.0" date="2025-01-01">
+      <description>
+        <p>Initial release of Terma.</p>
+      </description>
+    </release>
+  </releases>
+</component>

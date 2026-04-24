@@ -7,10 +7,10 @@
     "email": "scott@swlt.ru"
   },
   "license": "MIT",
-  "homepage": "https://github.com/scott/terma",
+  "homepage": "https://scott-walker.github.io/terma/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scott/terma.git"
+    "url": "https://github.com/scott-walker/terma.git"
   },
   "main": "./out/main/index.js",
   "scripts": {
