@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect, memo } from 'react'
 import { Columns2, Rows2, X, ChevronDown, Server, Loader2, Check, Terminal, FolderOpen, FileCode, Code2, Share2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { baseName } from '@shared/path-utils'
+import { isTranscriptionConfigured } from '@shared/settings'
 import type { PaneType } from '@/lib/layout-tree'
 import { PANE_TYPE_CONFIGS, PANE_ACTIVE_CLASSES } from '@/lib/pane-types'
 import { useTabStore } from '@/stores/tab-store'
@@ -434,7 +435,7 @@ const PaneTypeSelector = memo(function PaneTypeSelector({
 export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeaderProps): JSX.Element {
   const config = PANE_TYPE_CONFIGS[paneType] ?? PANE_TYPE_CONFIGS.terminal
   const isPreview = previewPaneTypes.has(paneType)
-  const hasApiKey = useSettingsStore((s) => !!s.settings.openaiApiKey)
+  const transcriptionReady = useSettingsStore((s) => isTranscriptionConfigured(s.settings))
   const idePath = useSettingsStore((s) => s.settings.idePath)
 
   const sshPaneState = useSshStore((s) => s.panes[paneId])
@@ -517,7 +518,7 @@ export function PaneHeader({ tabId, paneId, paneType, cwd, paneRef }: PaneHeader
             paneId={paneId}
             paneType={paneType}
             isSshMode={isSshMode}
-            disabled={!hasApiKey}
+            disabled={!transcriptionReady}
           />
         )}
         {showShare && !editorMeta && ptyId && (

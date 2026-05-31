@@ -1,24 +1,38 @@
 import { net } from 'electron'
 import { WHISPER_CHANNELS } from '../../shared/channels'
 import { SettingsService } from '../settings/settings-service'
+import { resolveTranscriptionEndpoint } from '../../shared/settings'
 import { logger } from '../services/logger-service'
 import { typedHandle } from './handlers'
 
+interface ListModelsArgs {
+  baseUrl: string
+  apiKey: string
+}
+
+function buildHeaders(apiKey: string): Record<string, string> {
+  return apiKey ? { Authorization: `Bearer ${apiKey}` } : {}
+}
+
 export function registerWhisperHandlers(): void {
   typedHandle(WHISPER_CHANNELS.TRANSCRIBE, async (_event, audioBytes: ArrayBuffer): Promise<string> => {
-    const { openaiApiKey, whisperLanguage } = SettingsService.getAll()
-    if (!openaiApiKey) {
-      throw new Error('OpenAI API key is not configured')
+    const settings = SettingsService.getAll()
+    const endpoint = resolveTranscriptionEndpoint(settings)
+    if (!endpoint) {
+      throw new Error(
+        settings.whisperProvider === 'custom'
+          ? 'Custom transcription base URL is not configured'
+          : 'OpenAI API key is not configured'
+      )
     }
 
-    logger.info('whisper', 'Transcription started')
+    logger.info('whisper', `Transcription started (${settings.whisperProvider}, model=${endpoint.model})`)
+
     const boundary = '----FormBoundary' + Math.random().toString(36).slice(2)
     const filename = 'audio.webm'
 
-    // Build multipart/form-data body
     const parts: Buffer[] = []
 
-    // file field
     parts.push(
       Buffer.from(
         `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: audio/webm\r\n\r\n`
@@ -27,24 +41,21 @@ export function registerWhisperHandlers(): void {
     parts.push(Buffer.from(audioBytes))
     parts.push(Buffer.from('\r\n'))
 
-    // model field
     parts.push(
       Buffer.from(
-        `--${boundary}\r\nContent-Disposition: form-data; name="model"\r\n\r\nwhisper-1\r\n`
+        `--${boundary}\r\nContent-Disposition: form-data; name="model"\r\n\r\n${endpoint.model}\r\n`
       )
     )
 
-    // response_format field
     parts.push(
       Buffer.from(
         `--${boundary}\r\nContent-Disposition: form-data; name="response_format"\r\n\r\ntext\r\n`
       )
     )
 
-    // language field
     parts.push(
       Buffer.from(
-        `--${boundary}\r\nContent-Disposition: form-data; name="language"\r\n\r\n${whisperLanguage || 'ru'}\r\n`
+        `--${boundary}\r\nContent-Disposition: form-data; name="language"\r\n\r\n${settings.whisperLanguage || 'ru'}\r\n`
       )
     )
 
@@ -52,10 +63,10 @@ export function registerWhisperHandlers(): void {
 
     const body = Buffer.concat(parts)
 
-    const res = await net.fetch('https://api.openai.com/v1/audio/transcriptions', {
+    const res = await net.fetch(`${endpoint.baseUrl}/audio/transcriptions`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${openaiApiKey}`,
+        ...buildHeaders(endpoint.apiKey),
         'Content-Type': `multipart/form-data; boundary=${boundary}`
       },
       body
@@ -63,11 +74,30 @@ export function registerWhisperHandlers(): void {
 
     if (!res.ok) {
       const errText = await res.text()
-      throw new Error(`Whisper API error ${res.status}: ${errText}`)
+      throw new Error(`Transcription error ${res.status}: ${errText}`)
     }
 
     const text = await res.text()
     logger.info('whisper', 'Transcription complete')
     return text.trim()
+  })
+
+  typedHandle(WHISPER_CHANNELS.LIST_MODELS, async (_event, args: ListModelsArgs): Promise<string[]> => {
+    const baseUrl = args.baseUrl.trim().replace(/\/+$/, '')
+    if (!baseUrl) throw new Error('Base URL is required')
+
+    const res = await net.fetch(`${baseUrl}/models`, {
+      method: 'GET',
+      headers: buildHeaders(args.apiKey)
+    })
+
+    if (!res.ok) {
+      const errText = await res.text()
+      throw new Error(`List models error ${res.status}: ${errText}`)
+    }
+
+    const json = (await res.json()) as { data?: { id: string }[] }
+    const ids = (json.data ?? []).map((m) => m.id).filter(Boolean)
+    return ids
   })
 }

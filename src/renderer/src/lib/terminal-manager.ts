@@ -73,6 +73,7 @@ let prevTerminalSettings: {
   fontFamily: string
   fontSize: number
   lineHeight: number
+  minimumContrastRatio: number
   scrollback: number
 } | null = null
 
@@ -88,6 +89,7 @@ function ensureSettingsSubscription(): void {
       fontFamily: settings.fontFamily,
       fontSize: settings.fontSize,
       lineHeight: settings.lineHeight,
+      minimumContrastRatio: settings.minimumContrastRatio,
       scrollback: settings.scrollback
     }
 
@@ -97,6 +99,7 @@ function ensureSettingsSubscription(): void {
       prevTerminalSettings.fontFamily === next.fontFamily &&
       prevTerminalSettings.fontSize === next.fontSize &&
       prevTerminalSettings.lineHeight === next.lineHeight &&
+      prevTerminalSettings.minimumContrastRatio === next.minimumContrastRatio &&
       prevTerminalSettings.scrollback === next.scrollback
     ) {
       return
@@ -108,6 +111,7 @@ function ensureSettingsSubscription(): void {
       entry.terminal.options.fontFamily = next.fontFamily
       entry.terminal.options.fontSize = next.fontSize
       entry.terminal.options.lineHeight = next.lineHeight
+      entry.terminal.options.minimumContrastRatio = next.minimumContrastRatio
       entry.terminal.options.scrollback = next.scrollback
 
       requestAnimationFrame(() => safeFit(entry.terminal, entry.fitAddon))
@@ -128,6 +132,7 @@ function createTerminalEntry(paneId: string, ptyId: string): TerminalEntry {
     theme: theme.colors,
     allowProposedApi: true,
     customGlyphs: true,
+    minimumContrastRatio: state.settings.minimumContrastRatio,
     scrollback: state.settings.scrollback
   })
 

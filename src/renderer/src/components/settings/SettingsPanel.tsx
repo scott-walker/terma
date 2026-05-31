@@ -4,6 +4,7 @@ import {
   X,
   Palette,
   Type,
+  Contrast,
   Monitor,
   RotateCcw,
   ZoomIn,
@@ -19,9 +20,12 @@ import {
   Check,
   AudioLines,
   Code2,
-  Globe
+  Globe,
+  Mic,
+  RefreshCw,
+  Loader2
 } from 'lucide-react'
-import type { FileAssociation } from '@shared/settings'
+import type { FileAssociation, WhisperProvider } from '@shared/settings'
 import { useSettingsStore } from '@/stores/settings-store'
 import { PRESET_THEMES } from '@shared/themes'
 import { Section } from '../ui/Section'
@@ -158,9 +162,141 @@ function OpenAISection(): JSX.Element {
           </button>
         </div>
         <p className="mt-2 text-[11px] text-fg-muted">
-          Used for voice input and translation.
+          Used for translation, definition and summary. For transcription see the section below.
         </p>
       </div>
+    </Section>
+  )
+}
+
+function TranscriptionSection(): JSX.Element {
+  const { settings, updateSettings } = useSettingsStore()
+  const [showKey, setShowKey] = useState(false)
+  const [models, setModels] = useState<string[] | null>(null)
+  const [fetching, setFetching] = useState(false)
+  const [fetchError, setFetchError] = useState<string | null>(null)
+
+  const provider = settings.whisperProvider
+  const isCustom = provider === 'custom'
+
+  const handleFetchModels = async (): Promise<void> => {
+    setFetching(true)
+    setFetchError(null)
+    try {
+      const baseUrl = isCustom ? settings.whisperCustomBaseUrl : 'https://api.openai.com/v1'
+      const apiKey = isCustom ? settings.whisperCustomApiKey : settings.openaiApiKey
+      const list = await window.api.whisper.listModels(baseUrl, apiKey)
+      setModels(list)
+    } catch (err) {
+      setFetchError(err instanceof Error ? err.message : 'Failed to fetch models')
+      setModels(null)
+    } finally {
+      setFetching(false)
+    }
+  }
+
+  return (
+    <Section icon={Mic} title="Transcription">
+      <div>
+        <label className="mb-2 block text-xs text-fg-muted">Provider</label>
+        <SegmentedControl
+          value={provider}
+          options={[
+            { value: 'openai', label: 'OpenAI Cloud' },
+            { value: 'custom', label: 'Custom (OpenAI-compatible)' }
+          ]}
+          onChange={(v) => {
+            setModels(null)
+            setFetchError(null)
+            updateSettings({ whisperProvider: v as WhisperProvider })
+          }}
+        />
+        <p className="mt-2 text-[11px] text-fg-muted">
+          {isCustom
+            ? 'Any OpenAI-compatible /audio/transcriptions endpoint (speaches, faster-whisper-server, whisper.cpp server, …).'
+            : 'Hosted OpenAI Whisper API. Uses the OpenAI API key from above.'}
+        </p>
+      </div>
+
+      {isCustom && (
+        <>
+          <div>
+            <label className="mb-2 block text-xs text-fg-muted">Base URL</label>
+            <Input
+              value={settings.whisperCustomBaseUrl}
+              onChange={(v) => updateSettings({ whisperCustomBaseUrl: v })}
+              placeholder="http://127.0.0.1:47800/v1"
+            />
+            <p className="mt-2 text-[11px] text-fg-muted">
+              Include the API version path (usually <code>/v1</code>).
+            </p>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs text-fg-muted">API Key (optional)</label>
+            <div className="flex items-center gap-2">
+              <Input
+                type={showKey ? 'text' : 'password'}
+                value={settings.whisperCustomApiKey}
+                onChange={(v) => updateSettings({ whisperCustomApiKey: v })}
+                placeholder="leave empty if not required"
+              />
+              <button
+                onClick={() => setShowKey((v) => !v)}
+                className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-fg-muted transition-colors hover:text-fg"
+              >
+                {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs text-fg-muted">Model</label>
+            <div className="flex items-center gap-2">
+              <Input
+                value={settings.whisperCustomModel}
+                onChange={(v) => updateSettings({ whisperCustomModel: v })}
+                placeholder="whisper-1"
+              />
+              <button
+                onClick={handleFetchModels}
+                disabled={fetching || !settings.whisperCustomBaseUrl}
+                title="Fetch available models"
+                className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-fg-muted transition-colors hover:text-fg disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                {fetching ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+              </button>
+            </div>
+            {fetchError && (
+              <p className="mt-2 text-[11px] text-danger">{fetchError}</p>
+            )}
+            {models && models.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {models.map((id) => {
+                  const isActive = settings.whisperCustomModel === id
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => updateSettings({ whisperCustomModel: id })}
+                      className={`cursor-pointer rounded-md border px-2 py-1 text-[11px] transition-colors ${
+                        isActive
+                          ? 'border-accent bg-accent/10 text-accent'
+                          : 'border-border bg-surface text-fg-muted hover:border-fg/40 hover:text-fg'
+                      }`}
+                    >
+                      {id}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+            {models && models.length === 0 && (
+              <p className="mt-2 text-[11px] text-fg-muted">No models returned by the server.</p>
+            )}
+          </div>
+        </>
+      )}
+
       <div>
         <label className="mb-2 block text-xs text-fg-muted">Language</label>
         <SegmentedControl
@@ -377,6 +513,11 @@ export function SettingsPanel(): JSX.Element {
 
                 <Divider />
 
+                {/* Transcription */}
+                <TranscriptionSection />
+
+                <Divider />
+
                 {/* ElevenLabs */}
                 <ElevenLabsSection />
 
@@ -453,6 +594,27 @@ export function SettingsPanel(): JSX.Element {
                         />
                       </div>
                     </div>
+                  </div>
+                </Section>
+
+                <Divider />
+
+                {/* Text contrast */}
+                <Section icon={Contrast} title="Contrast">
+                  <div>
+                    <label className="mb-2 block text-xs text-fg-muted">
+                      Minimum contrast ratio
+                    </label>
+                    <NumberStepper
+                      value={settings.minimumContrastRatio}
+                      min={1}
+                      max={21}
+                      step={0.5}
+                      onChange={(v) => updateSettings({ minimumContrastRatio: v })}
+                    />
+                    <p className="mt-2 text-[11px] text-fg-muted">
+                      Lifts dim / faint text to a readable level. 1 = off, 4.5 = WCAG AA, 21 = maximum.
+                    </p>
                   </div>
                 </Section>
 

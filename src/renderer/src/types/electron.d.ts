@@ -66,6 +66,7 @@ interface WindowApi {
 
 interface WhisperApi {
   transcribe(audioBuffer: ArrayBuffer): Promise<string>
+  listModels(baseUrl: string, apiKey: string): Promise<string[]>
 }
 
 interface LogApi {

@@ -49,7 +49,8 @@ export const CLIPBOARD_CHANNELS = {
 } as const
 
 export const WHISPER_CHANNELS = {
-  TRANSCRIBE: 'whisper:transcribe'
+  TRANSCRIBE: 'whisper:transcribe',
+  LIST_MODELS: 'whisper:listModels'
 } as const
 
 export const WINDOW_CHANNELS = {

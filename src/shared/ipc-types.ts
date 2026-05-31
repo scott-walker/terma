@@ -53,6 +53,7 @@ export interface IpcInvokeMap {
 
   // Whisper
   'whisper:transcribe': [args: [audioBuffer: ArrayBuffer], ret: string]
+  'whisper:listModels': [args: [args: { baseUrl: string; apiKey: string }], ret: string[]]
 
   // Log
   'log:getLogs': [args: [], ret: LogEntry[]]

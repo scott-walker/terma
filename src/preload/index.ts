@@ -156,7 +156,9 @@ const windowApi = {
 
 const whisperApi = {
   transcribe: (audioBuffer: ArrayBuffer): Promise<string> =>
-    ipcRenderer.invoke(WHISPER_CHANNELS.TRANSCRIBE, audioBuffer)
+    ipcRenderer.invoke(WHISPER_CHANNELS.TRANSCRIBE, audioBuffer),
+  listModels: (baseUrl: string, apiKey: string): Promise<string[]> =>
+    ipcRenderer.invoke(WHISPER_CHANNELS.LIST_MODELS, { baseUrl, apiKey })
 }
 
 const logApi = {
